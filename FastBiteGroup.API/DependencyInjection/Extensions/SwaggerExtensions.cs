@@ -26,6 +26,6 @@ public static class SwaggerExtensions
         });
 
         app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
-           .WithTags(string.Empty);
+           .ExcludeFromDescription();
     }
 }

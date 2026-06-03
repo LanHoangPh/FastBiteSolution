@@ -27,20 +27,20 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 
         options.MapType<DateOnly>(() => new OpenApiSchema
         {
-            Type = "string",
-            Format = "date",
-            Example = new OpenApiString(DateTime.Now.ToString("yyyy-MM-dd"))
+            Type = JsonSchemaType.String,
+            Format = "date"
         });
 
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            In = ParameterLocation.Header,
             Description = "Nhập token theo định dạng: Bearer {your_token}",
             Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
-            BearerFormat = "JWT",
-            Scheme = "Bearer"
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
         });
+
         options.CustomSchemaIds(type => type.ToString().Replace("+", "."));
     }
 }

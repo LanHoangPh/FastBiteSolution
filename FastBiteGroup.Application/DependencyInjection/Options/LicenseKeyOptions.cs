@@ -2,7 +2,7 @@
 
 public class LicenseKeyOptions
 {
-    public string LicenseKeyAutoMapper { get; set; } = string.Empty;
+    public string LicenseKeyAutoMapper { get; init; } = string.Empty;
 
-    public string LicenseKeyMediatR { get; set;} = string.Empty;
+    public string LicenseKeyMediatR { get; init; } = string.Empty;
 }

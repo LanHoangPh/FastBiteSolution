@@ -22,4 +22,5 @@
     <Project Path="FastBiteGroup.Domain.Tests/FastBiteGroup.Domain.Tests.csproj" Id="942d9974-716a-42df-919e-aa69dde6e5d9" />
     <Project Path="FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj" Id="51abcc59-74cb-42bf-8a1d-80e864b6532e" />
   </Folder>
+  <Folder Name="/tests/frontend/" />
 </Solution>

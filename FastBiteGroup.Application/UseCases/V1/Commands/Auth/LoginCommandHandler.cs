@@ -1,0 +1,68 @@
+using FastBiteGroup.Application.Abstractions.Authentication;
+using FastBiteGroup.Contract.Abstractions.Message;
+using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth.Commands;
+using FastBiteGroup.Contract.Services.V1.Auth.Responses;
+using FastBiteGroup.Domain.Abstractions.Repositories;
+using FastBiteGroup.Domain.Entities;
+
+namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
+
+internal sealed class LoginCommandHandler
+    : ICommandHandler<AuthCommands.LoginCommand, AuthResponse>
+{
+    private readonly IUserAuthService _userAuthService;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+
+    public LoginCommandHandler(
+        IUserAuthService userAuthService,
+        IJwtTokenService jwtTokenService,
+        IRefreshTokenRepository refreshTokenRepository)
+    {
+        _userAuthService = userAuthService;
+        _jwtTokenService = jwtTokenService;
+        _refreshTokenRepository = refreshTokenRepository;
+    }
+
+    public async Task<Result<AuthResponse>> Handle(
+        AuthCommands.LoginCommand request,
+        CancellationToken cancellationToken)
+    {
+        // 1. Find user
+        var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        if (user is null)
+            return Result.Failure<AuthResponse>(
+                new Error("Auth.InvalidCredentials", "Email or password is incorrect."));
+
+        // 2. Check lockout first
+        if (await _userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
+            return Result.Failure<AuthResponse>(
+                new Error("Auth.AccountLocked", "Account is locked. Please try again later."));
+
+        // 3. Verify password
+        var passwordValid = await _userAuthService.CheckPasswordAsync(user.Id, request.Password, cancellationToken);
+        if (!passwordValid)
+            return Result.Failure<AuthResponse>(
+                new Error("Auth.InvalidCredentials", "Email or password is incorrect."));
+
+        // 4. Generate tokens
+        var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
+            user.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles);
+        var refreshTokenString = _jwtTokenService.GenerateRefreshToken();
+        var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
+
+        // 5. Persist refresh token
+        var refreshToken = AppRefreshToken.Create(refreshTokenString, jti, user.Id, refreshExpiresAt);
+        _refreshTokenRepository.Add(refreshToken);
+
+        var response = new AuthResponse(
+            accessToken,
+            refreshTokenString,
+            accessExpiresAt,
+            refreshExpiresAt,
+            new UserInfoResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Roles));
+
+        return Result.Success(response);
+    }
+}

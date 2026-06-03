@@ -1,6 +1,6 @@
-﻿using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Abstractions.Shared;
 using Microsoft.EntityFrameworkCore;
-namespace FastBiteGroup.Application.Exception;
+namespace FastBiteGroup.Contract.Extensions;
 
 public static class QueryableExtensions
 {

@@ -13,10 +13,15 @@
 
   <ItemGroup>
     <Folder Include="Abstractions\Authentication\" />
+    <Folder Include="UseCases\V1\Commands\" />
+    <Folder Include="UseCases\V1\Queries\" />
+    <Folder Include="UseCases\V2\" />
+    <Folder Include="Validators\Identity\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
   </ItemGroup>
 
 </Project>

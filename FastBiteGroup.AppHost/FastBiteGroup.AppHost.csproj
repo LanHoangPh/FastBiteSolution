@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,5 +7,14 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>dc735719-5e12-42e6-9c49-3d16734fa21b</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.4.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FastBiteGroup.API\FastBiteGroup.API.csproj" />
+  </ItemGroup>
 
 </Project>

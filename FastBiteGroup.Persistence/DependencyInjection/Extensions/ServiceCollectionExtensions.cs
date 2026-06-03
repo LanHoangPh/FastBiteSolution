@@ -1,115 +1,84 @@
 using FastBiteGroup.Domain.Abstractions;
 using FastBiteGroup.Domain.Abstractions.Repositories;
-using FastBiteGroup.Persistence.DependencyInjection.Options;
+using FastBiteGroup.Persistence.Identity;
 using FastBiteGroup.Persistence.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
-namespace FastBiteGroup.Persistence.DependencyInjection.Extensions
+namespace FastBiteGroup.Persistence.DependencyInjection.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    /// <summary>
+    /// Registers EF Core with PostgreSQL (Npgsql) using connection string from configuration.
+    /// Connection string "DefaultConnection" is injected by .NET Aspire in dev, or via env var in prod.
+    /// </summary>
+    public static IServiceCollection AddPostgreSqlPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void AddSqlServerPersistence(this IServiceCollection services)
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
-            services.AddDbContextPool<DbContext, ApplicationDbContext>((provider, builder) =>
+            options.UseNpgsql(
+                configuration.GetConnectionString("DefaultConnection"),
+                npgsqlOptions =>
+                {
+                    npgsqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorCodesToAdd: null);
+                });
+
+            if (string.Equals(
+                    configuration["ASPNETCORE_ENVIRONMENT"],
+                    "Development",
+                    StringComparison.OrdinalIgnoreCase))
             {
-                //var auditableInterceptor = provider.GetService<UpdateAuditableEntitiesInterceptor>();
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+            }
+        });
 
-                var configuration = provider.GetRequiredService<IConfiguration>();
-                var options = provider.GetRequiredService<IOptionsMonitor<SqlServerRetryOptions>>();
+        return services;
+    }
 
-                #region ============ SQL-SERVER-STRATEGY-1 ============
-
-                builder
-                    .EnableDetailedErrors(true)
-                    .EnableSensitiveDataLogging(true)
-                    .UseLazyLoadingProxies(true) // If UseLazyLoadingProxies, all of the navigation fields should be VIRTUAL
-                    .UseSqlServer(
-                        connectionString: configuration.GetConnectionString("DefaultConnection"),
-                        sqlServerOptionsAction: optionsBuilder
-                            => optionsBuilder.ExecutionStrategy(
-                                dependencies => new SqlServerRetryingExecutionStrategy(
-                                    dependencies: dependencies,
-                                    maxRetryCount: options.CurrentValue.MaxRetryCount,
-                                    maxRetryDelay: options.CurrentValue.MaxRetryDelay,
-                                    errorNumbersToAdd: options.CurrentValue.ErrorNumbersToAdd))
-                    .MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name))
-                    .AddInterceptors();
-
-                #endregion ============ SQL-SERVER-STRATEGY-1 ============
-            });
-
-            //services.AddIdentityCore<AppUser>(options =>
-            //{
-            //    // Default Lockout settings.
-            //    // options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            //    // options.Lockout.MaxFailedAccessAttempts = 5;
-            //    // options.Lockout.AllowedForNewUsers = true;
-
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            //    options.Lockout.MaxFailedAccessAttempts = 3;
-            //    options.Lockout.AllowedForNewUsers = true;
-
-            //}).AddRoles<AppRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            //var passwordValidatorOptions =
-            //    services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<PasswordValidatorOptions>>();
-
-            //services.Configure<IdentityOptions>(options =>
-            //{
-
-
-            //    /*
-            //     * Property                                     Description
-            //     * RequiredDigit                Requires a number between 0-9 in the password.
-            //     * RequiredLength               The minimum length of the password.
-            //     * RequiredLowercase            Requires a lowercase character in the password.
-            //     * RequiredUppercase            Requires an uppercase character in the password.
-            //     * RequiredNonAlphanumeric      Requires a non-alphanumeric character in the password.
-            //     * RequiredUniqueChars          (Only applies to ASP.NET Core 2.0 or later.) Requires the number of distinct characters in the
-            //    */
-
-            //    // Default Password settings.
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequireLowercase = true;
-            //    options.Password.RequireNonAlphanumeric = true;
-            //    options.Password.RequireUppercase = true;
-            //    options.Password.RequiredLength = 6;
-            //    options.Password.RequiredUniqueChars = 1;
-
-            //    options.Password.RequireDigit = passwordValidatorOptions.CurrentValue.RequireDigitLength >= 1 ? true : false;
-            //    options.Password.RequireLowercase = passwordValidatorOptions.CurrentValue.RequireLowercaseLength >= 1 ? true : false;
-            //    options.Password.RequireNonAlphanumeric = passwordValidatorOptions.CurrentValue.RequireNonLetterOrDigitLength >= 1 ? true : false;
-            //    options.Password.RequireUppercase = passwordValidatorOptions.CurrentValue.RequireUppercaseLength >= 1 ? true : false;
-            //    options.Password.RequiredLength = passwordValidatorOptions.CurrentValue.RequiredMinLength;
-            //    options.Password.RequiredUniqueChars = 1;
-
-            //    // Enabling Email Confirmation
-            //    options.User.RequireUniqueEmail = true;
-            //    options.SignIn.RequireConfirmedEmail = true;
-            //});
-
-        }
-        public static void AddRepositoryPersistence(this IServiceCollection services)
+    public static IServiceCollection AddIdentityPersistence(this IServiceCollection services)
+    {
+        services.AddIdentityCore<AppUser>(options =>
         {
-            services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
-            services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
+            // Password policy
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 8;
 
-        }
-        public static void AddInterceptorPersistence(this IServiceCollection services)
-        {
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
-        }
-        //public static OptionsBuilder<SqlServerRetryOptions> ConfigureSqlServerRetryOptionsPersistence(this IServiceCollection services, IConfigurationSection section)
-        //   => services.AddOptions<SqlServerRetryOptions>()
-        //        .Bind(section)
-        //        .ValidateDataAnnotations()
-        //        .ValidateOnStart();
+            // Lockout
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
 
+            // User
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddRoles<AppRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddRepositoryPersistence(this IServiceCollection services)
+    {
+        services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+        services.AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+        return services;
+    }
+    public static IServiceCollection AddInterceptorPersistence(this IServiceCollection services)
+    {
+        services.AddHttpContextAccessor();
+        // Future: register UpdateAuditableEntitiesInterceptor here
+        return services;
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.7" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
