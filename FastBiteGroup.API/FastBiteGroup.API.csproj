@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="10.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Infrastructure\FastBiteGroup.Infrastructure.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Presentation\FastBiteGroup.Presentation.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
