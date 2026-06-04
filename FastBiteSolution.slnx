@@ -1,27 +1,27 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/Aspire/">
-    <Project Path="FastBiteGroup.AppHost/FastBiteGroup.AppHost.csproj" />
-    <Project Path="FastBiteGroup.ServiceDefaults/FastBiteGroup.ServiceDefaults.csproj" />
+    <Project Path="src/Aspire/FastBiteGroup.AppHost/FastBiteGroup.AppHost.csproj" />
+    <Project Path="src/Aspire/FastBiteGroup.ServiceDefaults/FastBiteGroup.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/src/backend/">
-    <Project Path="FastBiteGroup.API/FastBiteGroup.API.csproj" />
-    <Project Path="FastBiteGroup.Application/FastBiteGroup.Application.csproj" />
-    <Project Path="FastBiteGroup.Contract/FastBiteGroup.Contract.csproj" />
-    <Project Path="FastBiteGroup.Domain/FastBiteGroup.Domain.csproj" />
-    <Project Path="FastBiteGroup.Infrastructure/FastBiteGroup.Infrastructure.csproj" />
-    <Project Path="FastBiteGroup.MigrationService/FastBiteGroup.MigrationService.csproj" />
-    <Project Path="FastBiteGroup.Persistence/FastBiteGroup.Persistence.csproj" />
-    <Project Path="FastBiteGroup.Presentation/FastBiteGroup.Presentation.csproj" />
+    <Project Path="src/backend/FastBiteGroup.API/FastBiteGroup.API.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Application/FastBiteGroup.Application.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Contract/FastBiteGroup.Contract.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Domain/FastBiteGroup.Domain.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Infrastructure/FastBiteGroup.Infrastructure.csproj" />
+    <Project Path="src/backend/FastBiteGroup.MigrationService/FastBiteGroup.MigrationService.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Persistence/FastBiteGroup.Persistence.csproj" />
+    <Project Path="src/backend/FastBiteGroup.Presentation/FastBiteGroup.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/frontend/" />
   <Folder Name="/tests/" />
   <Folder Name="/tests/backend/">
-    <Project Path="FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj" Id="1fc39313-0636-4bad-9249-0aeaf5da0b62" />
-    <Project Path="FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj" Id="736b669d-d08c-46d3-b686-f4eeea82af4e" />
-    <Project Path="FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj" Id="94313fb6-aa7d-4259-b203-9be9a1650c32" />
-    <Project Path="FastBiteGroup.Domain.Tests/FastBiteGroup.Domain.Tests.csproj" Id="942d9974-716a-42df-919e-aa69dde6e5d9" />
-    <Project Path="FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj" Id="51abcc59-74cb-42bf-8a1d-80e864b6532e" />
+    <Project Path="tests/backend/FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj" />
+    <Project Path="tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj" />
+    <Project Path="tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj" />
+    <Project Path="tests/backend/FastBiteGroup.Domain.Tests/FastBiteGroup.Domain.Tests.csproj" />
+    <Project Path="tests/backend/FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/frontend/" />
 </Solution>

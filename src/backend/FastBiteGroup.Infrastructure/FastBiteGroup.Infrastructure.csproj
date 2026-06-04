@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
   </ItemGroup>
 

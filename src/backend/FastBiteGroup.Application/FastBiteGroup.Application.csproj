@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Abstractions\Authentication\" />
     <Folder Include="UseCases\V1\Commands\" />
     <Folder Include="UseCases\V1\Queries\" />
@@ -21,7 +16,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
   </ItemGroup>
 
 </Project>

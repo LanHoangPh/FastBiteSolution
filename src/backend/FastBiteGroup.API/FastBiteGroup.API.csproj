@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -21,17 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Infrastructure\FastBiteGroup.Infrastructure.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Presentation\FastBiteGroup.Presentation.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>

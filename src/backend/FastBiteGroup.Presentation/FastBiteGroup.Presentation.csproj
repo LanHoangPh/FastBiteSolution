@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
   </ItemGroup>
 

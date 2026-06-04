@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

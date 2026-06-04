@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FastBiteGroup.API\FastBiteGroup.API.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.MigrationService\FastBiteGroup.MigrationService.csproj" />
+    <ProjectReference Include="..\..\backend\FastBiteGroup.API\FastBiteGroup.API.csproj" />
+    <ProjectReference Include="..\..\backend\FastBiteGroup.MigrationService\FastBiteGroup.MigrationService.csproj" />
   </ItemGroup>
 
 </Project>

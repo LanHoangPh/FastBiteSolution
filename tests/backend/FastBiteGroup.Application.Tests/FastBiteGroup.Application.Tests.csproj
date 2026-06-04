@@ -19,17 +19,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
-    <ProjectReference Include="..\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="UseCases\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\backend\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\FastBiteGroup.Domain\FastBiteGroup.Domain.csproj" />
   </ItemGroup>
 
 </Project>
