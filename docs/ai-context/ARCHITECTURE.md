@@ -12,6 +12,7 @@
 
 | Layer | Project | Dependencies | Role |
 |---|---|---|---|
+| **MigrationService** | `FastBiteGroup.MigrationServiceMigrationService` | Aspire + Host | Runs migrations on startup  and Seed Data |
 | **Domain** | `FastBiteGroup.Domain` | None | Entities, business rules, domain exceptions, repository/UoW interfaces |
 | **Contract** | `FastBiteGroup.Contract` | MediatR (IRequest) | Shared commands, queries, responses, Result pattern |
 | **Application** | `FastBiteGroup.Application` | Domain + Contract | Use case handlers, pipeline behaviors, validators, mappers |
@@ -184,6 +185,7 @@ graph TD
     API --> ServiceDefaults
 
     AppHost[FastBiteGroup.AppHost] --> API
+    AppHost[FastBiteGroup.AppHost] --> MigrationService
 
     Presentation --> Contract
 
@@ -195,6 +197,9 @@ graph TD
 
     Persistence --> Domain
     Persistence --> Contract
+
+   MigrationService --> Persistence
+   MigrationService --> ServiceDefaults
 ```
 
 ---

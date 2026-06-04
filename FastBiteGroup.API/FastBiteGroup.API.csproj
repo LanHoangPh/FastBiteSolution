@@ -10,7 +10,7 @@
     <PackageReference Include="Asp.Versioning.Http" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -28,6 +28,10 @@
     <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Presentation\FastBiteGroup.Presentation.csproj" />
     <ProjectReference Include="..\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>

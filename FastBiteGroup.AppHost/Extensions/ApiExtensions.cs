@@ -6,6 +6,8 @@ internal static class ApiExtensions
         this IDistributedApplicationBuilder builder,
         IResourceBuilder<PostgresDatabaseResource> database,
         IResourceBuilder<RedisResource> cache,
+        //IResourceBuilder<IResourceWithConnectionString> databasepos,
+        //IResourceBuilder<IResourceWithConnectionString> cacheredis,
         IResourceBuilder<ParameterResource> mediatrLicense,
         IResourceBuilder<ParameterResource> autoMapperLicense)
     {

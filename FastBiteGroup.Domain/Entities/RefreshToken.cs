@@ -2,11 +2,6 @@ using FastBiteGroup.Domain.Abstractions;
 
 namespace FastBiteGroup.Domain.Entities;
 
-/// <summary>
-/// Refresh token for JWT rotation. Stored in DB and linked to AppUser via UserId.
-/// Navigation property to AppUser is intentionally omitted to keep Domain pure.
-/// The FK relationship is configured in Persistence via RefreshTokenConfiguration.
-/// </summary>
 public class AppRefreshToken : EntityBase<long>
 {
     public string Token { get; private set; } = default!;

@@ -1,4 +1,4 @@
-using Asp.Versioning.ApiExplorer;
+﻿using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -33,7 +33,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            Description = "Nhập token theo định dạng: Bearer {your_token}",
+            Description = "Paste JWT access token only. Do not include the 'Bearer ' prefix.",
             Name = "Authorization",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
@@ -41,6 +41,16 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
             BearerFormat = "JWT"
         });
 
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecuritySchemeReference("Bearer", document, null),
+                []
+            }
+        });
+
         options.CustomSchemaIds(type => type.ToString().Replace("+", "."));
     }
 }
+
+

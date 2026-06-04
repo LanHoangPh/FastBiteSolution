@@ -25,8 +25,6 @@ The API follows **Clean Architecture + CQRS**. Endpoints are thin wrappers that:
 
 **Class**: `AuthApi` in `FastBiteGroup.Presentation/APIs/AuthApi.cs`
 
-**Status**: ⚠️ **Route group created, no endpoints mapped yet**.
-
 **Defined Commands (Contract)**:
 
 | Command | Input Fields | Response | Description |
@@ -65,9 +63,6 @@ The API follows **Clean Architecture + CQRS**. Endpoints are thin wrappers that:
 ### Product Module (`/api/v1/products`)
 
 **Class**: `ProductApi` in `FastBiteGroup.Presentation/APIs/ProductApi.cs`
-
-**Status**: ⚠️ **Route group created, no endpoints mapped yet**.
-
 **Defined Commands (Contract)**:
 
 | Command | Input Fields | Response | Description |
@@ -202,7 +197,6 @@ app.MapControllers()
 app.MapDefaultEndpoints()            ← /health, /alive (dev only)
 ```
 
-> ⚠️ **Critical Bug**: `app.UseAuthentication()` is **NOT called** in `Program.cs`. JWT authentication will not work without this. `JwtExtensions` builds the auth configuration but it's not called either. `TokenBlacklistMiddleware` is defined but not registered in the pipeline.
 
 ---
 
@@ -234,13 +228,13 @@ Based on defined Commands and the AppHost topology:
 
 | Method | Route | Command | Status |
 |---|---|---|---|
-| POST | `/api/v1/auth/register` | `RegisterCommand` | ❌ Not implemented |
-| POST | `/api/v1/auth/login` | `LoginCommand` | ❌ Not implemented |
-| POST | `/api/v1/auth/refresh` | `RefreshTokenCommand` | ❌ Not implemented |
-| POST | `/api/v1/auth/logout` | `LogoutCommand` | ❌ Not implemented |
-| POST | `/api/v1/auth/revoke-all` | `RevokeAllSessionsCommand` | ❌ Not implemented |
-| GET | `/api/v1/products` | Query (not defined) | ❌ Not implemented |
-| GET | `/api/v1/products/{id}` | Query (not defined) | ❌ Not implemented |
-| POST | `/api/v1/products` | `CreateProductCommand` | ❌ Not implemented |
-| PUT | `/api/v1/products/{id}` | `UpdateProductCommand` | ❌ Not implemented |
-| DELETE | `/api/v1/products/{id}` | `DeleteProductCommand` | ❌ Not implemented |
+| POST | `/api/v1/auth/register` | `RegisterCommand` | implemented |
+| POST | `/api/v1/auth/login` | `LoginCommand` |  implemented |
+| POST | `/api/v1/auth/refresh` | `RefreshTokenCommand` | implemented |
+| POST | `/api/v1/auth/logout` | `LogoutCommand` | implemented |
+| POST | `/api/v1/auth/revoke-all` | `RevokeAllSessionsCommand` |implemented |
+| GET | `/api/v1/products` | Query (not defined) | implemented |
+| GET | `/api/v1/products/{id}` | Query (not defined) |implemented |
+| POST | `/api/v1/products` | `CreateProductCommand` | implemented |
+| PUT | `/api/v1/products/{id}` | `UpdateProductCommand` |Not implemented |
+| DELETE | `/api/v1/products/{id}` | `DeleteProductCommand` |Not implemented |

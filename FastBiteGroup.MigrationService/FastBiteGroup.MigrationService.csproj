@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-FastBiteGroup.MigrationService-38e9219e-8546-4df1-bd1d-03ada76eed16</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FastBiteGroup.Persistence\FastBiteGroup.Persistence.csproj" />
+    <ProjectReference Include="..\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
+  </ItemGroup>
+</Project>

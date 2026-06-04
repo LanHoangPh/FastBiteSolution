@@ -7,4 +7,9 @@ internal static class CacheExtensions
     {
         return builder.AddRedis("redis");
     }
+    internal static IResourceBuilder<IResourceWithConnectionString> AddApplicationRedisConnection(
+        this IDistributedApplicationBuilder builder)
+    {
+        return builder.AddConnectionString("redis");
+    }
 }
