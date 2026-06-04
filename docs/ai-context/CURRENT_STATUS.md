@@ -1,101 +1,135 @@
-# FastBiteGroup — Current Status
+# CURRENT_STATUS.md - FastBiteGroup
 
-**Last Updated:** 2026-06-03
+**Last Updated:** 2026-06-05
 
 ---
 
-## Overall Status: ✅ BUILD PASSING — Architecture Enforced
+## Overall Status
+
+Build passing. Architecture tests passing 10/10.
+
+The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.Driver scaffold for future document-oriented workloads.
 
 ---
 
 ## Completed Work
 
-### Phase 1: Domain Layer ✅
-- `AppRefreshToken` entity (pure Domain, renamed from RefreshToken)
-- `Products` entity with `Create`/`Update` factory methods + domain exceptions
-- All domain exceptions inherit from `DomainException`
-- `EntityBase<TKey>` and `EntityAuditBase<TKey>` abstractions
-- Repository interfaces: `IRepositoryBase<TEntity, TKey>`, `IRefreshTokenRepository`
-- `IUnitOfWork` interface
+### Domain
 
-### Phase 2: Persistence Layer ✅
-- `AppUser`, `AppRole` in `FastBiteGroup.Persistence.Identity` namespace (EF/Identity coupling isolated)
-- `ApplicationDbContext` : `IdentityDbContext<AppUser, AppRole, Guid>`
-- EF Configurations: `ProductConfiguration`, `RefreshTokenConfiguration`
-- `EFUnitOfWork` with transaction support + `ExecuteResilientInTransactionAsync`
-- `RepositoryBase<TEntity, TKey>` with `AsNoTracking()` for queries
-- `RefreshTokenRepository` with `ExecuteUpdateAsync` bulk revoke
-- DI: PostgreSQL (Npgsql) + Identity + Repositories
+- `Products` entity with factory/update methods and product domain exceptions.
+- `AppRefreshToken` entity with refresh-token rotation/revocation behavior.
+- Entity base abstractions and audit/soft-delete interfaces.
+- Repository interfaces: `IRepositoryBase<TEntity, TKey>`, `IRefreshTokenRepository`.
+- `IUnitOfWork` abstraction for EF Core transaction boundaries.
+- Domain exceptions inherit `DomainException`.
 
-### Phase 3: Infrastructure Layer ✅
-- `IJwtTokenService` interface (Application layer) — primitive params, no Identity coupling
-- `IUserAuthService` interface (Application layer) — wraps Identity UserManager
-- `RedisCacheService` using `IConnectionMultiplexer` (singleton)
-- `JwtTokenService` — HMAC-SHA256, JTI extraction from expired tokens
-- `UserAuthService` — wraps `UserManager<AppUser>`, maps to `UserDto`
-- DI: Redis singleton + scoped ICacheService, IJwtTokenService, IUserAuthService
+### Contract
 
-### Phase 4: Application — Auth Use Cases ✅
-- `LoginCommandHandler` — credential check, lockout, token generation
-- `RegisterCommandHandler` — user creation, Customer role assignment
-- `RefreshTokenCommandHandler` — JTI validation, token rotation
-- `LogoutCommandHandler` — Redis blacklist + refresh token revoke
-- `RevokeAllSessionsCommandHandler` — bulk revoke via `ExecuteUpdateAsync`
-- `LoginCommandValidator`, `RegisterCommandValidator` (FluentValidation)
+- Command/query abstractions for MediatR.
+- `Result`, `Result<T>`, validation result, `Error`, paged result.
+- Auth contracts: login, register, refresh, logout, revoke all.
+- Product contracts: create, update, delete, get all, get by id, product response.
+- Outbox contracts: `IntegrationOutboxMessage`, `IIntegrationOutboxStore`.
 
-### Phase 5: Application — Product Use Cases ✅
-- `CreateProductCommandHandler`, `UpdateProductCommandHandler`, `DeleteProductCommandHandler`
-- `GetAllProductsQueryHandler`, `GetProductByIdQueryHandler` (AsNoTracking + projection)
-- `CreateProductCommandValidator`, `UpdateProductCommandValidator`
-- `AutoMapper ServiceProfile` — Products → ProductResponse
+### Persistence
 
-### Phase 6: Presentation Layer ✅
-- `AuthApi` — 5 endpoints: Register, Login, RefreshToken, Logout, RevokeAll
-- `ProductApi` — 5 endpoints: GetAll, GetById, Create, Update, Delete (all require auth)
-- JTI extracted from JWT claims in Logout endpoint (not from body)
+- `ApplicationDbContext` with Identity persistence.
+- `AppUser`, `AppRole`.
+- EF configurations for products and refresh tokens.
+- Existing EF migration under `src/backend/FastBiteGroup.Persistence/Migrations`.
+- `EFUnitOfWork` with transaction support.
+- `RepositoryBase<TEntity, TKey>` with `AsNoTracking()` for reads.
+- `RefreshTokenRepository` with bulk revoke.
+- PostgreSQL DI through `AddPostgreSqlPersistence`.
+- Identity/repository/interceptor DI.
+- Optional MongoDB DI through `AddMongoPersistence`.
+- MongoDB scaffold: `MongoDbContext`, document base, Mongo outbox document, outbox store, outbox index initializer.
 
-### Phase 7: API Layer ✅
-- `Program.cs` — full DI composition, UseAuthentication, UseTokenBlacklist, Swagger
-- `ConfigureSwaggerOptions` — fixed for Swashbuckle 10.x + OpenAPI 2.7.5 SDK
-- `appsettings.Development.json` — JwtOptions skeleton (SecretKey via User Secrets)
+### Infrastructure
 
-### Bug Fixes ✅
-- `QueryableExtensions.cs` had wrong namespace `FastBiteGroup.Application.Exception` → fixed to `FastBiteGroup.Contract.Extensions` (was causing Architecture Test failure)
-- `Microsoft.AspNetCore.Identity` version — moved to Persistence, removed from Domain
-- `Products` namespace conflict — resolved with type aliases in Application handlers
-- `JsonSerializer.Deserialize` ambiguity in RedisCacheService — fixed with explicit string cast
+- Redis cache service using `StackExchange.Redis`.
+- JWT token service with JTI support.
+- User auth service wrapping ASP.NET Core Identity.
+- DI for Redis and security services.
+
+### Application
+
+- Auth handlers: login, register, refresh token, logout, revoke all sessions.
+- Product handlers: create, update, delete, get all, get by id.
+- Validators for auth/product commands.
+- AutoMapper profile for product response mapping.
+- MediatR pipeline behaviors: performance, tracing, transaction, validation.
+
+### Presentation/API
+
+- Auth API: register, login, refresh, logout, revoke all.
+- Product API: get all, get by id, create, update, delete.
+- API composition in `Program.cs`.
+- JWT auth, token blacklist middleware, global exception handler.
+- Swagger/OpenAPI and API versioning.
+- Serilog request logging.
 
 ---
 
 ## Test Status
 
-| Test Project | Status |
+| Test Area | Status |
 |---|---|
-| Architecture Tests (10 tests) | ✅ 10/10 PASS |
-| Contract Tests | ✅ Build passes |
-| Domain Tests | ✅ Build passes |
-| Application Tests | ✅ Build passes |
-| Integration Tests | ⏳ Requires live PostgreSQL + Redis via Aspire |
+| Solution build | Passing |
+| Architecture tests | 10/10 passing |
+| Contract tests | Build/pass available |
+| Domain tests | Build/pass available |
+| Application tests | Build/pass available |
+| Integration tests | Require live PostgreSQL/Redis environment |
+
+Last verified commands:
+
+```bash
+dotnet build FastBiteSolution.slnx
+dotnet test tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj
+```
+
+Known warnings:
+- NuGet vulnerability warnings for transitive packages `SharpCompress` and `Snappier`.
 
 ---
 
-## Pending Work (Requires Live Environment)
+## Current MongoDB Status
 
-### EF Migration
-```bash
-# Set JWT Secret in User Secrets first:
-dotnet user-secrets set "JwtOptions:SecretKey" "your-secret-key-min-32-chars" --project FastBiteGroup.API
+MongoDB is infrastructure-only for now. It is prepared for future features but has no chat/message/notification domain implemented yet.
 
-# Create initial migration:
-dotnet ef migrations add InitialCreate --project FastBiteGroup.Persistence --startup-project FastBiteGroup.API
+Enabled when any supported Mongo connection string exists:
+- `ConnectionStrings:mongodb`
+- `ConnectionStrings:MongoDb`
+- `MongoDbOptions:ConnectionString`
 
-# Run via Aspire (starts PostgreSQL + Redis automatically):
-dotnet run --project FastBiteGroup.AppHost
+Default options:
+
+```json
+{
+  "MongoDbOptions": {
+    "DatabaseName": "fastbite",
+    "OutboxCollectionName": "integration_outbox"
+  }
+}
 ```
 
-### Seed Data (Not Yet Implemented)
-- Default roles: `Admin`, `Customer`
-- Initial admin user
+Future work:
+- Add message/notification documents.
+- Add feature-specific repository interfaces.
+- Add outbox processors/background workers.
+- Add idempotency and inbox/processed-event tracking.
+- Add Aspire MongoDB provisioning if local orchestration should start Mongo automatically.
+
+---
+
+## Pending Work
+
+- Seed data: default roles `Admin`, `Customer`, and initial admin user.
+- Full integration tests with live PostgreSQL and Redis.
+- Future chat module design: conversation/member relational model, message documents, notification documents, delivery/read models.
+- MongoDB background outbox processing.
+- Decide whether AppHost should provision MongoDB locally or use an external Mongo connection.
 
 ---
 
@@ -103,20 +137,13 @@ dotnet run --project FastBiteGroup.AppHost
 
 | Rule | Status |
 |---|---|
-| Domain → No Application dependency | ✅ |
-| Domain → No Persistence dependency | ✅ |
-| Domain → No Infrastructure dependency | ✅ |
-| Application → No Persistence dependency | ✅ |
-| Application → No Infrastructure dependency | ✅ |
-| Presentation → No Domain dependency | ✅ |
-| Presentation → No Persistence dependency | ✅ |
-| Contract → No Application dependency | ✅ (fixed) |
-| DomainExceptions inherit DomainException | ✅ |
-| Entities reside in Domain layer | ✅ |
-
----
-
-## Middleware Status (Already Implemented)
-- `TokenBlacklistMiddleware` — exists in `FastBiteGroup.API/Middleware/`
-- `GlobalExceptionHandler` — exists in `FastBiteGroup.API/Middleware/`
-- `AddJwtAuthentication` extension — exists in `FastBiteGroup.API/DependencyInjection/Extensions/JwtExtensions.cs`
+| Domain has no Application dependency | Passing |
+| Domain has no Persistence dependency | Passing |
+| Domain has no Infrastructure dependency | Passing |
+| Application has no Persistence dependency | Passing |
+| Application has no Infrastructure dependency | Passing |
+| Presentation has no Domain dependency | Passing |
+| Presentation has no Persistence dependency | Passing |
+| Contract has no Application/Persistence dependency | Passing |
+| Entities reside in Domain layer | Passing |
+| Domain exceptions inherit DomainException | Passing |

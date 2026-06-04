@@ -1,240 +1,152 @@
-# API_CONTEXT.md — FastBite Solution
+# API_CONTEXT.md - FastBite Solution
 
 ## API Overview
 
-The API follows **Clean Architecture + CQRS**. Endpoints are thin wrappers that:
-1. Accept HTTP request.
-2. Map to a Command or Query (Contract layer).
-3. Send via `ISender` (MediatR).
-4. Map `Result<T>` to HTTP response using `ApiEndpoint.HandleFailure()`.
+The API uses Minimal APIs in the Presentation layer. Endpoints are thin wrappers:
+
+1. Accept HTTP input.
+2. Create Contract command/query.
+3. Send via MediatR `ISender`.
+4. Convert `Result<T>` / `Result` to HTTP response.
+
+API host:
+
+```text
+src/backend/FastBiteGroup.API
+```
+
+Endpoint definitions:
+
+```text
+src/backend/FastBiteGroup.Presentation/APIs
+```
 
 ---
 
-## API Versioning Strategy
+## API Versioning
 
 - URL-based: `/api/v{version:apiVersion}/...`
-- Library: `Asp.Versioning.Http v10.0.0`
-- **V1**: Active (definitions exist, endpoints EMPTY).
-- **V2**: Folder scaffold only, no content.
+- Library: `Asp.Versioning.Http`
+- V1 is active.
+- V2 folder exists as scaffold only.
 
 ---
 
-## Modules
+## Auth Endpoints
 
-### Authentication Module (`/api/v1/auth`)
+Base route:
 
-**Class**: `AuthApi` in `FastBiteGroup.Presentation/APIs/AuthApi.cs`
-
-**Defined Commands (Contract)**:
-
-| Command | Input Fields | Response | Description |
-|---|---|---|---|
-| `LoginCommand` | `Email`, `Password` | `Result<AuthResponse>` | Authenticate user, return JWT pair |
-| `RegisterCommand` | `Email`, `Password`, `FirstName`, `LastName`, `DayOfBirth` | `Result<AuthResponse>` | Create new user account |
-| `RefreshTokenCommand` | `AccessToken`, `RefreshToken` | `Result<AuthResponse>` | Rotate refresh token, issue new JWT pair |
-| `LogoutCommand` | `Jti`, `RefreshToken`, `UserId` | `Result` | Blacklist JWT in Redis, revoke refresh token |
-| `RevokeAllSessionsCommand` | `UserId` | `Result` | Revoke all active refresh tokens for user |
-
-**Defined Queries (Contract)**:
-
-| Query | Input | Response | Notes |
-|---|---|---|---|
-| `AuthQueries.Token` | `AccessToken?`, `RefreshToken?` | `Result<AuthResponse>` | Deprecated — superseded by `RefreshTokenCommand` |
-
-**Auth Response Shape**:
-```json
-{
-  "accessToken": "eyJ...",
-  "refreshToken": "...",
-  "accessTokenExpiresAt": "2026-01-01T00:00:00Z",
-  "refreshTokenExpiresAt": "2026-01-31T00:00:00Z",
-  "user": {
-    "id": "guid",
-    "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
-    "roles": ["Customer"]
-  }
-}
+```text
+/api/v1/auth
 ```
-
----
-
-### Product Module (`/api/v1/products`)
-
-**Class**: `ProductApi` in `FastBiteGroup.Presentation/APIs/ProductApi.cs`
-**Defined Commands (Contract)**:
-
-| Command | Input Fields | Response | Description |
-|---|---|---|---|
-| `CreateProductCommand` | `Name`, `Description`, `Price` | `Result<int>` | Create product, return new ID |
-| `UpdateProductCommand` | `Id`, `Name`, `Description`, `Price` | `Result` | Update existing product |
-| `DeleteProductCommand` | `Id` | `Result` | Delete product |
-
-**Product Queries**: Not yet defined in Contract.
-
----
-
-## Authentication Flow
-
-```
-POST /api/v1/auth/login
-  → LoginCommand { Email, Password }
-  → Validate credentials against ASP.NET Identity (planned)
-  → Generate JWT Access Token (HMAC-SHA256, signed with JwtOptions.SecretKey)
-  → Generate Refresh Token (opaque string, stored in DB as RefreshToken entity)
-  → Return AuthResponse { AccessToken, RefreshToken, Expiry, UserInfo }
-
-POST /api/v1/auth/refresh
-  → RefreshTokenCommand { AccessToken, RefreshToken }
-  → Validate: RefreshToken.IsActive, Jti matches AccessToken.jti
-  → MarkUsed(newToken) on old RefreshToken
-  → Issue new JWT + new RefreshToken
-  → Return new AuthResponse
-
-POST /api/v1/auth/logout
-  → LogoutCommand { Jti, RefreshToken, UserId }
-  → ICacheService.BlacklistTokenAsync(jti, remainingLifetime)
-  → IRefreshTokenRepository.FindByTokenAsync → Revoke()
-  → Save changes
-
-POST /api/v1/auth/revoke-all
-  → RevokeAllSessionsCommand { UserId }
-  → IRefreshTokenRepository.RevokeAllForUserAsync(userId)
-```
-
----
-
-## Authorization Flow
-
-```
-Incoming request with Bearer token
-  ↓
-[JwtBearerAuthentication middleware]
-  - Validates signature (SymmetricSecurityKey from JwtOptions.SecretKey)
-  - Validates Issuer, Audience, Lifetime
-  - ClockSkew = TimeSpan.Zero (exact expiry)
-  - On failure: returns 401 with application/problem+json
-  ↓
-[TokenBlacklistMiddleware]
-  - Extracts jti claim from authenticated user
-  - Calls ICacheService.IsTokenBlacklistedAsync(jti)
-  - If blacklisted: returns 401 with "session revoked" message
-  ↓
-[Controller / Endpoint authorization attribute]
-  - [Authorize] → requires authenticated user
-  - Role-based [Authorize(Roles = "...")] → coming once Identity is integrated
-```
-
----
-
-## Error Response Format
-
-All errors return `application/problem+json` (RFC 7807):
-
-```json
-// Validation error (400)
-{
-  "title": "Validation Error",
-  "type": "ValidationError.Code",
-  "detail": "...",
-  "status": 400,
-  "errors": [
-    { "code": "Email", "message": "Email is required." }
-  ]
-}
-
-// Not found (404)
-{
-  "title": "Not Found",
-  "type": "Product.NotFound",
-  "detail": "Product with id 42 not found.",
-  "status": 404
-}
-
-// Server error (500)
-{
-  "title": "Server Error",
-  "detail": "An unexpected error occurred.",
-  "status": 500
-}
-```
-
-**Error code → HTTP status mapping** (in `ApiEndpoint.GetStatusCode`):
-- Contains `"NotFound"` → 404
-- Contains `"Conflict"` → 409
-- Contains `"Unauthorized"` → 401
-- Contains `"Forbidden"` → 403
-- Default → 400
-
----
-
-## MediatR Pipeline (Request Lifecycle)
-
-All Commands and Queries go through this ordered pipeline:
-
-```
-1. PerformancePipelineBehavior    — Logs warning if handler takes > 5000ms
-2. TracingPipelineBehaviors       — Logs success/failure + elapsed time
-3. TransactionPipelineBehaviors   — Wraps command in DB transaction (via IUnitOfWork)
-4. ValidationPipelineBehaviors    — Runs all FluentValidation validators, returns ValidationResult on failure
-5. Handler                        — Actual use case implementation
-```
-
----
-
-## Middleware Pipeline (Program.cs)
-
-```
-builder.AddServiceDefaults()         ← OTel, health checks, service discovery
-builder.Services.AddApplicationServices(config)  ← MediatR, AutoMapper, FluentValidation
-builder.Services.AddAuthorization()
-builder.Services.AddOpenApi()
-
-app.UseHttpsRedirection()
-app.UseAuthorization()               ← Note: Authentication middleware is added but UseAuthentication() call is MISSING in Program.cs
-app.MapControllers()
-app.MapDefaultEndpoints()            ← /health, /alive (dev only)
-```
-
-
----
-
-## Caching Strategy
-
-| Cache Key Pattern | Description |
-|---|---|
-| `auth:blacklist:jti:{jti}` | Blacklisted JWT JTI, TTL = remaining token lifetime |
-| `user:profile:{userId}` | User profile cache (planned) |
-| `products:all` | All products cache (planned) |
-
----
-
-## Background Jobs
-
-- **Unknown from current repository state.** No background jobs or hosted services are defined.
-
----
-
-## External Integrations
-
-- **Unknown from current repository state.** No external HTTP clients, email providers, payment gateways, or third-party APIs are configured.
-
----
-
-## Planned Endpoints (Not Yet Implemented)
-
-Based on defined Commands and the AppHost topology:
 
 | Method | Route | Command | Status |
 |---|---|---|---|
-| POST | `/api/v1/auth/register` | `RegisterCommand` | implemented |
-| POST | `/api/v1/auth/login` | `LoginCommand` |  implemented |
-| POST | `/api/v1/auth/refresh` | `RefreshTokenCommand` | implemented |
-| POST | `/api/v1/auth/logout` | `LogoutCommand` | implemented |
-| POST | `/api/v1/auth/revoke-all` | `RevokeAllSessionsCommand` |implemented |
-| GET | `/api/v1/products` | Query (not defined) | implemented |
-| GET | `/api/v1/products/{id}` | Query (not defined) |implemented |
-| POST | `/api/v1/products` | `CreateProductCommand` | implemented |
-| PUT | `/api/v1/products/{id}` | `UpdateProductCommand` |Not implemented |
-| DELETE | `/api/v1/products/{id}` | `DeleteProductCommand` |Not implemented |
+| POST | `/register` | `RegisterCommand` | Implemented |
+| POST | `/login` | `LoginCommand` | Implemented |
+| POST | `/refresh` | `RefreshTokenCommand` | Implemented |
+| POST | `/logout` | `LogoutCommand` | Implemented |
+| POST | `/revoke-all` | `RevokeAllSessionsCommand` | Implemented |
+
+Logout extracts the JWT `jti` from claims rather than trusting the request body.
+
+---
+
+## Product Endpoints
+
+Base route:
+
+```text
+/api/v1/products
+```
+
+| Method | Route | Command/Query | Status |
+|---|---|---|---|
+| GET | `/` | `GetAllProductsQuery` | Implemented |
+| GET | `/{id}` | `GetProductByIdQuery` | Implemented |
+| POST | `/` | `CreateProductCommand` | Implemented |
+| PUT | `/{id}` | `UpdateProductCommand` | Implemented |
+| DELETE | `/{id}` | `DeleteProductCommand` | Implemented |
+
+Product endpoints require authentication.
+
+---
+
+## Response and Error Pattern
+
+Application handlers return `Result<T>` or `Result`.
+
+`ApiEndpoint.HandleFailure()` maps errors to `ProblemDetails`.
+
+Status mapping convention:
+- Code contains `NotFound` -> 404
+- Code contains `Conflict` -> 409
+- Code contains `Unauthorized` -> 401
+- Code contains `Forbidden` -> 403
+- Default -> 400
+
+---
+
+## Middleware Pipeline
+
+Current API startup flow includes:
+
+```text
+builder.AddServiceDefaults()
+AddPostgreSqlPersistence
+AddMongoPersistence
+AddIdentityPersistence
+AddRepositoryPersistence
+AddRedisInfrastructure
+AddSecurityInfrastructure
+AddApplicationServices
+AddJwtAuthentication
+AddEndpoints
+Swagger/OpenAPI
+ProblemDetails + GlobalExceptionHandler
+API versioning
+
+app.MapEndpoints()
+app.MapDefaultEndpoints()
+app.UseExceptionHandler()
+app.ConfigureSwagger() in Development/Staging
+app.UseSerilogRequestLogging()
+app.UseAuthentication()
+app.UseTokenBlacklist()
+app.UseAuthorization()
+```
+
+---
+
+## Auth Flow
+
+```text
+Login
+  -> validate credentials through IUserAuthService
+  -> generate JWT + refresh token
+  -> persist refresh token
+
+Refresh
+  -> validate expired access token JTI
+  -> validate refresh token
+  -> mark old token used
+  -> issue new token pair
+
+Logout
+  -> blacklist JWT jti in Redis
+  -> revoke refresh token in PostgreSQL
+
+Revoke all
+  -> bulk revoke refresh tokens for user
+```
+
+---
+
+## MongoDB / Background Work Status
+
+MongoDB is registered only when configured. Current Mongo capability is infrastructure-level only:
+- `IIntegrationOutboxStore`
+- `MongoIntegrationOutboxStore`
+- outbox document and indexes
+
+There are not yet chat/message/notification API endpoints or background outbox processors. Future chat features should add explicit commands, documents, repositories, and processors around this scaffold.

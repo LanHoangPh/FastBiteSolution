@@ -32,6 +32,7 @@ public class Program
         builder.AddServiceDefaults();
 
         builder.Services.AddPostgreSqlPersistence(config);
+        builder.Services.AddMongoPersistence(config);
         builder.Services.AddIdentityPersistence();
         builder.Services.AddRepositoryPersistence();
         builder.Services.AddInterceptorPersistence();

@@ -1,10 +1,15 @@
 using FastBiteGroup.Domain.Abstractions;
 using FastBiteGroup.Domain.Abstractions.Repositories;
+using FastBiteGroup.Contract.Abstractions.Outbox;
+using FastBiteGroup.Persistence.DependencyInjection.Options;
 using FastBiteGroup.Persistence.Identity;
+using FastBiteGroup.Persistence.Mongo;
+using FastBiteGroup.Persistence.Mongo.Outbox;
 using FastBiteGroup.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.DependencyInjection.Extensions;
 
@@ -79,6 +84,41 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpContextAccessor();
         // Future: register UpdateAuditableEntitiesInterceptor here
+        return services;
+    }
+
+    public static IServiceCollection AddMongoPersistence(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("mongodb")
+            ?? configuration.GetConnectionString("MongoDb")
+            ?? configuration[$"{MongoDbOptions.SectionName}:ConnectionString"];
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+            return services;
+
+        services.AddOptions<MongoDbOptions>()
+            .Bind(configuration.GetSection(MongoDbOptions.SectionName))
+            .PostConfigure(options =>
+            {
+                if (string.IsNullOrWhiteSpace(options.ConnectionString))
+                    options.ConnectionString = connectionString;
+            })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddSingleton<IMongoClient>(serviceProvider =>
+        {
+            var options = serviceProvider
+                .GetRequiredService<Microsoft.Extensions.Options.IOptions<MongoDbOptions>>()
+                .Value;
+
+            return new MongoClient(options.ConnectionString);
+        });
+
+        services.AddSingleton<MongoDbContext>();
+        services.AddScoped<IIntegrationOutboxStore, MongoIntegrationOutboxStore>();
+        services.AddHostedService<MongoIndexInitializer>();
+
         return services;
     }
 }

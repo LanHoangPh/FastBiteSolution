@@ -1,238 +1,188 @@
-# DATABASE_CONTEXT.md — FastBite Solution
+# DATABASE_CONTEXT.md - FastBite Solution
 
-## Database Provider
+## Database Providers
 
-| Provider | Status | Notes |
+| Provider | Status | Purpose |
 |---|---|---|
-| **PostgreSQL** (Npgsql) | Primary (Aspire-provisioned) | Used in dev via Aspire |
-| **SQL Server** | Configured in DI, not active | `AddSqlServerPersistence()` code exists |
+| PostgreSQL + EF Core/Npgsql | Active primary relational store | Identity, refresh tokens, products, future relational business data |
+| MongoDB + MongoDB.Driver | Optional scaffold | Future messages, notifications, delivery logs, projections, outbox documents |
+| Redis | Active cache/session store | JWT blacklist and cache entries |
 
-> ⚠️ **Inconsistency**: `ServiceCollectionExtensions.AddSqlServerPersistence()` configures SQL Server retry strategy, but PostgreSQL NuGet is also present. The active provider should be consolidated.
+SQL Server is not currently active in the Persistence project.
 
 ---
 
-## DbContext
+## Relational DbContext
 
-### `ApplicationDbContext` (`FastBiteGroup.Persistence`)
+`ApplicationDbContext` lives in `src/backend/FastBiteGroup.Persistence`.
+
+Current role:
+- Inherits from ASP.NET Core Identity DbContext with `AppUser`, `AppRole`, and `Guid` keys.
+- Applies EF configurations from the Persistence assembly.
+- Contains the relational model for products, refresh tokens, and Identity tables.
+
+Relational persistence is registered through:
 
 ```csharp
-public sealed class ApplicationDbContext : DbContext
+services.AddPostgreSqlPersistence(config);
+services.AddIdentityPersistence();
+services.AddRepositoryPersistence();
+services.AddInterceptorPersistence();
+```
+
+Connection string name:
+
+```text
+DefaultConnection
+```
+
+---
+
+## MongoDB Scaffold
+
+MongoDB code lives under:
+
+```text
+src/backend/FastBiteGroup.Persistence/Mongo/
+```
+
+Current components:
+
+| Component | Purpose |
+|---|---|
+| `MongoDbOptions` | `ConnectionString`, `DatabaseName`, `OutboxCollectionName` |
+| `MongoDbContext` | Thin wrapper around `IMongoDatabase` |
+| `MongoDocumentBase<TKey>` | Base document with `[BsonId]` |
+| `MongoOutboxMessageDocument` | Generic Mongo outbox document |
+| `MongoIntegrationOutboxStore` | Implements `IIntegrationOutboxStore` |
+| `MongoIndexInitializer` | Creates outbox index on `Status` + `OccurredAt` |
+
+MongoDB registration is optional. If no Mongo connection string is configured, `AddMongoPersistence` returns without registering Mongo services.
+
+Accepted configuration keys:
+
+```json
 {
-    // ⚠️ EMPTY — No DbSet<> properties defined yet
-    // No entity configurations applied
-    // No migrations exist
+  "ConnectionStrings": {
+    "mongodb": "mongodb://localhost:27017"
+  },
+  "MongoDbOptions": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "fastbite",
+    "OutboxCollectionName": "integration_outbox"
+  }
 }
 ```
 
-**Status**: Scaffold only. Must be populated before any persistence operations can work.
-
-**Required next steps**:
-1. Add `DbSet<Products>` and `DbSet<RefreshToken>`.
-2. Register `AppUser` + ASP.NET Core Identity tables (commented out in DI).
-3. Apply entity configurations from `Configurations/` folder.
-4. Run `dotnet ef migrations add Initial`.
+`ConnectionStrings:MongoDb` is also accepted.
 
 ---
 
-## Entities
+## Current Relational Entities
 
-### `Products` (FastBiteGroup.Domain.Entities)
+### `Products`
 
 | Field | Type | Notes |
 |---|---|---|
-| `Id` | `int` | PK (from `EntityAuditBase<int>`) |
-| `Name` | `string` | Private setter — domain-controlled |
-| `Description` | `string` | Private setter |
-| `Price` | `decimal` | Private setter — validated ≥ 0 |
-| `CreatedAt` | `DateTimeOffset` | Audit field |
-| `UpdatedAt` | `DateTimeOffset?` | Audit field |
-| `CreatedBy` | `Guid` | Audit field (user ID) |
-| `UpdatedBy` | `Guid?` | Audit field |
-| `IsDeleted` | `bool` | Soft delete flag |
-| `DeletedAt` | `DateTimeOffset?` | Soft delete timestamp |
+| `Id` | `int` | Primary key |
+| `Name` | `string` | Domain-controlled |
+| `Description` | `string` | Domain-controlled |
+| `Price` | `decimal` | Must be non-negative |
+| Audit fields | various | Created/updated/deleted metadata |
 
-**Business rules**:
-- `Price` must be ≥ 0 (enforced by `ProductPriceInvalidException`).
-- Instantiated only via `Products.Create(name, description, price)` factory method.
-- Updated via `Update(name, description, price)`.
+Business rules:
+- Created through `Products.Create(...)`.
+- Updated through `Update(...)`.
+- Invalid price throws domain exception.
 
-**Table name constant**: `TableNames.Product = "Product"`.
-
----
-
-### `RefreshToken` (FastBiteGroup.Domain.Entities)
+### `AppRefreshToken`
 
 | Field | Type | Notes |
 |---|---|---|
-| `Id` | `long` | PK (from `EntityBase<long>`) |
-| `Token` | `string` | Opaque random token value |
-| `Jti` | `string` | Links to corresponding Access Token |
-| `UserId` | `Guid` | ASP.NET Core Identity User ID |
-| `ExpiresAt` | `DateTime` | Token expiry |
-| `IsRevoked` | `bool` | Explicitly revoked |
-| `IsUsed` | `bool` | Consumed in rotation |
-| `ReplacedByToken` | `string?` | Token that replaced this one (rotation chain) |
+| `Id` | `long` | Primary key |
+| `Token` | `string` | Opaque refresh token |
+| `Jti` | `string` | Access token link |
+| `UserId` | `Guid` | Identity user id |
+| `ExpiresAt` | `DateTime` | Expiry |
+| `IsRevoked` | `bool` | Revocation flag |
+| `IsUsed` | `bool` | Rotation flag |
+| `ReplacedByToken` | `string?` | Rotation chain |
 
-**Business rules**:
-- `IsActive = !IsRevoked && !IsUsed && ExpiresAt > DateTime.UtcNow`
-- `MarkUsed(replacementToken)` — sets `IsUsed = true`, records replacement.
-- `Revoke()` — sets `IsRevoked = true`.
+Business rules:
+- Active only when not revoked, not used, and not expired.
+- Refresh rotation marks old token used.
+- Logout/revoke all marks tokens revoked.
 
-**Table name constant**: `TableNames.RefreshTokens = "RefreshTokens"`.
+### Identity
 
----
-
-### Identity Entities (Planned — Commented Out)
-
-From `TableNames.cs`, the following tables are planned for ASP.NET Core Identity:
-
-| Table Constant | Purpose |
-|---|---|
-| `AppUser` | Identity user |
-| `AppRoles` | Identity roles |
-| `AppUserRoles` | User-role join |
-| `AppUserClaims` | IdentityUserClaim |
-| `AppRoleClaims` | IdentityRoleClaim |
-| `AppUserLogins` | External logins |
-| `AppUserTokens` | Identity tokens |
-
-Identity configuration is **fully commented out** in `Persistence/DependencyInjection/Extensions/ServiceCollectionExtensions.cs`.
-
----
-
-## Entity Hierarchy
-
-```
-EntityBase<TKey>
-    └── EntityAuditBase<TKey>    ← CreatedAt, UpdatedAt, CreatedBy, UpdatedBy, IsDeleted, DeletedAt
-            └── Products<int>    ← Business entity with soft delete + audit
-
-EntityBase<TKey>
-    └── RefreshToken<long>       ← Token entity (no audit fields)
-```
+Identity persistence uses:
+- `AppUser`
+- `AppRole`
+- ASP.NET Core Identity tables with `Guid` keys.
 
 ---
 
 ## Repository Abstractions
 
-### `IRepositoryBase<TEntity, TKey>` (Domain)
+Relational:
 
 ```csharp
-Task<TEntity> FindByIdAsync(TKey id, CancellationToken ct, params Expression<Func<TEntity, object>>[] includes);
-Task<TEntity> FindSingleAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken ct, params Expression<Func<TEntity, object>>[] includes);
-IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>>? predicate = null, params Expression<Func<TEntity, object>>[] includes);
-void Add(TEntity entity);
-void Update(TEntity entity);
-void Remove(TEntity entity);
-void RemoveMultiple(List<TEntity> entities);
+IRepositoryBase<TEntity, TKey>
+IRefreshTokenRepository
+IUnitOfWork
 ```
 
-### `IRefreshTokenRepository` (Domain)
+Mongo/outbox:
 
-Extends `IRepositoryBase<RefreshToken, long>` with:
 ```csharp
-Task<RefreshToken?> FindByTokenAsync(string token, CancellationToken ct = default);
-Task RevokeAllForUserAsync(Guid userId, CancellationToken ct = default);
+IIntegrationOutboxStore
+IntegrationOutboxMessage
 ```
+
+`IIntegrationOutboxStore` is intentionally placed in Contract because Persistence implements it and future Application handlers can depend on it without referencing Persistence.
 
 ---
 
-## Repository Implementation Status
+## Consistency Guidance
 
-| Class | Status | Notes |
-|---|---|---|
-| `RepositoryBase<TEntity, TKey>` | ⚠️ STUB | All methods throw `NotImplementedException` |
-| `EFUnitOfWork` | ⚠️ STUB | `SaveChangesAsync`, `ExecuteTransactionAsync`, `DisposeAsync` all throw |
-| `IRefreshTokenRepository` implementation | ❌ Missing | Interface exists, no concrete class |
+Do not coordinate PostgreSQL and MongoDB with a shared transaction. Instead:
 
----
-
-## DI Registration
-
-```csharp
-// In Persistence DI:
-services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
-services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
-
-// DbContext Pool (SQL Server path):
-services.AddDbContextPool<DbContext, ApplicationDbContext>((provider, builder) => {
-    builder
-        .UseLazyLoadingProxies(true)
-        .UseSqlServer(connectionString, opts => opts.ExecutionStrategy(
-            deps => new SqlServerRetryingExecutionStrategy(deps, maxRetry, maxDelay, errorNumbers)))
-        .MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
-});
+```text
+Write source-of-truth data
+  -> write outbox message in same DB boundary
+  -> commit
+  -> background processor reads outbox
+  -> update the other store / publish realtime notification
+  -> mark processed
 ```
 
----
+Future chat example:
+- SQL validates `ConversationMember`.
+- Mongo inserts `MessageDocument` and `MessageSent` outbox.
+- Worker updates SQL conversation summary and pushes notifications.
 
-## ERD (Current State)
-
-```mermaid
-erDiagram
-    Products {
-        int Id PK
-        string Name
-        string Description
-        decimal Price
-        DateTimeOffset CreatedAt
-        DateTimeOffset UpdatedAt_nullable
-        Guid CreatedBy
-        Guid UpdatedBy_nullable
-        bool IsDeleted
-        DateTimeOffset DeletedAt_nullable
-    }
-
-    RefreshToken {
-        long Id PK
-        string Token
-        string Jti
-        Guid UserId FK
-        DateTime ExpiresAt
-        bool IsRevoked
-        bool IsUsed
-        string ReplacedByToken_nullable
-    }
-
-    AppUser {
-        Guid Id PK
-        string Email
-        string FirstName
-        string LastName
-        string PasswordHash
-        note "Planned - ASP.NET Identity"
-    }
-
-    AppUser ||--o{ RefreshToken : "has"
-```
+Use idempotency keys such as `clientMessageId` for retry-safe writes.
 
 ---
 
 ## Migrations
 
-**No migrations exist yet.**
+Existing migrations live in:
 
-To create the first migration:
-```bash
-dotnet ef migrations add Initial \
-  --project FastBiteGroup.Persistence \
-  --startup-project FastBiteGroup.API \
-  --output-dir Migrations
+```text
+src/backend/FastBiteGroup.Persistence/Migrations/
 ```
 
-**Prerequisites before running migrations**:
-1. Register all entity `DbSet<>` in `ApplicationDbContext`.
-2. Add `IEntityTypeConfiguration<T>` for each entity in `Configurations/` folder.
-3. Decide on Identity: add `IdentityDbContext` or keep custom.
-4. Resolve PostgreSQL vs SQL Server provider choice.
+Create a migration:
 
----
+```bash
+dotnet ef migrations add <MigrationName> --project src/backend/FastBiteGroup.Persistence --startup-project src/backend/FastBiteGroup.API
+```
 
-## Connection String Configuration
+Apply migrations:
 
-In development (via .NET Aspire):
-- Aspire injects `ConnectionStrings__DefaultConnection` automatically.
+```bash
+dotnet ef database update --project src/backend/FastBiteGroup.Persistence --startup-project src/backend/FastBiteGroup.API
+```
 
-In production:
-- Must be set via environment variable: `ConnectionStrings__DefaultConnection`.
-- Never stored in source-controlled `appsettings.json`.
+MongoDB does not use EF migrations. Mongo indexes are created by `MongoIndexInitializer` when Mongo is configured.
