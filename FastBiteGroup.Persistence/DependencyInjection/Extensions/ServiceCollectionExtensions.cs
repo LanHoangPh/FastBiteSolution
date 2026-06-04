@@ -29,10 +29,10 @@ public static class ServiceCollectionExtensions
                         errorCodesToAdd: null);
                 });
 
-            if (string.Equals(
-                    configuration["ASPNETCORE_ENVIRONMENT"],
-                    "Development",
-                    StringComparison.OrdinalIgnoreCase))
+            var environmentName = configuration["ASPNETCORE_ENVIRONMENT"]
+                ?? configuration["DOTNET_ENVIRONMENT"];
+
+            if (string.Equals(environmentName, "Development", StringComparison.OrdinalIgnoreCase))
             {
                 options.EnableDetailedErrors();
                 options.EnableSensitiveDataLogging();

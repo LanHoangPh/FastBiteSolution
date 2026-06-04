@@ -7,10 +7,14 @@ namespace FastBiteGroup.API.Middleware
     public class GlobalExceptionHandler : IExceptionHandler
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
+        private readonly IHostEnvironment _environment;
 
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        public GlobalExceptionHandler(
+            ILogger<GlobalExceptionHandler> logger,
+            IHostEnvironment environment)
         {
             _logger = logger;
+            _environment = environment;
         }
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -24,22 +28,13 @@ namespace FastBiteGroup.API.Middleware
                 FluentValidation.ValidationException => (StatusCodes.Status400BadRequest, "Validation Error"),
                 _ => (StatusCodes.Status500InternalServerError, "Server Error")
             };
-            //var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-
-            //var problemDetails = new ProblemDetails
-            //{
-            //    Status = statusCode,
-            //    Title = title,
-            //    Detail = (isDevelopment || statusCode < 500)
-            //             ? exception.Message
-            //             : "Một lỗi không mong muốn đã xảy ra. Vui lòng thử lại sau.",
-            //    Instance = httpContext.Request.Path
-            //};
             var problemDetails = new ProblemDetails
             {
                 Status = statusCode,
                 Title = title,
-                Detail = exception.Message,
+                Detail = _environment.IsDevelopment() || statusCode < 500
+                    ? exception.Message
+                    : "An unexpected error occurred. Please try again later.",
                 Instance = httpContext.Request.Path
             };
 

@@ -25,8 +25,11 @@ public sealed class PerformancePipelineBehavior<TRequest, TResponse> : IPipeline
             return response;
         }
         var requestName = typeof(TRequest).Name;
-        _logger.LogWarning("FastBiteGroup Long Running Request: {RequestName} ({ElapsedMilliseconds} milliseconds) {@Request}",
-            requestName, elapsedMilliseconds, request);
+        _logger.LogWarning(
+            "FastBiteGroup long running request: {RequestName} ({ElapsedMilliseconds} milliseconds)",
+            requestName,
+            elapsedMilliseconds);
+
         return response;
     }
 }

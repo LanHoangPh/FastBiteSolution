@@ -5,6 +5,8 @@ using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
 using FastBiteGroup.Domain.Entities;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
@@ -14,15 +16,18 @@ internal sealed class RegisterCommandHandler
     private readonly IUserAuthService _userAuthService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly ILogger<RegisterCommandHandler> _logger;
 
     public RegisterCommandHandler(
         IUserAuthService userAuthService,
         IJwtTokenService jwtTokenService,
-        IRefreshTokenRepository refreshTokenRepository)
+        IRefreshTokenRepository refreshTokenRepository,
+        ILogger<RegisterCommandHandler>? logger = null)
     {
         _userAuthService = userAuthService;
         _jwtTokenService = jwtTokenService;
         _refreshTokenRepository = refreshTokenRepository;
+        _logger = logger ?? NullLogger<RegisterCommandHandler>.Instance;
     }
 
     public async Task<Result<AuthResponse>> Handle(
@@ -32,8 +37,11 @@ internal sealed class RegisterCommandHandler
         // 1. Check if email already exists
         var existing = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (existing is not null)
+        {
+            _logger.LogWarning("Registration failed: email already exists.");
             return Result.Failure<AuthResponse>(
                 new Error("Auth.EmailAlreadyExists", $"Email '{request.Email}' is already registered."));
+        }
 
         // 2. Create user via service (assigns Customer role)
         var (success, errorMessage) = await _userAuthService.CreateUserAsync(
@@ -41,13 +49,19 @@ internal sealed class RegisterCommandHandler
             request.DayOfBirth, cancellationToken);
 
         if (!success)
+        {
+            _logger.LogWarning("Registration failed while creating user.");
             return Result.Failure<AuthResponse>(new Error("Auth.RegistrationFailed", errorMessage!));
+        }
 
         // 3. Get the created user to generate tokens
         var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
+        {
+            _logger.LogError("Registration failed: created user could not be retrieved.");
             return Result.Failure<AuthResponse>(
                 new Error("Auth.RegistrationFailed", "User was created but could not be retrieved."));
+        }
 
         // 4. Generate tokens
         var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
@@ -65,6 +79,8 @@ internal sealed class RegisterCommandHandler
             accessExpiresAt,
             refreshExpiresAt,
             new UserInfoResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Roles));
+
+        _logger.LogInformation("User registered successfully. UserId: {UserId}", user.Id);
 
         return Result.Success(response);
     }

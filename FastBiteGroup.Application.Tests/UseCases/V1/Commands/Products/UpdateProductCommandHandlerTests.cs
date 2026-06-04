@@ -1,5 +1,6 @@
 using FastBiteGroup.Application.UseCases.V1.Commands.Products;
-using FastBiteGroup.Contract.Services.V1.Product.Commands;
+using FastBiteGroup.Application.Tests.Common.Assertions;
+using FastBiteGroup.Application.Tests.Common.Builders;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -24,8 +25,8 @@ public class UpdateProductCommandHandlerTests
     public async Task Handle_GivenValidRequest_UpdatesProduct()
     {
         // Arrange
-        var command = new UpdateProductCommand(1, "Updated Product", "Updated Description", 150);
-        var existingProduct = DomainProducts.Create("Old", "Old", 100);
+        var command = ProductTestData.UpdateCommand();
+        var existingProduct = ProductTestData.Product(name: "Old", description: "Old", price: 100);
         
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(existingProduct);
@@ -34,7 +35,7 @@ public class UpdateProductCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        result.ShouldBeSuccess();
         existingProduct.Name.Should().Be("Updated Product");
         existingProduct.Price.Should().Be(150);
         _productRepositoryMock.Received(1).Update(existingProduct);
@@ -44,7 +45,7 @@ public class UpdateProductCommandHandlerTests
     public async Task Handle_GivenNotFoundId_ReturnsFailure()
     {
         // Arrange
-        var command = new UpdateProductCommand(99, "Updated Product", "Updated Description", 150);
+        var command = ProductTestData.UpdateCommand(id: 99);
         
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
@@ -53,16 +54,15 @@ public class UpdateProductCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Product.NotFound");
+        result.ShouldFailWith("Product.NotFound");
     }
 
     [Fact]
     public async Task Handle_GivenNegativePrice_ReturnsFailure()
     {
         // Arrange
-        var command = new UpdateProductCommand(1, "Updated Product", "Updated Description", -10);
-        var existingProduct = DomainProducts.Create("Old", "Old", 100);
+        var command = ProductTestData.UpdateCommand(price: -10);
+        var existingProduct = ProductTestData.Product(name: "Old", description: "Old", price: 100);
         
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(existingProduct);
@@ -71,8 +71,7 @@ public class UpdateProductCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Product.PriceInvalid");
+        result.ShouldFailWith("Product.PriceInvalid");
         _productRepositoryMock.DidNotReceive().Update(existingProduct);
     }
 }

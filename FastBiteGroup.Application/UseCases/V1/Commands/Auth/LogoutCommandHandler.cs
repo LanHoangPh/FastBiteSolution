@@ -3,6 +3,8 @@ using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Domain.Abstractions.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
@@ -10,13 +12,16 @@ internal sealed class LogoutCommandHandler : ICommandHandler<AuthCommands.Logout
 {
     private readonly ICacheService _cacheService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly ILogger<LogoutCommandHandler> _logger;
 
     public LogoutCommandHandler(
         ICacheService cacheService,
-        IRefreshTokenRepository refreshTokenRepository)
+        IRefreshTokenRepository refreshTokenRepository,
+        ILogger<LogoutCommandHandler>? logger = null)
     {
         _cacheService = cacheService;
         _refreshTokenRepository = refreshTokenRepository;
+        _logger = logger ?? NullLogger<LogoutCommandHandler>.Instance;
     }
 
     public async Task<Result> Handle(
@@ -43,6 +48,8 @@ internal sealed class LogoutCommandHandler : ICommandHandler<AuthCommands.Logout
             tracked.Revoke();
             _refreshTokenRepository.Update(tracked);
         }
+
+        _logger.LogInformation("User logged out successfully.");
 
         return Result.Success();
     }

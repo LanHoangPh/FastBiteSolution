@@ -1,11 +1,11 @@
 using FastBiteGroup.Application.UseCases.V1.Queries.Products;
+using FastBiteGroup.Application.Tests.Common;
+using FastBiteGroup.Application.Tests.Common.Assertions;
+using FastBiteGroup.Application.Tests.Common.Builders;
 using FastBiteGroup.Contract.Services.V1.Product.Queries;
 using FluentAssertions;
-using MockQueryable.NSubstitute;
-using MockQueryable;
 using NSubstitute;
 using Xunit;
-using DomainProducts = FastBiteGroup.Domain.Entities.Products;
 using ProductsRepository = FastBiteGroup.Domain.Abstractions.Repositories.IRepositoryBase<FastBiteGroup.Domain.Entities.Products, int>;
 
 namespace FastBiteGroup.Application.Tests.UseCases.V1.Queries.Products;
@@ -26,23 +26,22 @@ public class GetAllProductsQueryHandlerTests
     {
         // Arrange
         var command = new ProductQueries.GetAllProductsQuery();
-        var products = new List<DomainProducts>
+        var older = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var newer = new DateTimeOffset(2026, 1, 2, 0, 0, 0, TimeSpan.Zero);
+        var products = new[]
         {
-            DomainProducts.Create("Product 1", "Desc 1", 100),
-            DomainProducts.Create("Product 2", "Desc 2", 200)
+            ProductTestData.Product(id: 1, name: "Product 1", description: "Desc 1", price: 100, createdAt: older),
+            ProductTestData.Product(id: 2, name: "Product 2", description: "Desc 2", price: 200, createdAt: newer)
         };
-
-        var mockDbSet = products.BuildMockDbSet();
-
-        _productRepositoryMock.FindAll().Returns(mockDbSet);
+        _productRepositoryMock.ReturnsProducts(products);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Items.Should().HaveCount(2);
-        result.Value.TotalCount.Should().Be(2);
-        result.Value.Items.First().Name.Should().Be("Product 1"); // Assuming order is maintained correctly based on CreatedAt (since both are created at same time, order may vary, but let's assert count)
+        var page = result.ShouldBeSuccess();
+        page.Items.Should().HaveCount(2);
+        page.TotalCount.Should().Be(2);
+        page.Items.Select(product => product.Id).Should().Equal(2, 1);
     }
 }

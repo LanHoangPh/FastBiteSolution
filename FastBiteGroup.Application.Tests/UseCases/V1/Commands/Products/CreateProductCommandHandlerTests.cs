@@ -1,5 +1,6 @@
 using FastBiteGroup.Application.UseCases.V1.Commands.Products;
-using FastBiteGroup.Contract.Services.V1.Product.Commands;
+using FastBiteGroup.Application.Tests.Common.Assertions;
+using FastBiteGroup.Application.Tests.Common.Builders;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -23,13 +24,13 @@ public class CreateProductCommandHandlerTests
     public async Task Handle_GivenValidRequest_ReturnsProductId()
     {
         // Arrange
-        var command = new CreateProductCommand("Product 1", "Description", 100);
+        var command = ProductTestData.CreateCommand(name: "Product 1", description: "Description", price: 100);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        result.ShouldBeSuccess();
         _productRepositoryMock.Received(1).Add(Arg.Is<DomainProducts>(p => p.Name == command.Name && p.Price == command.Price));
     }
 
@@ -37,14 +38,13 @@ public class CreateProductCommandHandlerTests
     public async Task Handle_GivenNegativePrice_ReturnsFailure()
     {
         // Arrange
-        var command = new CreateProductCommand("Product 1", "Description", -10);
+        var command = ProductTestData.CreateCommand(price: -10);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Product.PriceInvalid");
+        result.ShouldFailWith("Product.PriceInvalid");
         _productRepositoryMock.DidNotReceiveWithAnyArgs().Add(default!);
     }
 }

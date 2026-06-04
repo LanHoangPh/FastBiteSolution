@@ -1,7 +1,16 @@
-﻿using FastBiteGroup.MigrationService;
+using FastBiteGroup.MigrationService;
 using FastBiteGroup.Persistence.DependencyInjection.Extensions;
+using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+builder.Services.AddSerilog((services, loggerConfiguration) =>
+{
+    loggerConfiguration
+        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext();
+});
 
 builder.AddServiceDefaults();
 
@@ -15,4 +24,11 @@ builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();
 
-await host.RunAsync();
+try
+{
+    await host.RunAsync();
+}
+finally
+{
+    Log.CloseAndFlush();
+}
