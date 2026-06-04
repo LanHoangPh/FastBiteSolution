@@ -21,7 +21,7 @@ public class ProductApi : ApiEndpoint, IEndpoint
                        .MapGroup(BaseUrl)
                        .HasApiVersion(1)
                        .WithTags("Products")
-                       .RequireAuthorization(); 
+                       .RequireAuthorization();
 
         // GET /api/v1/products
         group.MapGet("/", GetAll)

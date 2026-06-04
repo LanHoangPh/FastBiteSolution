@@ -35,13 +35,13 @@ public class RefreshTokenCommandHandlerTests
         var command = new AuthCommands.RefreshTokenCommand("old-access", "old-refresh");
         var userId = Guid.NewGuid();
         var jti = "jti-123";
-        
+
         var oldRefreshToken = AppRefreshToken.Create("old-refresh", jti, userId, DateTime.UtcNow.AddDays(1));
 
         var userDto = new UserDto(userId, "test@test.com", "test@test.com", "First", "Last", new List<string> { "Customer" });
 
         _jwtTokenServiceMock.GetJtiFromExpiredToken(command.AccessToken).Returns(jti);
-        
+
         _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
             .Returns(oldRefreshToken);
         _refreshTokenRepositoryMock.FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
@@ -61,7 +61,7 @@ public class RefreshTokenCommandHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.AccessToken.Should().Be("new-access");
         result.Value.RefreshToken.Should().Be("new-refresh");
-        
+
         oldRefreshToken.IsUsed.Should().BeTrue();
         _refreshTokenRepositoryMock.Received(1).Update(oldRefreshToken);
         _refreshTokenRepositoryMock.Received(1).Add(Arg.Is<AppRefreshToken>(r => r.Token == "new-refresh" && r.Jti == "new-jti"));
@@ -111,11 +111,11 @@ public class RefreshTokenCommandHandlerTests
         var command = new AuthCommands.RefreshTokenCommand("old-access", "old-refresh");
         var jtiFromAccess = "jti-access";
         var jtiFromRefresh = "jti-refresh";
-        
+
         _jwtTokenServiceMock.GetJtiFromExpiredToken(command.AccessToken).Returns(jtiFromAccess);
 
         var refreshToken = AppRefreshToken.Create("old-refresh", jtiFromRefresh, Guid.NewGuid(), DateTime.UtcNow.AddDays(1));
-        
+
         _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
             .Returns(refreshToken);
 

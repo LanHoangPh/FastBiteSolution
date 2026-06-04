@@ -81,7 +81,7 @@ public class RegisterCommandHandlerTests
     {
         // Arrange
         var command = new AuthCommands.RegisterCommand("test@test.com", "Password123!", "First", "Last", new DateTime(1990, 1, 1));
-        
+
         _userAuthServiceMock.FindByEmailAsync(command.Email, Arg.Any<CancellationToken>())
             .Returns((UserDto?)null);
 

@@ -25,7 +25,7 @@ public class DeleteProductCommandHandlerTests
         // Arrange
         var command = ProductTestData.DeleteCommand();
         var existingProduct = ProductTestData.Product(name: "Old", description: "Old", price: 100);
-        
+
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(existingProduct);
 
@@ -42,7 +42,7 @@ public class DeleteProductCommandHandlerTests
     {
         // Arrange
         var command = ProductTestData.DeleteCommand(99);
-        
+
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 

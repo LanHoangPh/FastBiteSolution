@@ -33,7 +33,7 @@ public class LogoutCommandHandlerTests
         var jti = "jti-123";
 
         var refreshToken = AppRefreshToken.Create("refresh-token", jti, Guid.NewGuid(), DateTime.UtcNow.AddDays(1));
-        
+
         _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
             .Returns(refreshToken);
         _refreshTokenRepositoryMock.FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
@@ -44,10 +44,10 @@ public class LogoutCommandHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        
+
         // Ensure JTI is blacklisted
         await _cacheServiceMock.Received(1).BlacklistTokenAsync(jti, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
-        
+
         // Ensure refresh token is revoked
         refreshToken.IsRevoked.Should().BeTrue();
         _refreshTokenRepositoryMock.Received(1).Update(refreshToken);

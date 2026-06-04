@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FastBiteGroup.Persistence;
+
 public sealed class ApplicationDbContext
     : IdentityDbContext<AppUser, AppRole, Guid>
 {

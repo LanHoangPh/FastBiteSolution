@@ -27,7 +27,7 @@ public class UpdateProductCommandHandlerTests
         // Arrange
         var command = ProductTestData.UpdateCommand();
         var existingProduct = ProductTestData.Product(name: "Old", description: "Old", price: 100);
-        
+
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(existingProduct);
 
@@ -46,7 +46,7 @@ public class UpdateProductCommandHandlerTests
     {
         // Arrange
         var command = ProductTestData.UpdateCommand(id: 99);
-        
+
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
@@ -63,7 +63,7 @@ public class UpdateProductCommandHandlerTests
         // Arrange
         var command = ProductTestData.UpdateCommand(price: -10);
         var existingProduct = ProductTestData.Product(name: "Old", description: "Old", price: 100);
-        
+
         _productRepositoryMock.FindByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(existingProduct);
 

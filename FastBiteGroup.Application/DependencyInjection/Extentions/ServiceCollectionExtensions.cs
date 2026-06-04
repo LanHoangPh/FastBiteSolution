@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.Configure<LicenseKeyOptions>(
-            configuration.GetSection(nameof(LicenseKeyOptions))); 
+            configuration.GetSection(nameof(LicenseKeyOptions)));
         services.AddConfigureMediatR(configuration);
         services.AddConfigureAutoMapper(configuration);
 
