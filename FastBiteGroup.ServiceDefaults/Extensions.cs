@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -99,9 +100,18 @@ namespace Microsoft.Extensions.Hosting
 
         public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
         {
-            builder.Services.AddHealthChecks()
-                // Add a default liveness check to ensure app is responsive
+            var healthChecks = builder.Services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+
+            //var redisConnectionString = builder.Configuration.GetConnectionString("redis");
+
+            //if (!string.IsNullOrWhiteSpace(redisConnectionString))
+            //{
+            //    healthChecks.AddRedis(
+            //        redisConnectionString,
+            //        name: "redis",
+            //        tags: ["ready"]);
+            //}
 
             return builder;
         }

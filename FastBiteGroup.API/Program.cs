@@ -28,6 +28,7 @@ public class Program
 
         Log.Information("Starting FastBiteGroup API...");
 
+
         builder.AddServiceDefaults();
 
         builder.Services.AddPostgreSqlPersistence(config);

@@ -19,8 +19,7 @@ public static class JwtExtensions
 
         .AddJwtBearer(options =>
         {
-            JwtOptions jwtOption = new JwtOptions();
-            configuration.GetSection(nameof(JwtOptions)).Bind(jwtOption);
+            var jwtOption = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>() ?? new JwtOptions();
 
             options.SaveToken = true;
             var Key = Encoding.UTF8.GetBytes(jwtOption.SecretKey);
