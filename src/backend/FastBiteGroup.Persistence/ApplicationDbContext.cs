@@ -10,8 +10,6 @@ public sealed class ApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
-
-    public DbSet<Products> Products => Set<Products>();
     public DbSet<AppRefreshToken> RefreshTokens => Set<AppRefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder builder)

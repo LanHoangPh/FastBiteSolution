@@ -1,9 +1,4 @@
-﻿using FastBiteGroup.Infrastructure.DependencyInjection.Options;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-
-namespace FastBiteGroup.API.DependencyInjection.Extensions;
+﻿namespace FastBiteGroup.API.DependencyInjection.Extensions;
 
 public static class JwtExtensions
 {

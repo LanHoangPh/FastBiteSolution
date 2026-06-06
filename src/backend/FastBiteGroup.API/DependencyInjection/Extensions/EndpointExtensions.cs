@@ -1,8 +1,4 @@
-﻿using FastBiteGroup.Presentation.Abstractions;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Reflection;
-
-namespace FastBiteGroup.API.DependencyInjection.Extensions;
+﻿namespace FastBiteGroup.API.DependencyInjection.Extensions;
 
 public static class EndpointExtensions
 {

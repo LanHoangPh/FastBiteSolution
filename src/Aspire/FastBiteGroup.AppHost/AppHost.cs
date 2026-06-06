@@ -10,6 +10,7 @@ var secretKey = builder.AddParameter("jwt-secret-key", secret: true);
 // --use local resources for database and cache to speed up development feedback loop
 var database = builder.AddApplicationPostgres();
 //var cache = builder.AddApplicationRedis();
+var mongoDB = builder.AddApplicationMongoDB();
 
 
 // -- use cloud resources for database and cache to test real-world connectivity and performance
@@ -23,6 +24,7 @@ var migrations = builder.AddProject<Projects.FastBiteGroup_MigrationService>("mi
 
 var api = builder.AddApplicationApi(
         database,
+        mongoDB,
         cache,
         mediatrLicense,
         autoMapperLicense,

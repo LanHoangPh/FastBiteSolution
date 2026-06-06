@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using Microsoft.Extensions.Options;
 
 namespace FastBiteGroup.Persistence.DependencyInjection.Extensions;
 
@@ -89,7 +90,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddMongoPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("mongodb")
+        var connectionString = configuration.GetConnectionString("MongoDBConnection")
             ?? configuration.GetConnectionString("MongoDb")
             ?? configuration[$"{MongoDbOptions.SectionName}:ConnectionString"];
 
@@ -109,7 +110,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             var options = serviceProvider
-                .GetRequiredService<Microsoft.Extensions.Options.IOptions<MongoDbOptions>>()
+                .GetRequiredService<IOptions<MongoDbOptions>>()
                 .Value;
 
             return new MongoClient(options.ConnectionString);

@@ -1,9 +1,4 @@
-﻿using Asp.Versioning.ApiExplorer;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace FastBiteGroup.API.DependencyInjection.Options;
+﻿namespace FastBiteGroup.API.DependencyInjection.Options;
 
 public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {

@@ -1,7 +1,4 @@
 ﻿using FastBiteGroup.API.DependencyInjection.Options;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace FastBiteGroup.API.DependencyInjection.Extensions;
 

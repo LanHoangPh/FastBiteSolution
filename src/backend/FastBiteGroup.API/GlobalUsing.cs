@@ -1,0 +1,17 @@
+﻿global using FastBiteGroup.Presentation.Abstractions;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using FastBiteGroup.Infrastructure.DependencyInjection.Options;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.Extensions.Options;
+global using Swashbuckle.AspNetCore.SwaggerGen;
+global using Swashbuckle.AspNetCore.SwaggerUI;
+global using Asp.Versioning.ApiExplorer;
+global using Microsoft.AspNetCore.Diagnostics;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.OpenApi;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Net;
+global using System.Text.Json;
+global using System.Text;
+global using System.Reflection;

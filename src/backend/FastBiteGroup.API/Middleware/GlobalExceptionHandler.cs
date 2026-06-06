@@ -1,6 +1,4 @@
 ﻿using FastBiteGroup.Domain.Exceptions;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FastBiteGroup.API.Middleware
 {
