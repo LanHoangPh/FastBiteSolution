@@ -34,7 +34,7 @@ internal sealed class RegisterCommandHandler
         AuthCommands.RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        // 1. Check if email already exists
+        // 1. Check if email already exists (single read query)
         var existing = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (existing is not null)
         {
@@ -43,33 +43,24 @@ internal sealed class RegisterCommandHandler
                 new Error("Auth.EmailAlreadyExists", $"Email '{request.Email}' is already registered."));
         }
 
-        // 2. Create user via service (assigns Customer role)
-        var (success, errorMessage) = await _userAuthService.CreateUserAsync(
+        // 2. Create user (returns UserDto directly — no second round-trip needed)
+        var (user, errorMessage) = await _userAuthService.CreateUserAsync(
             request.Email, request.Password, request.FirstName, request.LastName,
             request.DayOfBirth, cancellationToken);
 
-        if (!success)
+        if (user is null)
         {
-            _logger.LogWarning("Registration failed while creating user.");
+            _logger.LogWarning("Registration failed while creating user. Error: {Error}", errorMessage);
             return Result.Failure<AuthResponse>(new Error("Auth.RegistrationFailed", errorMessage!));
         }
 
-        // 3. Get the created user to generate tokens
-        var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
-        if (user is null)
-        {
-            _logger.LogError("Registration failed: created user could not be retrieved.");
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.RegistrationFailed", "User was created but could not be retrieved."));
-        }
-
-        // 4. Generate tokens
+        // 3. Generate tokens
         var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
             user.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles);
         var refreshTokenString = _jwtTokenService.GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
-        // 5. Persist refresh token
+        // 4. Persist refresh token
         var refreshToken = AppRefreshToken.Create(refreshTokenString, jti, user.Id, refreshExpiresAt);
         _refreshTokenRepository.Add(refreshToken);
 
@@ -78,7 +69,16 @@ internal sealed class RegisterCommandHandler
             refreshTokenString,
             accessExpiresAt,
             refreshExpiresAt,
-            new UserInfoResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Roles));
+            new UserInfoResponse(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.FullName,
+                user.AvatarUrl,
+                user.Bio,
+                user.IsActive,
+                user.Roles));
 
         _logger.LogInformation("User registered successfully. UserId: {UserId}", user.Id);
 

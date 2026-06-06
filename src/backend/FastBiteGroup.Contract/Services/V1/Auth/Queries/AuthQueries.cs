@@ -1,9 +1,5 @@
-using FastBiteGroup.Contract.Abstractions.Message;
-using FastBiteGroup.Contract.Services.V1.Auth.Responses;
-
 namespace FastBiteGroup.Contract.Services.V1.Auth.Queries;
 
-public static class AuthQueries
-{
-    public record Token(string? AccessToken, string? RefreshToken) : IQuery<AuthResponse>;
-}
+// No auth queries currently active.
+// AuthQueries.Token was removed — it had no handler and would cause MediatR to throw.
+// Add new queries here as the feature set grows (e.g., GetUserProfileQuery).

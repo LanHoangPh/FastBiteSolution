@@ -1,4 +1,5 @@
-﻿using FastBiteGroup.Persistence;
+using FastBiteGroup.Domain.Entities;
+using FastBiteGroup.Persistence;
 using FastBiteGroup.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -20,7 +21,7 @@ public sealed class SeedDataInitializer(
 
         var adminUser = await SeedAdminUserAsync();
 
-        
+        await SeedGlobalSettingsAsync(cancellationToken);
     }
 
     private async Task SeedRolesAsync()
@@ -79,6 +80,38 @@ public sealed class SeedDataInitializer(
 
         return admin;
     }
+    private async Task SeedGlobalSettingsAsync(CancellationToken cancellationToken)
+    {
+        bool settingsChanged = false;
+
+        if (!dbContext.GlobalSettings.Any(s => s.SettingKey == "DefaultCurrency"))
+        {
+            dbContext.GlobalSettings.Add(new FastBiteGroup.Domain.Entities.GlobalSettings 
+            { 
+                SettingKey = "DefaultCurrency", 
+                SettingValue = "VND" 
+            });
+            settingsChanged = true;
+            logger.LogInformation("Seeded Global Setting: DefaultCurrency = VND");
+        }
+
+        if (!dbContext.GlobalSettings.Any(s => s.SettingKey == "MaxUploadSize"))
+        {
+            dbContext.GlobalSettings.Add(new GlobalSettings 
+            { 
+                SettingKey = "MaxUploadSize", 
+                SettingValue = "5MB" 
+            });
+            settingsChanged = true;
+            logger.LogInformation("Seeded Global Setting: MaxUploadSize = 5MB");
+        }
+
+        if (settingsChanged)
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+
     private static void ThrowIfFailed(IdentityResult result, string operation)
     {
         if (result.Succeeded)

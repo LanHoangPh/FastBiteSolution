@@ -38,13 +38,24 @@ public class RefreshTokenCommandHandlerTests
 
         var oldRefreshToken = AppRefreshToken.Create("old-refresh", jti, userId, DateTime.UtcNow.AddDays(1));
 
-        var userDto = new UserDto(userId, "test@test.com", "test@test.com", "First", "Last", new List<string> { "Customer" });
+        var userDto = new UserDto(
+            Id: userId,
+            Email: "test@test.com",
+            UserName: "test@test.com",
+            FirstName: "First",
+            LastName: "Last",
+            FullName: "First Last",
+            AvatarUrl: null,
+            Bio: null,
+            IsActive: true,
+            LastSeenAt: null,
+            Roles: new List<string> { "Customer" });
 
         _jwtTokenServiceMock.GetJtiFromExpiredToken(command.AccessToken).Returns(jti);
 
-        _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
-            .Returns(oldRefreshToken);
-        _refreshTokenRepositoryMock.FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
+        // Handler now uses FindSingleAsync (tracked) for single-query pattern
+        _refreshTokenRepositoryMock
+            .FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(oldRefreshToken);
 
         _userAuthServiceMock.FindByIdAsync(userId, Arg.Any<CancellationToken>())
@@ -61,10 +72,15 @@ public class RefreshTokenCommandHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.AccessToken.Should().Be("new-access");
         result.Value.RefreshToken.Should().Be("new-refresh");
+        result.Value.TokenType.Should().Be("Bearer");
+        result.Value.User.IsActive.Should().BeTrue();
 
         oldRefreshToken.IsUsed.Should().BeTrue();
         _refreshTokenRepositoryMock.Received(1).Update(oldRefreshToken);
         _refreshTokenRepositoryMock.Received(1).Add(Arg.Is<AppRefreshToken>(r => r.Token == "new-refresh" && r.Jti == "new-jti"));
+
+        // Ensure FindByTokenAsync is NOT called (eliminated double-query)
+        await _refreshTokenRepositoryMock.DidNotReceiveWithAnyArgs().FindByTokenAsync(default!, default);
     }
 
     [Fact]
@@ -93,7 +109,9 @@ public class RefreshTokenCommandHandlerTests
         var revokedToken = AppRefreshToken.Create("old-refresh", jti, Guid.NewGuid(), DateTime.UtcNow.AddDays(1));
         revokedToken.Revoke(); // mark as revoked
 
-        _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
+        // Handler uses FindSingleAsync
+        _refreshTokenRepositoryMock
+            .FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(revokedToken);
 
         // Act
@@ -116,7 +134,9 @@ public class RefreshTokenCommandHandlerTests
 
         var refreshToken = AppRefreshToken.Create("old-refresh", jtiFromRefresh, Guid.NewGuid(), DateTime.UtcNow.AddDays(1));
 
-        _refreshTokenRepositoryMock.FindByTokenAsync(command.RefreshToken, Arg.Any<CancellationToken>())
+        // Handler uses FindSingleAsync
+        _refreshTokenRepositoryMock
+            .FindSingleAsync(Arg.Any<System.Linq.Expressions.Expression<Func<AppRefreshToken, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(refreshToken);
 
         // Act

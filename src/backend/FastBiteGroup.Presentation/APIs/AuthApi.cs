@@ -1,3 +1,4 @@
+using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
@@ -7,8 +8,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace FastBiteGroup.Presentation.APIs;
 
@@ -91,32 +90,34 @@ public class AuthApi : ApiEndpoint, IEndpoint
     }
 
     private static async Task<IResult> Logout(
-        ClaimsPrincipal user,
+        ICurrentUser currentUser,
         [FromBody] LogoutRequest request,
+        [FromHeader(Name = "Authorization")] string? authorizationHeader,
         ISender sender,
         CancellationToken ct)
     {
-        var jti = user.FindFirstValue(JwtRegisteredClaimNames.Jti) ?? string.Empty;
-        var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
+        // Extract raw access token from "Bearer <token>" header for TTL computation
+        var accessToken = authorizationHeader?.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) == true
+            ? authorizationHeader["Bearer ".Length..].Trim()
+            : string.Empty;
 
-        var command = new AuthCommands.LogoutCommand(jti, request.RefreshToken, userId);
+        var command = new AuthCommands.LogoutCommand(
+            accessToken,
+            currentUser.Jti,
+            request.RefreshToken,
+            currentUser.UserId);
+
         var result = await sender.Send(command, ct);
-
         return result.IsFailure ? HandleFailure(result) : Results.NoContent();
     }
 
     private static async Task<IResult> RevokeAll(
-        ClaimsPrincipal user,
+        ICurrentUser currentUser,
         ISender sender,
         CancellationToken ct)
     {
-        var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? Guid.Empty.ToString());
-
-        var command = new AuthCommands.RevokeAllSessionsCommand(userId);
+        var command = new AuthCommands.RevokeAllSessionsCommand(currentUser.UserId);
         var result = await sender.Send(command, ct);
-
         return result.IsFailure ? HandleFailure(result) : Results.NoContent();
     }
 }
-
-public sealed record LogoutRequest(string RefreshToken);

@@ -19,12 +19,17 @@ internal static class AuthTestData
         string lastName = "Last",
         IReadOnlyList<string>? roles = null)
         => new(
-            id ?? Guid.NewGuid(),
-            email,
-            email,
-            firstName,
-            lastName,
-            roles?.ToList() ?? new List<string> { "Customer" });
+            Id: id ?? Guid.NewGuid(),
+            Email: email,
+            UserName: email,
+            FirstName: firstName,
+            LastName: lastName,
+            FullName: $"{firstName} {lastName}",
+            AvatarUrl: null,
+            Bio: null,
+            IsActive: true,
+            LastSeenAt: null,
+            Roles: roles?.ToList() ?? new List<string> { "Customer" });
 
     public static AuthCommands.LoginCommand LoginCommand(
         string email = ValidEmail,
@@ -46,9 +51,10 @@ internal static class AuthTestData
 
     public static AuthCommands.LogoutCommand LogoutCommand(
         Guid? userId = null,
+        string accessToken = AccessToken,
         string jti = Jti,
         string refreshToken = RefreshToken)
-        => new(jti, refreshToken, userId ?? Guid.NewGuid());
+        => new(accessToken, jti, refreshToken, userId ?? Guid.NewGuid());
 
     public static AppRefreshToken ActiveRefreshToken(
         Guid userId,

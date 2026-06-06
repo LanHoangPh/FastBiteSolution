@@ -41,7 +41,8 @@ internal sealed class UserAuthService : IUserAuthService
         return await _userManager.IsLockedOutAsync(user);
     }
 
-    public async Task<(bool Success, string? ErrorMessage)> CreateUserAsync(
+    /// <inheritdoc />
+    public async Task<(UserDto? User, string? ErrorMessage)> CreateUserAsync(
         string email, string password, string firstName, string lastName,
         DateTime dateOfBirth, CancellationToken ct = default)
     {
@@ -51,21 +52,39 @@ internal sealed class UserAuthService : IUserAuthService
             Email = email,
             FirstName = firstName,
             LastName = lastName,
+            FullName = $"{firstName} {lastName}".Trim(),
             DateOfBirth = dateOfBirth,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
         };
 
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             var error = string.Join(", ", result.Errors.Select(e => e.Description));
-            return (false, error);
+            return (null, error);
         }
 
+        // Assign default Customer role
         await _userManager.AddToRoleAsync(user, "Customer");
-        return (true, null);
+
+        // Reload roles for the DTO (AddToRoleAsync does not populate the user's roles in memory)
+        var roles = await _userManager.GetRolesAsync(user);
+        return (MapToDto(user, roles), null);
     }
 
     private static UserDto MapToDto(AppUser user, IList<string> roles) =>
-        new(user.Id, user.Email!, user.UserName!, user.FirstName, user.LastName, roles);
+        new(
+            Id: user.Id,
+            Email: user.Email!,
+            UserName: user.UserName!,
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            FullName: user.FullName,
+            AvatarUrl: user.AvatarUrl,
+            Bio: user.Bio,
+            IsActive: user.IsActive,
+            LastSeenAt: user.LastSeenAt,
+            Roles: roles);
 }

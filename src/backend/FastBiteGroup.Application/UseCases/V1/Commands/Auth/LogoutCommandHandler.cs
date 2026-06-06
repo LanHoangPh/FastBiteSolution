@@ -1,3 +1,4 @@
+using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
@@ -11,15 +12,18 @@ namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 internal sealed class LogoutCommandHandler : ICommandHandler<AuthCommands.LogoutCommand>
 {
     private readonly ICacheService _cacheService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly ILogger<LogoutCommandHandler> _logger;
 
     public LogoutCommandHandler(
         ICacheService cacheService,
+        IJwtTokenService jwtTokenService,
         IRefreshTokenRepository refreshTokenRepository,
         ILogger<LogoutCommandHandler>? logger = null)
     {
         _cacheService = cacheService;
+        _jwtTokenService = jwtTokenService;
         _refreshTokenRepository = refreshTokenRepository;
         _logger = logger ?? NullLogger<LogoutCommandHandler>.Instance;
     }
@@ -28,28 +32,27 @@ internal sealed class LogoutCommandHandler : ICommandHandler<AuthCommands.Logout
         AuthCommands.LogoutCommand request,
         CancellationToken cancellationToken)
     {
-        // 1. Blacklist the access token JTI in Redis
-        // TTL: 2 hours is a safe upper bound for typical access token lifetimes.
-        // Ideally compute from JWT exp claim, but this is safe and simple.
-        await _cacheService.BlacklistTokenAsync(
-            request.Jti,
-            remainingLifetime: TimeSpan.FromHours(2),
-            ct: cancellationToken);
+        // 1. Compute accurate TTL from the token's actual exp claim.
+        //    Falls back to a safe minimum (5 min) if the token is already expired — ensures
+        //    the key is written to Redis (with a short TTL) so race conditions don't leave
+        //    a revoked token appearing valid momentarily.
+        var ttl = _jwtTokenService.GetAccessTokenRemainingLifetime(request.AccessToken);
+        if (ttl == TimeSpan.Zero)
+            ttl = TimeSpan.FromMinutes(5);
 
-        // 2. Revoke the refresh token in DB
+        await _cacheService.BlacklistTokenAsync(request.Jti, ttl, cancellationToken);
+
+        // 2. Revoke the refresh token — load as tracked entity (single query)
         var refreshToken = await _refreshTokenRepository
-            .FindByTokenAsync(request.RefreshToken, cancellationToken);
+            .FindSingleAsync(r => r.Token == request.RefreshToken, cancellationToken);
 
         if (refreshToken is not null && refreshToken.IsActive)
         {
-            // Need tracked entity for update
-            var tracked = await _refreshTokenRepository
-                .FindSingleAsync(r => r.Token == request.RefreshToken, cancellationToken);
-            tracked.Revoke();
-            _refreshTokenRepository.Update(tracked);
+            refreshToken.Revoke();
+            _refreshTokenRepository.Update(refreshToken);
         }
 
-        _logger.LogInformation("User logged out successfully.");
+        _logger.LogInformation("User logged out successfully. Jti: {Jti}", request.Jti);
 
         return Result.Success();
     }

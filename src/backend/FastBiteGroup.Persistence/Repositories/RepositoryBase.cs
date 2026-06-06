@@ -63,6 +63,18 @@ public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
                ?? throw new KeyNotFoundException($"{typeof(TEntity).Name} matching predicate was not found.");
     }
 
+    /// <summary>
+    /// Returns a tracked entity for mutation. Use this when you need to modify and save the entity.
+    /// Unlike FindSingleAsync, this does NOT use AsNoTracking — EF Core will track changes.
+    /// </summary>
+    public async Task<TEntity?> FindSingleTrackedAsync(
+        Expression<Func<TEntity, bool>>? predicate,
+        CancellationToken cancellationToken = default)
+    {
+        var query = BuildQuery(predicate, asNoTracking: false, []);
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+
     /// <inheritdoc />
     public IQueryable<TEntity> FindAll(
         Expression<Func<TEntity, bool>>? predicate = null,

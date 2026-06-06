@@ -14,8 +14,9 @@ public static class AuthCommands
         string RefreshToken) : ICommand<AuthResponse>;
 
     public sealed record LogoutCommand(
-        string Jti,                    // Access Token jti để blacklist
-        string RefreshToken,           // Thu hồi Refresh Token
+        string AccessToken,       // Used to compute remaining TTL for Redis blacklist
+        string Jti,               // Access Token jti để blacklist
+        string RefreshToken,      // Thu hồi Refresh Token
         Guid UserId) : ICommand;
 
     public sealed record RegisterCommand(

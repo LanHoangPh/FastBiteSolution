@@ -86,7 +86,7 @@ internal sealed class JwtTokenService : IJwtTokenService
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateIssuerSigningKey = true,
-                ValidateLifetime = false,
+                ValidateLifetime = false,   // intentionally skip lifetime validation
                 ValidIssuer = _options.Issuer,
                 ValidAudience = _options.Audience,
                 IssuerSigningKey = key
@@ -102,6 +102,41 @@ internal sealed class JwtTokenService : IJwtTokenService
         catch
         {
             return null;
+        }
+    }
+
+    /// <inheritdoc />
+    public TimeSpan GetAccessTokenRemainingLifetime(string accessToken)
+    {
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+
+            var validationParams = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = false,   // parse even if expired — we compute remaining ourselves
+                ValidIssuer = _options.Issuer,
+                ValidAudience = _options.Audience,
+                IssuerSigningKey = key
+            };
+
+            handler.ValidateToken(accessToken, validationParams, out var validatedToken);
+
+            if (validatedToken is JwtSecurityToken jwt)
+            {
+                var remaining = jwt.ValidTo - DateTime.UtcNow;
+                return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
+            }
+
+            return TimeSpan.Zero;
+        }
+        catch
+        {
+            return TimeSpan.Zero;
         }
     }
 }

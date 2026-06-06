@@ -21,6 +21,7 @@
     <Project Path="tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj" />
     <Project Path="tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj" />
     <Project Path="tests/backend/FastBiteGroup.Domain.Tests/FastBiteGroup.Domain.Tests.csproj" />
+    <Project Path="tests/backend/FastBiteGroup.Infrastructure.Tests/FastBiteGroup.Infrastructure.Tests.csproj" />
     <Project Path="tests/backend/FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/frontend/" />

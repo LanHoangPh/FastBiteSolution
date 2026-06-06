@@ -1,4 +1,4 @@
-﻿namespace FastBiteGroupMCA.Persistentce.Configurations;
+namespace FastBiteGroupMCA.Persistentce.Configurations;
 
 internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 {
@@ -17,7 +17,7 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.Property(x => x.OneSignalPlayerId).HasMaxLength(50);
 
         // Cấu hình thuộc tính Enum
-        builder.Property(x => x.PresenceStatus)
+        builder.Property(x => x.ManualStatus)
                .IsRequired()
                .HasConversion<string>()
                .HasMaxLength(50);
@@ -25,7 +25,6 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
                .IsRequired()
                .HasConversion<string>()
                .HasMaxLength(50);
-
         // Cấu hình query filter cho Soft Delete
         builder.HasQueryFilter(x => !x.IsDeleted);
 

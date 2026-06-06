@@ -2,6 +2,7 @@ namespace FastBiteGroup.Application.Abstractions.Authentication;
 
 /// <summary>
 /// User data projection — avoids coupling Application to Persistence/AppUser.
+/// Contains all user fields needed by Application layer use cases.
 /// </summary>
 public record UserDto(
     Guid Id,
@@ -9,6 +10,11 @@ public record UserDto(
     string UserName,
     string FirstName,
     string LastName,
+    string? FullName,
+    string? AvatarUrl,
+    string? Bio,
+    bool IsActive,
+    DateTime? LastSeenAt,
     IList<string> Roles);
 
 /// <summary>
@@ -21,7 +27,12 @@ public interface IUserAuthService
     Task<UserDto?> FindByIdAsync(Guid id, CancellationToken ct = default);
     Task<bool> CheckPasswordAsync(Guid userId, string password, CancellationToken ct = default);
     Task<bool> IsLockedOutAsync(Guid userId, CancellationToken ct = default);
-    Task<(bool Success, string? ErrorMessage)> CreateUserAsync(
+
+    /// <summary>
+    /// Creates a new user and assigns the Customer role.
+    /// Returns the created UserDto directly to avoid a second DB round-trip.
+    /// </summary>
+    Task<(UserDto? User, string? ErrorMessage)> CreateUserAsync(
         string email, string password, string firstName, string lastName,
         DateTime dateOfBirth, CancellationToken ct = default);
 }

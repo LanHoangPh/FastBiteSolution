@@ -43,9 +43,9 @@ internal sealed class RefreshTokenCommandHandler
                 new Error("Auth.InvalidToken", "Access token is invalid or cannot be parsed."));
         }
 
-        // 2. Find the refresh token in DB (read-only)
+        // 2. Load the refresh token as a tracked entity (single query — avoids double round-trip)
         var refreshToken = await _refreshTokenRepository
-            .FindByTokenAsync(request.RefreshToken, cancellationToken);
+            .FindSingleAsync(r => r.Token == request.RefreshToken, cancellationToken);
 
         if (refreshToken is null)
         {
@@ -86,11 +86,9 @@ internal sealed class RefreshTokenCommandHandler
         var newRefreshTokenString = _jwtTokenService.GenerateRefreshToken();
         var newRefreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
-        // 7. Rotate — load tracked entity for mutation
-        var trackedToken = await _refreshTokenRepository
-            .FindSingleAsync(r => r.Token == request.RefreshToken, cancellationToken);
-        trackedToken.MarkUsed(newRefreshTokenString);
-        _refreshTokenRepository.Update(trackedToken);
+        // 7. Rotate — mark old token as used (already tracked, no extra query needed)
+        refreshToken.MarkUsed(newRefreshTokenString);
+        _refreshTokenRepository.Update(refreshToken);
 
         var newRefreshToken = AppRefreshToken.Create(newRefreshTokenString, newJti, user.Id, newRefreshExpiresAt);
         _refreshTokenRepository.Add(newRefreshToken);
@@ -100,7 +98,16 @@ internal sealed class RefreshTokenCommandHandler
             newRefreshTokenString,
             newAccessExpiresAt,
             newRefreshExpiresAt,
-            new UserInfoResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Roles));
+            new UserInfoResponse(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.FullName,
+                user.AvatarUrl,
+                user.Bio,
+                user.IsActive,
+                user.Roles));
 
         _logger.LogInformation("Refresh token rotated successfully. UserId: {UserId}", user.Id);
 

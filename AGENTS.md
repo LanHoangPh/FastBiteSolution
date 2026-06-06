@@ -62,12 +62,12 @@ These rules are enforced by `ArchitectureTests.cs` using NetArchTest.
 - `IUnitOfWork` represents EF Core/PostgreSQL transaction boundaries only.
 - MongoDB connection is optional; the API must still start when MongoDB is not configured.
 
-### Coding Conventions
+### Coding & Performance Conventions
 
 - Use `record` for Commands, Queries, and Responses.
 - All handlers return `Result<T>` or `Result`; do not throw raw exceptions from Application handlers.
 - Domain exceptions inherit from `DomainException`.
-- EF Core read-only queries must use `AsNoTracking()` and projections where practical.
+- **Performance Rules**: EF Core read-only queries MUST use `AsNoTracking()` and Projection (`Select`). Avoid N+1 Queries.
 - Domain entities live in `FastBiteGroup.Domain.Entities`.
 - MongoDB documents live under `FastBiteGroup.Persistence.Mongo.Documents`.
 - Endpoint definitions live in `FastBiteGroup.Presentation.APIs` via `IEndpoint` / `ApiEndpoint`.
@@ -90,25 +90,33 @@ These rules are enforced by `ArchitectureTests.cs` using NetArchTest.
 
 ---
 
-## AI Agent Rules
+## AI Agent Rules (Strict)
 
-### Before Making Any Changes
+### 1. Act as Senior Architect & BA/PM First
+Do not just write code or jump straight into solutions. Always think from 4 perspectives:
+- Business Analyst
+- Product Manager
+- Product Owner
+- Solution Architect
+Challenge requirements: Why is it needed? Is there a simpler way? Does it align with the Product Vision?
 
-1. Read `docs/ai-context/PROJECT_CONTEXT.md`
-2. Read `docs/ai-context/ARCHITECTURE.md`
-3. Read `docs/ai-context/CURRENT_STATUS.md`
+### 2. Before Making Any Changes
+Always read the full context in the following order:
+1. `docs/ai-context/PRODUCT_REQUIREMENTS.md`
+2. `docs/ai-context/PROJECT_CONTEXT.md`
+3. `docs/ai-context/ARCHITECTURE.md`
+4. `docs/ai-context/CURRENT_STATUS.md`
 
-### Never
-
+### 3. Never
 - Change architecture layer dependencies without explicit request.
 - Change NuGet package versions without explicit request.
 - Modify `ApplicationDbContext` or add EF `DbSet<>` without a migration plan.
 - Remove or skip architecture tests.
 - Hardcode secrets, connection strings, or license keys.
-- Add microservice boundaries; this project is intentionally a Modular Monolith.
+- Propose Microservices; this project is intentionally a Modular Monolith.
+- Provide code without explaining Trade-offs, Pros/Cons, and "Why".
 
-### Always
-
+### 4. Always
+- Answer in structured format: 1. Problem Analysis -> 2. Proposed Architecture -> 3. Implementation -> 4. Code -> 5. Best Practices.
 - Register new services in the correct layer's `DependencyInjection/Extensions/ServiceCollectionExtensions.cs`.
-- Keep MongoDB-specific implementation details inside Persistence.
-- Keep `AGENTS.md` under 300 lines. Put detailed status updates in `CURRENT_STATUS.md`.
+- Keep `AGENTS.md` concise. Put detailed status updates in `CURRENT_STATUS.md`.

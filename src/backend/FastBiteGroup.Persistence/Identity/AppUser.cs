@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Persistence.Identity;
 
@@ -12,7 +13,8 @@ public class AppUser : IdentityUser<Guid>
     public string? AvatarUrl { get; set; }
     public string? Bio { get; set; }
     public bool IsActive { get; set; } = true;
-    public EnumUserPresenceStatus PresenceStatus { get; set; } = EnumUserPresenceStatus.Offline;
+    public DateTime? LastSeenAt { get; set; }
+    public EnumManualStatus ManualStatus { get; set; } = EnumManualStatus.Available;
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

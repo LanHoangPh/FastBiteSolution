@@ -75,7 +75,16 @@ internal sealed class LoginCommandHandler
             refreshTokenString,
             accessExpiresAt,
             refreshExpiresAt,
-            new UserInfoResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Roles));
+            new UserInfoResponse(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.FullName,
+                user.AvatarUrl,
+                user.Bio,
+                user.IsActive,
+                user.Roles));
 
         _logger.LogInformation("User logged in successfully. UserId: {UserId}", user.Id);
 

@@ -21,10 +21,14 @@ internal sealed class RefreshTokenRepository
     /// <inheritdoc />
     public async Task RevokeAllForUserAsync(Guid userId, CancellationToken ct = default)
     {
+        var revokedAt = DateTime.UtcNow;
+
         await _context.RefreshTokens
             .Where(r => r.UserId == userId && !r.IsRevoked)
             .ExecuteUpdateAsync(
-                s => s.SetProperty(r => r.IsRevoked, true),
+                s => s
+                    .SetProperty(r => r.IsRevoked, true)
+                    .SetProperty(r => r.RevokedAt, revokedAt),
                 ct);
     }
 }

@@ -2,10 +2,10 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 using FastBiteGroup.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System.Security.Authentication;
 
 namespace FastBiteGroup.Infrastructure.DependencyInjection.Extentions;
 
@@ -50,6 +50,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
 
+        // Register ICurrentUser — reads claims from HTTP request context
+        services.AddCurrentUser();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers IHttpContextAccessor (required for ICurrentUser) and CurrentUserService.
+    /// ICurrentUser is Scoped — one instance per HTTP request, matching the request pipeline lifetime.
+    /// </summary>
+    public static IServiceCollection AddCurrentUser(this IServiceCollection services)
+    {
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUserService>();
         return services;
     }
 }
