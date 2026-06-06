@@ -1,4 +1,4 @@
-﻿namespace FastBiteGroupMCA.Domain.Enum;
+﻿namespace FastBiteGroup.Domain.Enum;
 
 public enum EnumReportedContentType
 {

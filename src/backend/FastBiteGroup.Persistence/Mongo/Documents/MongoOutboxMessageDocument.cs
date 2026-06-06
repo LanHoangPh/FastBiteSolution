@@ -1,5 +1,3 @@
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace FastBiteGroup.Persistence.Mongo.Documents;
 
 public sealed class MongoOutboxMessageDocument : MongoDocumentBase<Guid>

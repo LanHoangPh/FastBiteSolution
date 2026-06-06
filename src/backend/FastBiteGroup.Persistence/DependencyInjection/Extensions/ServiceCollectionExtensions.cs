@@ -4,6 +4,8 @@ using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Persistence.DependencyInjection.Options;
 using FastBiteGroup.Persistence.Identity;
 using FastBiteGroup.Persistence.Mongo;
+using FastBiteGroup.Persistence.Mongo.Messages;
+using FastBiteGroup.Persistence.Mongo.Notifications;
 using FastBiteGroup.Persistence.Mongo.Outbox;
 using FastBiteGroup.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -117,6 +119,8 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<MongoDbContext>();
+        services.AddScoped<IMessageDocumentStore, MongoMessageDocumentStore>();
+        services.AddScoped<INotificationDocumentStore, MongoNotificationDocumentStore>();
         services.AddScoped<IIntegrationOutboxStore, MongoIntegrationOutboxStore>();
         services.AddHostedService<MongoIndexInitializer>();
 

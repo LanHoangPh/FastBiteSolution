@@ -28,9 +28,12 @@ internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<AppRe
         builder.Property(r => r.UserId)
             .IsRequired();
 
+        builder.Property(r => r.CreatedAt).IsRequired();
         builder.Property(r => r.ExpiresAt).IsRequired();
         builder.Property(r => r.IsRevoked).IsRequired().HasDefaultValue(false);
+        builder.Property(r => r.RevokedAt).IsRequired(false);
         builder.Property(r => r.IsUsed).IsRequired().HasDefaultValue(false);
+        builder.Property(r => r.UsedAt).IsRequired(false);
 
         builder.Property(r => r.ReplacedByToken)
             .HasMaxLength(500);
@@ -43,7 +46,7 @@ internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<AppRe
 
         // FK to AppUser (in Identity tables)
         builder.HasOne<AppUser>()
-            .WithMany(u => u.RefreshTokens)
+            .WithMany()
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

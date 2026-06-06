@@ -20,4 +20,25 @@ internal static class TableNames
     // ********** Singular Nouns **********
     internal const string Product = nameof(Product);
     internal const string RefreshTokens = nameof(RefreshTokens);
+    internal const string AdminAuditLogs = nameof(AdminAuditLogs);
+    internal const string AdminNotifications = nameof(AdminNotifications);
+    internal const string ContentReports = nameof(ContentReports);
+    internal const string ConversationParticipants = nameof(ConversationParticipants);
+    internal const string Conversations = nameof(Conversations);
+    internal const string GlobalSettings = nameof(GlobalSettings);
+    internal const string Groups = nameof(Groups);
+    internal const string GroupInvitations = nameof(GroupInvitations);
+    internal const string GroupMembers = nameof(GroupMembers);
+    internal const string LoginHistories = nameof(LoginHistories);
+    internal const string PollOptions = nameof(PollOptions);
+    internal const string Polls = nameof(Polls);
+    internal const string PollVotes = nameof(PollVotes);
+    internal const string PostAttachments = nameof(PostAttachments);
+    internal const string PostComments = nameof(PostComments);
+    internal const string PostLikes = nameof(PostLikes);
+    internal const string Posts = nameof(Posts);
+    internal const string SharedFiles = nameof(SharedFiles);
+    internal const string UserGroupInvitations = nameof(UserGroupInvitations);
+    internal const string VideoCallParticipants = nameof(VideoCallParticipants);
+    internal const string VideoCallSessions = nameof(VideoCallSessions);
 }

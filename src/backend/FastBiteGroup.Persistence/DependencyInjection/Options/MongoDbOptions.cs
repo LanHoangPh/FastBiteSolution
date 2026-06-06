@@ -14,4 +14,10 @@ public sealed class MongoDbOptions
 
     [Required]
     public string OutboxCollectionName { get; set; } = "integration_outbox";
+
+    [Required]
+    public string MessagesCollectionName { get; set; } = "messages";
+
+    [Required]
+    public string NotificationsCollectionName { get; set; } = "notifications";
 }
