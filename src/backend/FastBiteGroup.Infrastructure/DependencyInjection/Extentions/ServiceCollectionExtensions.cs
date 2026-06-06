@@ -1,11 +1,10 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
-using FastBiteGroup.Infrastructure.DependencyInjection.Options;
-using FastBiteGroup.Infrastructure.Services;
-using FastBiteGroup.Infrastructure.Emails;
-using FastBiteGroup.Infrastructure.BackgroundJobs;
 using FastBiteGroup.Application.Abstractions.Emails;
-using Microsoft.AspNetCore.Http;
+using FastBiteGroup.Infrastructure.BackgroundJobs;
+using FastBiteGroup.Infrastructure.DependencyInjection.Options;
+using FastBiteGroup.Infrastructure.Emails;
+using FastBiteGroup.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -14,10 +13,6 @@ namespace FastBiteGroup.Infrastructure.DependencyInjection.Extentions;
 
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Registers Redis IConnectionMultiplexer (singleton) and ICacheService (scoped).
-    /// Connection string "redis" is injected by .NET Aspire in dev.
-    /// </summary>
     public static IServiceCollection AddRedisInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -61,7 +56,7 @@ public static class ServiceCollectionExtensions
 
         // Emails
         services.Configure<SendGridOptions>(
-            configuration.GetSection(SendGridOptions.SectionName));
+            configuration.GetSection(nameof(SendGridOptions)));
         services.AddTransient<IEmailSender, SendGridEmailSender>();
 
         // Background Jobs

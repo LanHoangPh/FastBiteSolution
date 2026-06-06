@@ -40,7 +40,7 @@ internal sealed class OtpService : IOtpService
 
         // Increment attempts atomically
         var attempts = await _db.StringIncrementAsync(attemptsKey);
-        
+
         // Ensure attempts key expires roughly when the OTP expires
         if (attempts == 1)
         {
@@ -70,13 +70,13 @@ internal sealed class OtpService : IOtpService
     {
         var key = GetOtpKey(purpose, identifier);
         var attemptsKey = GetAttemptsKey(purpose, identifier);
-        
+
         await _db.KeyDeleteAsync(new RedisKey[] { key, attemptsKey });
     }
 
-    private static string GetOtpKey(string purpose, string identifier) => 
+    private static string GetOtpKey(string purpose, string identifier) =>
         $"otp:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}";
 
-    private static string GetAttemptsKey(string purpose, string identifier) => 
+    private static string GetAttemptsKey(string purpose, string identifier) =>
         $"otp_attempts:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}";
 }

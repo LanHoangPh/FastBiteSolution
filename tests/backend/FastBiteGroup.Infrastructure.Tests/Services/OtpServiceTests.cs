@@ -34,7 +34,7 @@ public class OtpServiceTests
 
         _dbMock.Setup(x => x.StringSetAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
             .ReturnsAsync(true);
-            
+
         _dbMock.Setup(x => x.KeyDeleteAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()))
             .ReturnsAsync(true);
 
@@ -101,9 +101,9 @@ public class OtpServiceTests
         result.Should().Be(OtpValidationResult.MaxAttemptsReached);
 
         _dbMock.Verify(x => x.KeyDeleteAsync(
-            It.Is<RedisKey[]>(keys => keys.Length == 2 && 
-                                      keys[0] == $"otp:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}" && 
-                                      keys[1] == $"otp_attempts:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}"), 
+            It.Is<RedisKey[]>(keys => keys.Length == 2 &&
+                                      keys[0] == $"otp:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}" &&
+                                      keys[1] == $"otp_attempts:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}"),
             It.IsAny<CommandFlags>()), Times.Once);
     }
 
@@ -131,9 +131,9 @@ public class OtpServiceTests
         result.Should().Be(OtpValidationResult.Success);
 
         _dbMock.Verify(x => x.KeyDeleteAsync(
-            It.Is<RedisKey[]>(keys => keys.Length == 2 && 
-                                      keys[0] == $"otp:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}" && 
-                                      keys[1] == $"otp_attempts:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}"), 
+            It.Is<RedisKey[]>(keys => keys.Length == 2 &&
+                                      keys[0] == $"otp:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}" &&
+                                      keys[1] == $"otp_attempts:{purpose.ToLowerInvariant()}:{identifier.ToLowerInvariant()}"),
             It.IsAny<CommandFlags>()), Times.Once);
     }
 }

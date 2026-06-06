@@ -4,7 +4,7 @@ namespace FastBiteGroup.Domain.Entities;
 
 public class AdminNotifications
 {
-    public long Id { get; set; } 
+    public long Id { get; set; }
 
     public EnumAdminNotificationType NotificationType { get; set; }
 

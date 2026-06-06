@@ -63,11 +63,11 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
                             <p>Or click this link to verify your email automatically:</p>
                             <a href=""https://localhost:5001/api/v1/auth/verify-email?email={payload.Email}&code={payload.MagicLinkToken}"">Verify Account</a>
                         ";
-                        
+
                         await emailSender.SendEmailAsync(
-                            payload.Email, 
-                            "FastBite - Activate your account", 
-                            htmlBody, 
+                            payload.Email,
+                            "FastBite - Activate your account",
+                            htmlBody,
                             cancellationToken);
                     }
                 }
@@ -88,11 +88,11 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
                                 <p style=""color: #999; font-size: 12px; text-align: center;"">&copy; {DateTime.UtcNow.Year} FastBite. All rights reserved.</p>
                             </div>
                         ";
-                        
+
                         await emailSender.SendEmailAsync(
-                            payload.Email, 
-                            "FastBite - Reset your password", 
-                            htmlBody, 
+                            payload.Email,
+                            "FastBite - Reset your password",
+                            htmlBody,
                             cancellationToken);
                     }
                 }

@@ -31,7 +31,7 @@ public class AuthTests : BaseIntegrationTest
         // Assert
         response.EnsureSuccessStatusCode();
         var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
-        
+
         authResponse.Should().NotBeNull();
         authResponse!.AccessToken.Should().NotBeNullOrEmpty();
         authResponse.RefreshToken.Should().NotBeNullOrEmpty();

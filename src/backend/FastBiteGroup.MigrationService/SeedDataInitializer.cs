@@ -86,10 +86,10 @@ public sealed class SeedDataInitializer(
 
         if (!dbContext.GlobalSettings.Any(s => s.SettingKey == "DefaultCurrency"))
         {
-            dbContext.GlobalSettings.Add(new FastBiteGroup.Domain.Entities.GlobalSettings 
-            { 
-                SettingKey = "DefaultCurrency", 
-                SettingValue = "VND" 
+            dbContext.GlobalSettings.Add(new FastBiteGroup.Domain.Entities.GlobalSettings
+            {
+                SettingKey = "DefaultCurrency",
+                SettingValue = "VND"
             });
             settingsChanged = true;
             logger.LogInformation("Seeded Global Setting: DefaultCurrency = VND");
@@ -97,10 +97,10 @@ public sealed class SeedDataInitializer(
 
         if (!dbContext.GlobalSettings.Any(s => s.SettingKey == "MaxUploadSize"))
         {
-            dbContext.GlobalSettings.Add(new GlobalSettings 
-            { 
-                SettingKey = "MaxUploadSize", 
-                SettingValue = "5MB" 
+            dbContext.GlobalSettings.Add(new GlobalSettings
+            {
+                SettingKey = "MaxUploadSize",
+                SettingValue = "5MB"
             });
             settingsChanged = true;
             logger.LogInformation("Seeded Global Setting: MaxUploadSize = 5MB");

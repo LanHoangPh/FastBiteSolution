@@ -1,11 +1,12 @@
 ﻿namespace FastBiteGroup.Domain.Entities;
+
 public class AdminAuditLog
 {
     public long Id { get; set; }
     public Guid AdminUserId { get; set; }
     public string AdminFullName { get; set; } = string.Empty;
     public EnumAdminActionType ActionType { get; set; }
-    public EnumTargetEntityType TargetEntityType { get; set; } 
+    public EnumTargetEntityType TargetEntityType { get; set; }
     public string TargetEntityId { get; set; } = string.Empty;
     public string? Details { get; set; } // Lý do hoặc thông tin thêm (dạng JSON hoặc text)
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;

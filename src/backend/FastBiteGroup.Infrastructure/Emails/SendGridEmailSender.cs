@@ -1,4 +1,5 @@
 using FastBiteGroup.Application.Abstractions.Emails;
+using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -16,16 +17,19 @@ internal sealed class SendGridEmailSender : IEmailSender
     {
         _options = options.Value;
         _logger = logger;
-        
-        // Initialize the client here (or inject ISendGridClient)
-        _client = new SendGridClient(_options.ApiKey);
+
+        // Initialize the client only if ApiKey is provided to avoid ArgumentNullException
+        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
+        {
+            _client = new SendGridClient(_options.ApiKey);
+        }
     }
 
     public async Task SendEmailAsync(string to, string subject, string htmlContent, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(_options.ApiKey))
+        if (_client == null || string.IsNullOrWhiteSpace(_options.ApiKey))
         {
-            _logger.LogWarning("SendGrid ApiKey is missing. Email to {To} was not sent.", to);
+            _logger.LogWarning("SendGrid ApiKey is missing. Email to {To} was not sent. Subject: {Subject}", to, subject);
             return;
         }
 
@@ -35,7 +39,7 @@ internal sealed class SendGridEmailSender : IEmailSender
             Subject = subject,
             HtmlContent = htmlContent
         };
-        
+
         msg.AddTo(new EmailAddress(to));
 
         var response = await _client.SendEmailAsync(msg, cancellationToken);

@@ -58,7 +58,7 @@ internal sealed class RefreshTokenCommandHandler
         if (!refreshToken.IsActive)
         {
             _logger.LogWarning("Refresh token failed: refresh token is expired, used, or revoked. UserId: {UserId}", refreshToken.UserId);
-            
+
             // SECURITY CHECK: Refresh Token Reuse Detection (RFC 6819)
             if (refreshToken.IsUsed)
             {

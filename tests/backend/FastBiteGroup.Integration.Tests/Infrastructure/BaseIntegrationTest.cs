@@ -33,7 +33,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _dbConnection.OpenAsync();
-        
+
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,

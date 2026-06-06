@@ -6,6 +6,6 @@ public class ServiceProfile : Profile
 {
     public ServiceProfile()
     {
-      
+
     }
 }

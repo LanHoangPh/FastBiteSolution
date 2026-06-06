@@ -58,7 +58,7 @@ public class VerifyEmailCommandHandlerTests
         // Arrange
         var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, true, true, null, new List<string>());
-        
+
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
@@ -76,7 +76,7 @@ public class VerifyEmailCommandHandlerTests
         // Arrange
         var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
-        
+
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
@@ -97,7 +97,7 @@ public class VerifyEmailCommandHandlerTests
         // Arrange
         var command = new AuthCommands.VerifyEmailCommand("test@example.com", "invalid-code");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
-        
+
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
@@ -122,7 +122,7 @@ public class VerifyEmailCommandHandlerTests
         var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
         var verifiedUser = new UserDto(user.Id, command.Email, "testuser", "Test", "User", "Test User", null, null, true, true, null, new List<string>());
-        
+
         var accessToken = "access-token";
         var jti = "jti-value";
         var accessExpiresAt = DateTime.UtcNow.AddMinutes(15);

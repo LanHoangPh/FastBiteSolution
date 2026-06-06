@@ -7,9 +7,9 @@ public class Group : IDateTracking, ISoftDelete
     public Guid GroupID { get; set; }
     public string GroupName { get; set; } = string.Empty;
     public string? Description { get; set; }
-    public EnumGroupType GroupType { get; set; } = EnumGroupType.Public; 
+    public EnumGroupType GroupType { get; set; } = EnumGroupType.Public;
     public EnumGroupPrivacy Privacy { get; set; } = EnumGroupPrivacy.Public;
-    public string GroupAvatarUrl { get; set; }= string.Empty;
+    public string GroupAvatarUrl { get; set; } = string.Empty;
     public bool IsArchived { get; set; } // trạng thái nhóm có bị lưu trữ hay không
     public Guid CreatedByUserID { get; set; }
     public Guid? UpdatedByUserID { get; set; }

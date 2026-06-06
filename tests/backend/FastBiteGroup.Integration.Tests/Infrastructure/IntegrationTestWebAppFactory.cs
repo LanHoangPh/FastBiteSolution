@@ -12,12 +12,13 @@ namespace FastBiteGroup.Integration.Tests.Infrastructure;
 
 public class IntegrationTestWebAppFactory : WebApplicationFactory<API.Program>, IAsyncLifetime
 {
+    [Obsolete]
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder(PostgreSqlBuilder.PostgreSqlImage)
         .WithDatabase("fastbite_test")
         .WithUsername("postgres")
         .WithPassword("postgres")
         .Build();
-
+    [Obsolete]
     private readonly RedisContainer _redisContainer = new RedisBuilder()
         .Build();
 

@@ -5,7 +5,7 @@ namespace FastBiteGroup.Domain.Entities;
 public class Conversation : IAuditable
 {
     public int ConversationID { get; set; }
-    public EnumConversationType ConversationType { get; set; } 
+    public EnumConversationType ConversationType { get; set; }
     public string? Title { get; set; }
     public string? AvatarUrl { get; set; }
     public Guid? ExplicitGroupID { get; set; }
@@ -16,11 +16,11 @@ public class Conversation : IAuditable
     [MaxLength(100)]
     public string? LastMessageSenderName { get; set; } // Tên người gửi tin nhắn cuối
     public virtual ICollection<ConversationParticipants> Participants { get; set; } = new HashSet<ConversationParticipants>();
-    public DateTimeOffset CreatedAt { get ; set ; }
-    public DateTimeOffset? UpdatedAt { get ; set ; }
-    public Guid CreatedBy { get ; set ; }
-    public Guid? UpdatedBy { get ; set ; }
-    public bool IsDeleted { get ; set ; }
-    public DateTimeOffset? DeletedAt { get ; set ; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public Guid CreatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 }
 

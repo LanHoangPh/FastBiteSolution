@@ -9,7 +9,7 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         // cấu hình khóa chính
         builder.HasKey(user => user.Id);
 
-        builder.Property(x =>x.FirstName).HasMaxLength(100);
+        builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
         builder.Property(x => x.FullName).IsRequired().HasMaxLength(255);
         builder.Property(x => x.AvatarUrl).HasMaxLength(2048);

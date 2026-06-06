@@ -12,7 +12,7 @@ internal sealed class VideoCallSessionsConfiguration : IEntityTypeConfiguration<
         builder.Property(x => x.Title).HasMaxLength(255);
 
         builder.Property(x => x.Status)
-                   .HasConversion<string>() 
+                   .HasConversion<string>()
                    .IsRequired();
         builder.Property(x => x.TimeoutJobId).HasMaxLength(100);
         builder.Property(x => x.StartedAt).IsRequired();

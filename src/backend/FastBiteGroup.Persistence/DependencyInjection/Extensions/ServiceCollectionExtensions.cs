@@ -93,14 +93,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMongoPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("MongoDBConnection")
-            ?? configuration.GetConnectionString("MongoDb")
-            ?? configuration[$"{MongoDbOptions.SectionName}:ConnectionString"];
+            ?? configuration.GetConnectionString("MongoDb");
 
         if (string.IsNullOrWhiteSpace(connectionString))
             return services;
 
         services.AddOptions<MongoDbOptions>()
-            .Bind(configuration.GetSection(MongoDbOptions.SectionName))
+            .Bind(configuration.GetSection(nameof(MongoDbOptions)))
             .PostConfigure(options =>
             {
                 if (string.IsNullOrWhiteSpace(options.ConnectionString))

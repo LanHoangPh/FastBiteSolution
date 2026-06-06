@@ -5,17 +5,19 @@ var builder = DistributedApplication.CreateBuilder(args);
 var mediatrLicense = builder.AddParameter("mediatr-license", secret: true);
 var autoMapperLicense = builder.AddParameter("automapper-license", secret: true);
 var secretKey = builder.AddParameter("jwt-secret-key", secret: true);
+var apikeySendGrid = builder.AddParameter("sendgrid-api-key", secret: true);
+var googleClientId = builder.AddParameter("google-client-id", secret: true);
 
 
 // --use local resources for database and cache to speed up development feedback loop
 var database = builder.AddApplicationPostgres();
-//var cache = builder.AddApplicationRedis();
+var cache = builder.AddApplicationRedis();
 var mongoDB = builder.AddApplicationMongoDB();
 
 
 // -- use cloud resources for database and cache to test real-world connectivity and performance
 //var database = builder.AddApplicationPostgresConnection();
-var cache = builder.AddApplicationRedisConnection();
+//var cache = builder.AddApplicationRedisConnection();
 
 
 var migrations = builder.AddProject<Projects.FastBiteGroup_MigrationService>("migrations")
@@ -28,7 +30,9 @@ var api = builder.AddApplicationApi(
         cache,
         mediatrLicense,
         autoMapperLicense,
-        secretKey)
+        secretKey,
+        apikeySendGrid,
+        googleClientId)
     .WaitForCompletion(migrations);
 
 // builder.AddOptionalFrontend(api);

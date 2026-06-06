@@ -2,10 +2,10 @@
 
 public enum EnumNotificationObjectType
 {
-    Message = 1, 
-    Post, 
-    UserMention, 
-    PostLike, 
+    Message = 1,
+    Post,
+    UserMention,
+    PostLike,
     Poll,
     Group,
     ExternalLink = 99

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
 namespace FastBiteGroupMCA.Persistentce.Configurations;
+
 internal sealed class IdentityRolsConfiguration : IEntityTypeConfiguration<AppRoles>
 {
     public void Configure(EntityTypeBuilder<AppRoles> builder)

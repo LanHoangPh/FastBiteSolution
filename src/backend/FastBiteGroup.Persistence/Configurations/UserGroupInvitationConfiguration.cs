@@ -23,7 +23,7 @@ internal class UserGroupInvitationConfiguration : IEntityTypeConfiguration<UserG
         builder.Property(x => x.RespondedAt).IsRequired(false);
         // Cấu hình mối quan hệ với User và Group
         builder.HasOne(invitation => invitation.Group)
-               .WithMany(group => group.DirectUserInvitations) 
+               .WithMany(group => group.DirectUserInvitations)
                .HasForeignKey(invitation => invitation.GroupID)
                .OnDelete(DeleteBehavior.Cascade); // Nếu xóa Group, các lời mời liên quan cũng sẽ bị xóa
 
