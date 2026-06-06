@@ -7,7 +7,7 @@ namespace FastBiteGroup.MigrationService;
 
 public sealed class SeedDataInitializer(
     ApplicationDbContext dbContext,
-    RoleManager<AppRole> roleManager,
+    RoleManager<AppRoles> roleManager,
     UserManager<AppUser> userManager,
     IOptions<SeedDataOptions> options,
     ILogger<SeedDataInitializer> logger)
@@ -32,7 +32,7 @@ public sealed class SeedDataInitializer(
                 continue;
             }
 
-            var result = await roleManager.CreateAsync(new AppRole(roleName));
+            var result = await roleManager.CreateAsync(new AppRoles(roleName));
             ThrowIfFailed(result, $"create role '{roleName}'");
 
             logger.LogInformation("Seeded role {RoleName}.", roleName);

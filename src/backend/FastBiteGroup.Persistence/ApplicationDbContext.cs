@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FastBiteGroup.Persistence;
 
 public sealed class ApplicationDbContext
-    : IdentityDbContext<AppUser, AppRole, Guid>
+    : IdentityDbContext<AppUser, AppRoles, Guid>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }

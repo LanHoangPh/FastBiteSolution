@@ -67,7 +67,7 @@ public static class ServiceCollectionExtensions
             // User
             options.User.RequireUniqueEmail = true;
         })
-        .AddRoles<AppRole>()
+        .AddRoles<AppRoles>()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
         return services;
