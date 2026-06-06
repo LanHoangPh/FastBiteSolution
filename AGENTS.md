@@ -6,7 +6,7 @@
 
 ## Project Summary
 
-**FastBiteGroup** is a .NET 10 backend API currently shaped as a food-ordering / e-commerce platform, with a planned evolution toward chat-style workloads that combine relational and document storage.
+**FastBiteGroup** is a .NET 10 backend API for a Unified Communication Platform (hybrid Microsoft Teams/Slack + Facebook Workplace/Yammer) designed for enterprises and communities. It combines real-time messaging, workspaces, and social feeds using both relational and document storage.
 
 - **Architecture**: Clean Architecture / Modular Monolith
 - **Pattern**: CQRS via MediatR + Repository + Unit of Work

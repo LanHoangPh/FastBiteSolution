@@ -1,5 +1,4 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
-using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Presentation.Abstractions;
@@ -26,6 +25,14 @@ public class AuthApi : ApiEndpoint, IEndpoint
         group.MapPost("/register", Register)
             .AllowAnonymous()
             .WithSummary("Register a new user account")
+            .Produces<RegisterResponse>(StatusCodes.Status202Accepted)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        // POST /api/v1/auth/verify-email
+        group.MapPost("/verify-email", VerifyEmail)
+            .AllowAnonymous()
+            .WithSummary("Verify email via OTP or Magic Link Token and receive JWT token pair")
             .Produces<AuthResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest);
@@ -58,12 +65,45 @@ public class AuthApi : ApiEndpoint, IEndpoint
             .WithSummary("Revoke all active sessions for the current user")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
+
+        // POST /api/v1/auth/forgot-password
+        group.MapPost("/forgot-password", ForgotPassword)
+            .AllowAnonymous()
+            .WithSummary("Request a password reset OTP")
+            .Produces(StatusCodes.Status202Accepted)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        // POST /api/v1/auth/reset-password
+        group.MapPost("/reset-password", ResetPassword)
+            .AllowAnonymous()
+            .WithSummary("Reset password using OTP")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        // POST /api/v1/auth/google-login
+        group.MapPost("/google-login", GoogleLogin)
+            .AllowAnonymous()
+            .WithSummary("Login or auto-register using Google ID Token")
+            .Produces<AuthResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
     }
 
-    // ─── Handlers ─────────────────────────────────────────────────────────
+    #region Handelrs
 
     private static async Task<IResult> Register(
         [FromBody] AuthCommands.RegisterCommand command,
+        ISender sender,
+        CancellationToken ct)
+    {
+        var result = await sender.Send(command, ct);
+        return result.IsFailure ? HandleFailure(result) : Results.Accepted(string.Empty, result.Value);
+    }
+
+    private static async Task<IResult> VerifyEmail(
+        [FromBody] AuthCommands.VerifyEmailCommand command,
         ISender sender,
         CancellationToken ct)
     {
@@ -120,4 +160,32 @@ public class AuthApi : ApiEndpoint, IEndpoint
         var result = await sender.Send(command, ct);
         return result.IsFailure ? HandleFailure(result) : Results.NoContent();
     }
+
+    private static async Task<IResult> ForgotPassword(
+        [FromBody] AuthCommands.ForgotPasswordCommand command,
+        ISender sender,
+        CancellationToken ct)
+    {
+        var result = await sender.Send(command, ct);
+        return result.IsFailure ? HandleFailure(result) : Results.Accepted(string.Empty);
+    }
+
+    private static async Task<IResult> ResetPassword(
+        [FromBody] AuthCommands.ResetPasswordCommand command,
+        ISender sender,
+        CancellationToken ct)
+    {
+        var result = await sender.Send(command, ct);
+        return result.IsFailure ? HandleFailure(result) : Results.NoContent();
+    }
+
+    private static async Task<IResult> GoogleLogin(
+        [FromBody] GoogleLoginCommand command,
+        ISender sender,
+        CancellationToken ct)
+    {
+        var result = await sender.Send(command, ct);
+        return result.IsFailure ? HandleFailure(result) : Results.Ok(result.Value);
+    }
+    #endregion
 }

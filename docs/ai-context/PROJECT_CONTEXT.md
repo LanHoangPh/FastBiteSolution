@@ -2,10 +2,10 @@
 
 ## What This Project Does
 
-**FastBiteGroup** is a .NET 10 backend REST API. The current implemented domain is food-ordering / product e-commerce, and the storage architecture is being prepared for future chat-style workloads that combine SQL and NoSQL.
+**FastBiteGroup** is a .NET 10 backend REST API for a Unified Communication Platform (hybrid Microsoft Teams/Slack + Facebook Workplace/Yammer). The storage architecture combines SQL for strict relational state and NoSQL for high-volume unstructured social/chat workloads.
 
 Implemented capabilities:
-- Product management: create, update, delete, list, get by id.
+- User and Workspace management basics (replacing legacy product concepts).
 - Authentication: register, login, refresh token, logout, revoke all sessions.
 - Session protection: JWT blacklist in Redis.
 - PostgreSQL persistence with EF Core and ASP.NET Core Identity.
@@ -18,9 +18,9 @@ The system is still a Modular Monolith, not microservices.
 
 ## Target Users
 
-- End users browsing or ordering products.
-- Future chat users sending messages and receiving notifications.
-- Administrators managing catalog data.
+- Enterprise employees or community members collaborating via channels and social feeds.
+- Workspace Administrators managing roles and moderating content.
+- System Administrators monitoring logs and health.
 - Internal developers consuming the API.
 
 ---

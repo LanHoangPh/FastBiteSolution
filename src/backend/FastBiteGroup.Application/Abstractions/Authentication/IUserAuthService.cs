@@ -1,3 +1,5 @@
+using FastBiteGroup.Contract.Abstractions.Shared;
+
 namespace FastBiteGroup.Application.Abstractions.Authentication;
 
 /// <summary>
@@ -13,6 +15,7 @@ public record UserDto(
     string? FullName,
     string? AvatarUrl,
     string? Bio,
+    bool EmailConfirmed,
     bool IsActive,
     DateTime? LastSeenAt,
     IList<string> Roles);
@@ -35,4 +38,15 @@ public interface IUserAuthService
     Task<(UserDto? User, string? ErrorMessage)> CreateUserAsync(
         string email, string password, string firstName, string lastName,
         DateTime dateOfBirth, CancellationToken ct = default);
+
+    /// <summary>
+    /// Creates a new user from Google payload with a random secure password and confirmed email.
+    /// </summary>
+    Task<(UserDto? User, string? ErrorMessage)> CreateUserFromGoogleAsync(
+        string email, string firstName, string lastName, string picture, CancellationToken ct = default);
+
+    Task<string> GenerateEmailConfirmationTokenAsync(string email, CancellationToken ct = default);
+    Task<bool> ConfirmEmailWithTokenAsync(string email, string token, CancellationToken ct = default);
+    Task<bool> ActivateUserAsync(string email, CancellationToken ct = default);
+    Task<Result> ResetPasswordAsync(string email, string newPassword, CancellationToken ct = default);
 }

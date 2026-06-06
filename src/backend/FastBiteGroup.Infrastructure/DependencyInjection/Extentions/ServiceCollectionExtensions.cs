@@ -2,6 +2,9 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 using FastBiteGroup.Infrastructure.Services;
+using FastBiteGroup.Infrastructure.Emails;
+using FastBiteGroup.Infrastructure.BackgroundJobs;
+using FastBiteGroup.Application.Abstractions.Emails;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,11 +50,22 @@ public static class ServiceCollectionExtensions
         services.Configure<JwtOptions>(
             configuration.GetSection(nameof(JwtOptions)));
 
+        services.AddSingleton<IOtpService, OtpService>();
+
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
         // Register ICurrentUser — reads claims from HTTP request context
         services.AddCurrentUser();
+
+        // Emails
+        services.Configure<SendGridOptions>(
+            configuration.GetSection(SendGridOptions.SectionName));
+        services.AddTransient<IEmailSender, SendGridEmailSender>();
+
+        // Background Jobs
+        services.AddHostedService<IntegrationOutboxProcessorService>();
 
         return services;
     }

@@ -4,7 +4,6 @@ namespace FastBiteGroup.Persistence.DependencyInjection.Options;
 
 public sealed class MongoDbOptions
 {
-    public const string SectionName = "MongoDbOptions";
 
     [Required]
     public string ConnectionString { get; set; } = string.Empty;

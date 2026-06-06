@@ -14,6 +14,7 @@
     <Project Path="src/backend/FastBiteGroup.Persistence/FastBiteGroup.Persistence.csproj" />
     <Project Path="src/backend/FastBiteGroup.Presentation/FastBiteGroup.Presentation.csproj" />
   </Folder>
+  <Folder Name="/src/desktop/" />
   <Folder Name="/src/frontend/" />
   <Folder Name="/tests/" />
   <Folder Name="/tests/backend/">

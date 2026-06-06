@@ -1,4 +1,5 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
+using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,7 +32,18 @@ internal sealed class UserAuthService : IUserAuthService
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null) return false;
-        return await _userManager.CheckPasswordAsync(user, password);
+        
+        var isMatch = await _userManager.CheckPasswordAsync(user, password);
+        if (!isMatch)
+        {
+            await _userManager.AccessFailedAsync(user);
+        }
+        else
+        {
+            await _userManager.ResetAccessFailedCountAsync(user);
+        }
+        
+        return isMatch;
     }
 
     public async Task<bool> IsLockedOutAsync(Guid userId, CancellationToken ct = default)
@@ -54,8 +66,8 @@ internal sealed class UserAuthService : IUserAuthService
             LastName = lastName,
             FullName = $"{firstName} {lastName}".Trim(),
             DateOfBirth = dateOfBirth,
-            EmailConfirmed = true,
-            IsActive = true,
+            EmailConfirmed = false,
+            IsActive = false,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -74,6 +86,89 @@ internal sealed class UserAuthService : IUserAuthService
         return (MapToDto(user, roles), null);
     }
 
+    public async Task<(UserDto? User, string? ErrorMessage)> CreateUserFromGoogleAsync(
+        string email, string firstName, string lastName, string picture, CancellationToken ct = default)
+    {
+        var user = new AppUser
+        {
+            UserName = email,
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}".Trim(),
+            AvatarUrl = picture,
+            EmailConfirmed = true, // Auto confirmed from Google
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        // Generate a random secure password for Google users
+        var randomPassword = Guid.NewGuid().ToString("N") + "Aa1!";
+        
+        var result = await _userManager.CreateAsync(user, randomPassword);
+        if (!result.Succeeded)
+        {
+            var error = string.Join(", ", result.Errors.Select(e => e.Description));
+            return (null, error);
+        }
+
+        await _userManager.AddToRoleAsync(user, "Customer");
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        return (MapToDto(user, roles), null);
+    }
+
+    public async Task<string> GenerateEmailConfirmationTokenAsync(string email, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return string.Empty;
+        return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    }
+
+    public async Task<bool> ConfirmEmailWithTokenAsync(string email, string token, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return false;
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (result.Succeeded)
+        {
+            user.IsActive = true;
+            await _userManager.UpdateAsync(user);
+        }
+        return result.Succeeded;
+    }
+
+    public async Task<bool> ActivateUserAsync(string email, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return false;
+        
+        user.EmailConfirmed = true;
+        user.IsActive = true;
+        var result = await _userManager.UpdateAsync(user);
+        return result.Succeeded;
+    }
+
+    public async Task<Result> ResetPasswordAsync(string email, string newPassword, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return Result.Failure(new Error("UserAuth.UserNotFound", "User not found"));
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+        if (result.Succeeded)
+        {
+            return Result.Success();
+        }
+
+        var error = string.Join(", ", result.Errors.Select(e => e.Description));
+        return Result.Failure(new Error("UserAuth.ResetFailed", error));
+    }
+
     private static UserDto MapToDto(AppUser user, IList<string> roles) =>
         new(
             Id: user.Id,
@@ -84,6 +179,7 @@ internal sealed class UserAuthService : IUserAuthService
             FullName: user.FullName,
             AvatarUrl: user.AvatarUrl,
             Bio: user.Bio,
+            EmailConfirmed: user.EmailConfirmed,
             IsActive: user.IsActive,
             LastSeenAt: user.LastSeenAt,
             Roles: roles);

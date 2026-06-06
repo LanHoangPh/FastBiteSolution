@@ -47,6 +47,7 @@ public class RefreshTokenCommandHandlerTests
             FullName: "First Last",
             AvatarUrl: null,
             Bio: null,
+            EmailConfirmed: true,
             IsActive: true,
             LastSeenAt: null,
             Roles: new List<string> { "Customer" });

@@ -43,6 +43,13 @@ internal sealed class LoginCommandHandler
                 new Error("Auth.InvalidCredentials", "Email or password is incorrect."));
         }
 
+        if (!user.EmailConfirmed || !user.IsActive)
+        {
+            _logger.LogWarning("Login failed: account is inactive or email not confirmed. UserId: {UserId}", user.Id);
+            return Result.Failure<AuthResponse>(
+                new Error("Auth.AccountInactive", "Account is not active. Please confirm your email first."));
+        }
+
         // 2. Check lockout first
         if (await _userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
         {

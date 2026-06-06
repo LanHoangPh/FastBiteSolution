@@ -24,8 +24,20 @@ public static class AuthCommands
         string Password,
         string FirstName,
         string LastName,
-        DateTime DayOfBirth) : ICommand<AuthResponse>;
+        DateTime DayOfBirth) : ICommand<RegisterResponse>;
+
+    public sealed record VerifyEmailCommand(
+        string Email,
+        string Code) : ICommand<AuthResponse>;
 
     public sealed record RevokeAllSessionsCommand(
         Guid UserId) : ICommand;
+
+    public sealed record ForgotPasswordCommand(
+        string Email) : ICommand;
+
+    public sealed record ResetPasswordCommand(
+        string Email,
+        string Otp,
+        string NewPassword) : ICommand;
 }

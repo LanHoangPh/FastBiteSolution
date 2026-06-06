@@ -27,6 +27,7 @@ internal static class AuthTestData
             FullName: $"{firstName} {lastName}",
             AvatarUrl: null,
             Bio: null,
+            EmailConfirmed: true,
             IsActive: true,
             LastSeenAt: null,
             Roles: roles?.ToList() ?? new List<string> { "Customer" });
