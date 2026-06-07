@@ -1,8 +1,6 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Shared;
 using Google.Apis.Auth;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FastBiteGroup.Infrastructure.Services;
 

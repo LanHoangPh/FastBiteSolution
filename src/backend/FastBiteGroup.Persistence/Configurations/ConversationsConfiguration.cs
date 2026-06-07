@@ -15,7 +15,6 @@ internal sealed class ConversationsConfiguration : IEntityTypeConfiguration<Conv
                .IsUnique()
                .HasFilter("[ExplicitGroupID] IS NOT NULL"); // Áp dụng cho các bản ghi không null
 
-        // Cấu hình Enum
         builder.Property(x => x.ConversationType)
                .IsRequired()
                .HasConversion<string>()

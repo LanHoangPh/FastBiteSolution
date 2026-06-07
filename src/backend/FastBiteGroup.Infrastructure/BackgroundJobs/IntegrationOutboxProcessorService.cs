@@ -1,10 +1,7 @@
-using System.Text.Json;
 using FastBiteGroup.Application.Abstractions.Emails;
 using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.BackgroundJobs;
 

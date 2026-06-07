@@ -18,11 +18,11 @@ namespace FastBiteGroupMCA.Persistentce.Configurations
                    .HasMaxLength(1000);
 
             builder.Property(x => x.ReportedContentType)
-                   .HasConversion<string>()  // Enum to string
+                   .HasConversion<string>()  
                    .IsRequired();
 
             builder.Property(x => x.Status)
-                   .HasConversion<string>() // Lưu Enum dưới dạng chuỗi trong DB
+                   .HasConversion<string>() 
                    .IsRequired();
 
             // FK: User báo cáo

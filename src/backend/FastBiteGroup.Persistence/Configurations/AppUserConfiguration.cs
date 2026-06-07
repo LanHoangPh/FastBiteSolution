@@ -4,9 +4,7 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
-        // set tên bảng
         builder.ToTable(TableNames.AppUser);
-        // cấu hình khóa chính
         builder.HasKey(user => user.Id);
 
         builder.Property(x => x.FirstName).HasMaxLength(100);

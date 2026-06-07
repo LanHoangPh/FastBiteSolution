@@ -1,7 +1,5 @@
 using FastBiteGroup.Application.Abstractions.Emails;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -11,7 +9,7 @@ internal sealed class SendGridEmailSender : IEmailSender
 {
     private readonly SendGridOptions _options;
     private readonly ILogger<SendGridEmailSender> _logger;
-    private readonly ISendGridClient _client;
+    private readonly ISendGridClient? _client;
 
     public SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<SendGridEmailSender> logger)
     {

@@ -1,6 +1,6 @@
 # CURRENT_STATUS.md - FastBiteGroup
 
-**Last Updated:** 2026-06-05
+**Last Updated:** 2026-06-07
 
 ---
 
@@ -27,7 +27,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 
 - Command/query abstractions for MediatR.
 - `Result`, `Result<T>`, validation result, `Error`, paged result.
-- Auth contracts: login, register, refresh, logout, revoke all.
+- Auth contracts: login, register, verify email, refresh, logout, revoke all, forgot password, reset password, google login.
 - Product contracts: create, update, delete, get all, get by id, product response.
 - Outbox contracts: `IntegrationOutboxMessage`, `IIntegrationOutboxStore`.
 
@@ -48,13 +48,17 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 ### Infrastructure
 
 - Redis cache service using `StackExchange.Redis`.
+- OTP service with limits (MaxAttempts, RateLimiting) using `StackExchange.Redis`.
 - JWT token service with JTI support.
 - User auth service wrapping ASP.NET Core Identity.
-- DI for Redis and security services.
+- Google Auth service wrapping `Google.Apis.Auth` for verifying ID Tokens.
+- Email sender using `SendGrid`.
+- `IntegrationOutboxProcessorService` running as a background service to process outbox events (e.g., sending emails).
+- DI for Redis, email, google auth, and security services.
 
 ### Application
 
-- Auth handlers: login, register, refresh token, logout, revoke all sessions.
+- Auth handlers: login, register, verify email, forgot password, reset password, google login, refresh token, logout, revoke all sessions.
 - Product handlers: create, update, delete, get all, get by id.
 - Validators for auth/product commands.
 - AutoMapper profile for product response mapping.
@@ -62,7 +66,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 
 ### Presentation/API
 
-- Auth API: register, login, refresh, logout, revoke all.
+- Auth API: register, verify email, login, refresh, logout, revoke all, forgot password, reset password, google login.
 - Product API: get all, get by id, create, update, delete.
 - API composition in `Program.cs`.
 - JWT auth, token blacklist middleware, global exception handler.
@@ -79,7 +83,8 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 | Architecture tests | 10/10 passing |
 | Contract tests | Build/pass available |
 | Domain tests | Build/pass available |
-| Application tests | Build/pass available |
+| Application tests | Build/pass available (Expanded with extensive tests for Auth Flows: OTP, Forgot Password, Reset Password, etc.) |
+| Infrastructure tests | Build/pass available (OTP Service Mocking tests) |
 | Integration tests | Require live PostgreSQL/Redis environment |
 
 Last verified commands:

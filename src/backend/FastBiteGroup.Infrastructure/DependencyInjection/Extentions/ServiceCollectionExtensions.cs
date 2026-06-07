@@ -5,9 +5,6 @@ using FastBiteGroup.Infrastructure.BackgroundJobs;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 using FastBiteGroup.Infrastructure.Emails;
 using FastBiteGroup.Infrastructure.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 
 namespace FastBiteGroup.Infrastructure.DependencyInjection.Extentions;
 

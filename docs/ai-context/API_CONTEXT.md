@@ -43,10 +43,14 @@ Base route:
 | Method | Route | Command | Status |
 |---|---|---|---|
 | POST | `/register` | `RegisterCommand` | Implemented |
+| POST | `/verify-email` | `VerifyEmailCommand` | Implemented |
 | POST | `/login` | `LoginCommand` | Implemented |
 | POST | `/refresh` | `RefreshTokenCommand` | Implemented |
 | POST | `/logout` | `LogoutCommand` | Implemented |
 | POST | `/revoke-all` | `RevokeAllSessionsCommand` | Implemented |
+| POST | `/forgot-password` | `ForgotPasswordCommand` | Implemented |
+| POST | `/reset-password` | `ResetPasswordCommand` | Implemented |
+| POST | `/google-login` | `GoogleLoginCommand` | Implemented |
 
 Logout extracts the JWT `jti` from claims rather than trusting the request body.
 
@@ -138,6 +142,27 @@ Logout
 
 Revoke all
   -> bulk revoke refresh tokens for user
+
+Verify Email
+  -> validate OTP or Magic Link Token
+  -> set EmailConfirmed to true and IsActive to true
+  -> issue new token pair (auto login)
+
+Forgot Password
+  -> validate user exists
+  -> generate 6-digit OTP and store in Redis
+  -> enqueue Integration Event to Outbox for async email delivery
+
+Reset Password
+  -> validate OTP with limits (MaxAttempts)
+  -> call UserManager to reset password
+  -> bulk revoke all active sessions for security
+
+Google Login
+  -> validate Google ID token signature via `Google.Apis.Auth`
+  -> check if user exists by email -> auto-register with random secure password if not found
+  -> auto-activate user if not active
+  -> issue new token pair
 ```
 
 ---

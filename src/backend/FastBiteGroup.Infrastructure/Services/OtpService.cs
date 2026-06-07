@@ -1,5 +1,4 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
-using StackExchange.Redis;
 
 namespace FastBiteGroup.Infrastructure.Services;
 

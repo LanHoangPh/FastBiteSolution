@@ -16,4 +16,8 @@
     <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="APIs\Admin\" />
+  </ItemGroup>
+
 </Project>

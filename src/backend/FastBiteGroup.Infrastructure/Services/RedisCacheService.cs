@@ -1,5 +1,4 @@
 using FastBiteGroup.Application.Abstractions.Caching;
-using StackExchange.Redis;
 using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.Services;

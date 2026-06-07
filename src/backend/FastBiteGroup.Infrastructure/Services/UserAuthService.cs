@@ -1,7 +1,6 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Persistence.Identity;
-using Microsoft.AspNetCore.Identity;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
@@ -78,7 +77,6 @@ internal sealed class UserAuthService : IUserAuthService
             return (null, error);
         }
 
-        // Assign default Customer role
         await _userManager.AddToRoleAsync(user, "Customer");
 
         // Reload roles for the DTO (AddToRoleAsync does not populate the user's roles in memory)

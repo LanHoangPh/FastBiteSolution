@@ -1,11 +1,5 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
