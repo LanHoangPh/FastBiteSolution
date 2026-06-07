@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/Aspire/">
+    <Project Path="Aspire/FastBiteGroup.AppHost/FastBiteGroup.AppHost.csproj" />
+    <Project Path="Aspire/FastBiteGroup.ServiceDefaults/FastBiteGroup.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/backend/">
+    <Project Path="backend/FastBiteGroup.API/FastBiteGroup.API.csproj" />
+    <Project Path="backend/FastBiteGroup.Application/FastBiteGroup.Application.csproj" />
+    <Project Path="backend/FastBiteGroup.Contract/FastBiteGroup.Contract.csproj" />
+    <Project Path="backend/FastBiteGroup.Domain/FastBiteGroup.Domain.csproj" />
+    <Project Path="backend/FastBiteGroup.Infrastructure/FastBiteGroup.Infrastructure.csproj" />
+    <Project Path="backend/FastBiteGroup.MigrationService/FastBiteGroup.MigrationService.csproj" />
+    <Project Path="backend/FastBiteGroup.Persistence/FastBiteGroup.Persistence.csproj" />
+    <Project Path="backend/FastBiteGroup.Presentation/FastBiteGroup.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="../tests/backend/FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj" />
+    <Project Path="../tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj" />
+    <Project Path="../tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj" />
+    <Project Path="../tests/backend/FastBiteGroup.Infrastructure.Tests/FastBiteGroup.Infrastructure.Tests.csproj" />
+    <Project Path="../tests/backend/FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FastBiteGroup.Desktop.Application/FastBiteGroup.Desktop.Application.csproj" />
+  <Project Path="FastBiteGroup.Desktop.Domain/FastBiteGroup.Desktop.Domain.csproj" />
+  <Project Path="FastBiteGroup.Desktop.Infrastructure/FastBiteGroup.Desktop.Infrastructure.csproj" />
+  <Project Path="FastBiteGroup.Desktop.UI/FastBiteGroup.Desktop.UI.csproj" />
+</Solution>
