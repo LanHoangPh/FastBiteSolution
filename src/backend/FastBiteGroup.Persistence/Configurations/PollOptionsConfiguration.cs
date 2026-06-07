@@ -9,6 +9,7 @@ internal sealed class PollOptionsConfiguration : IEntityTypeConfiguration<PollOp
 
         builder.Property(x => x.OptionText).IsRequired().HasMaxLength(500);
         builder.Property(x => x.CreatedAt).IsRequired();
+        builder.HasQueryFilter(x => x.Poll != null && !x.Poll.IsDeleted);
 
         // Mối quan hệ với Poll
         builder.HasOne(po => po.Poll)

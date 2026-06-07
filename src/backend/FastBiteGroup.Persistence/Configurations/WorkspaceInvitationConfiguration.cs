@@ -1,8 +1,3 @@
-using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Persistence.Constants;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace FastBiteGroup.Persistentce.Configurations;
 
 internal sealed class WorkspaceInvitationConfiguration : IEntityTypeConfiguration<WorkspaceInvitation>
@@ -17,6 +12,7 @@ internal sealed class WorkspaceInvitationConfiguration : IEntityTypeConfiguratio
         builder.Property(x => x.UpdatedAt).IsRequired(false);
 
         builder.HasIndex(x => x.InvitationCode).IsUnique();
+        builder.HasQueryFilter(x => x.Workspace != null && !x.Workspace.IsDeleted);
 
         // Mối quan hệ với Workspace
         builder.HasOne(gi => gi.Workspace)

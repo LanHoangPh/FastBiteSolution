@@ -1,58 +1,73 @@
+using FastBiteGroup.Application.Abstractions.Authentication;
+using FastBiteGroup.Application.Abstractions.Caching;
+using FastBiteGroup.Application.Constants;
+using FastBiteGroup.Application.UseCases.V1.Workspace;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
+using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 using FastBiteGroup.Domain.Abstractions;
 using FastBiteGroup.Domain.Abstractions.Repositories;
 using FastBiteGroup.Domain.Entities;
 using FastBiteGroup.Domain.Enum;
-using FastBiteGroup.Application.Abstractions.Authentication;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Workspace;
 
-public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceCommand>
+public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceCommand, WorkspaceResponse>
 {
     private readonly IWorkspaceRepository _workspaceRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
+    private readonly ICacheService _cacheService;
 
     public CreateWorkspaceCommandHandler(
         IWorkspaceRepository workspaceRepository,
         IUnitOfWork unitOfWork,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        ICacheService cacheService)
     {
         _workspaceRepository = workspaceRepository;
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
+        _cacheService = cacheService;
     }
 
-    public async Task<Result> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
+    public async Task<Result<WorkspaceResponse>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
         var userId = _currentUser.UserId;
+        var workspaceId = Guid.NewGuid();
+        var now = DateTimeOffset.UtcNow;
 
-        // Create Workspace Entity
         var workspace = new FastBiteGroup.Domain.Entities.Workspace
         {
-            WorkspaceName = request.WorkspaceName,
-            Description = request.Description,
+            WorkspaceID = workspaceId,
+            WorkspaceName = request.WorkspaceName.Trim(),
+            Description = request.Description?.Trim(),
             WorkspaceType = (EnumWorkspaceType)request.WorkspaceType,
             Privacy = (EnumWorkspacePrivacy)request.Privacy,
-            WorkspaceAvatarUrl = request.WorkspaceAvatarUrl ?? string.Empty,
+            WorkspaceAvatarUrl = request.WorkspaceAvatarUrl?.Trim() ?? string.Empty,
             CreatedByUserID = userId,
-            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = now,
+            Members = new List<WorkspaceMember>
+            {
+                new()
+                {
+                    WorkspaceID = workspaceId,
+                    UserID = userId,
+                    Role = EnumWorkspaceRole.Owner,
+                    Status = EnumWorkspaceMemberStatus.Active,
+                    JoinedAt = now.UtcDateTime
+                }
+            }
         };
-
-        // Assign Creator as Owner
-        var member = new WorkspaceMember
-        {
-            UserID = userId,
-            Role = EnumWorkspaceRole.Owner,
-            JoinedAt = DateTime.UtcNow
-        };
-        workspace.Members = new List<WorkspaceMember> { member };
 
         _workspaceRepository.Add(workspace);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _cacheService.RemoveAsync(CacheKeys.UserWorkspaces(userId), cancellationToken);
 
-        return Result.Success();
+        var summary = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(workspaceId, userId, cancellationToken);
+        return summary is null
+            ? Result.Failure<WorkspaceResponse>(Contract.Services.V1.Workspace.WorkspaceErrors.NotFound)
+            : Result.Success(summary.ToResponse());
     }
 }

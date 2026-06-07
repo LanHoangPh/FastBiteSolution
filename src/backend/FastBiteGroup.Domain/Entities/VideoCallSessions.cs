@@ -2,7 +2,7 @@
 
 public class VideoCallSessions : ISoftDelete
 {
-    public Guid VideoCallSessionID { get; set; }
+    public Guid VideoCallSessionID { get; set; } = Guid.NewGuid();
     public string? Title { get; set; }
     public int ConversationID { get; set; }
     public Guid InitiatorUserID { get; set; }

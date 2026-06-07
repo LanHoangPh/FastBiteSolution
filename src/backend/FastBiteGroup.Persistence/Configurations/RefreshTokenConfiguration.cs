@@ -1,9 +1,3 @@
-using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Persistence.Constants;
-using FastBiteGroup.Persistence.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace FastBiteGroup.Persistence.Configurations;
 
 internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<AppRefreshToken>

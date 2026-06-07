@@ -76,6 +76,272 @@ Product endpoints require authentication.
 
 ---
 
+## Workspace Endpoints
+
+Base route:
+
+```text
+/api/v1/workspaces
+```
+
+All Workspace endpoints require JWT authentication.
+
+Workspace is the tenant boundary for future Channels, Messages, Social Feed, and Files. Frontend should treat `workspaceId` as required context after login.
+
+### Common Response Types
+
+`WorkspaceResponse`
+
+```json
+{
+  "workspaceId": "0f5e0d4e-1b8f-4b3c-930f-9a8a68a8c7b1",
+  "workspaceName": "Acme Team",
+  "description": "Internal workspace",
+  "workspaceType": "Private",
+  "privacy": "Private",
+  "workspaceAvatarUrl": "https://cdn.example.com/logo.png",
+  "currentUserRole": "Owner",
+  "createdAt": "2026-06-07T14:34:31Z",
+  "isArchived": false,
+  "memberCount": 1
+}
+```
+
+`WorkspaceInvitationResponse`
+
+```json
+{
+  "invitationId": 12,
+  "workspaceId": "0f5e0d4e-1b8f-4b3c-930f-9a8a68a8c7b1",
+  "workspaceName": "Acme Team",
+  "description": "Internal workspace",
+  "workspaceAvatarUrl": "https://cdn.example.com/logo.png",
+  "invitedByUserId": "a3dff0ca-7f0e-42bb-b0f4-70112fdc6ab0",
+  "createdAt": "2026-06-07T14:34:31Z",
+  "expiresAt": "2026-06-14T14:34:31Z"
+}
+```
+
+### Onboarding and Navigation
+
+| Method | Route | Purpose | Request | Response |
+|---|---|---|---|---|
+| GET | `/me` | Get workspaces where current user is an active member. FE uses this after login for empty state/sidebar. Uses Redis cache. | None | `200 OK` + `WorkspaceResponse[]` |
+| GET | `/invitations/me` | Get pending invitations for the current user's email. FE uses this in onboarding empty state. | None | `200 OK` + `WorkspaceInvitationResponse[]` |
+
+`GET /me` behavior:
+- Returns only active memberships.
+- Excludes archived/deleted workspaces.
+- Returns `[]` for new users with no workspace.
+
+### Workspace Management
+
+#### POST `/api/v1/workspaces`
+
+Creates a workspace. The current user becomes `Owner`.
+
+Request body:
+
+```json
+{
+  "workspaceName": "Acme Team",
+  "description": "Internal workspace",
+  "workspaceType": 1,
+  "privacy": 2,
+  "workspaceAvatarUrl": "https://cdn.example.com/logo.png"
+}
+```
+
+Enum values:
+- `workspaceType`: `1 = Private`, `2 = Public`, `3 = Community`
+- `privacy`: `1 = Public`, `2 = Private`
+
+Response:
+- `201 Created`
+- Body: `WorkspaceResponse`
+
+#### GET `/api/v1/workspaces/{workspaceId}`
+
+Gets workspace detail for the selected workspace.
+
+Request:
+- Route: `workspaceId` as GUID
+
+Response:
+- `200 OK` + `WorkspaceDetailResponse`
+- Only active members can access.
+
+#### PATCH `/api/v1/workspaces/{workspaceId}`
+
+Updates workspace profile/settings. Only `Owner` or `Admin` can update.
+
+Request body:
+
+```json
+{
+  "workspaceName": "Acme Team",
+  "description": "Updated description",
+  "workspaceType": 1,
+  "privacy": 2,
+  "workspaceAvatarUrl": "https://cdn.example.com/new-logo.png"
+}
+```
+
+Response:
+- `200 OK` + `WorkspaceResponse`
+
+#### DELETE `/api/v1/workspaces/{workspaceId}`
+
+Archives a workspace. This is a soft archive, not hard delete. Only `Owner` can archive.
+
+Request:
+- Route: `workspaceId` as GUID
+
+Response:
+- `204 No Content`
+
+### Members
+
+#### GET `/api/v1/workspaces/{workspaceId}/members`
+
+Gets active members in a workspace. Any active member can view the list.
+
+Response:
+
+```json
+[
+  {
+    "workspaceMemberId": 1,
+    "userId": "a3dff0ca-7f0e-42bb-b0f4-70112fdc6ab0",
+    "email": "owner@example.com",
+    "fullName": "Owner User",
+    "avatarUrl": "https://cdn.example.com/avatar.png",
+    "role": "Owner",
+    "status": "Active",
+    "joinedAt": "2026-06-07T14:34:31Z"
+  }
+]
+```
+
+Role values:
+- `Owner`
+- `Admin`
+- `Moderator`
+- `Member`
+
+Member status values:
+- `Pending`
+- `Active`
+- `Banned`
+- `Left`
+
+### Invitations and Join
+
+#### POST `/api/v1/workspaces/{workspaceId}/invitations`
+
+Creates a pending invitation for any email address. The invited user does not need to exist yet. Only `Owner` or `Admin` can invite.
+
+Request body:
+
+```json
+{
+  "email": "member@example.com"
+}
+```
+
+Response:
+- `201 Created` + `WorkspaceInvitationResponse`
+
+Behavior:
+- Stores normalized lowercase email.
+- Default expiry is 7 days.
+- Prevents duplicate pending invitations for the same email/workspace.
+- If the user already exists and is an active member, returns conflict.
+- Current MVP stores the record only; it does not send invitation email yet.
+
+#### POST `/api/v1/workspaces/invitations/{invitationId}/accept`
+
+Accepts a pending email invitation for the current authenticated user's email.
+
+Request:
+- Route: `invitationId` as integer
+
+Response:
+- `200 OK` + `WorkspaceResponse`
+
+Behavior:
+- Current user's email must match the invitation email.
+- Adds user as `Member` with `Active` status.
+- Existing left member can rejoin; banned member cannot.
+
+#### POST `/api/v1/workspaces/{workspaceId}/invite-links`
+
+Creates a shared invite code/link for a workspace. Only `Owner` or `Admin` can create.
+
+Request body:
+
+```json
+{
+  "expiresAt": "2026-06-14T14:34:31Z",
+  "maxUses": 25
+}
+```
+
+Both fields are optional.
+
+Response:
+
+```json
+{
+  "invitationId": 7,
+  "workspaceId": "0f5e0d4e-1b8f-4b3c-930f-9a8a68a8c7b1",
+  "invitationCode": "9F2A8C1B0D3E4F5A",
+  "createdAt": "2026-06-07T14:34:31Z",
+  "expiresAt": "2026-06-14T14:34:31Z",
+  "maxUses": 25,
+  "currentUses": 0,
+  "isActive": true
+}
+```
+
+#### POST `/api/v1/workspaces/join`
+
+Joins a workspace using a shared invite code.
+
+Request body:
+
+```json
+{
+  "invitationCode": "9F2A8C1B0D3E4F5A"
+}
+```
+
+Response:
+- `200 OK` + `WorkspaceResponse`
+
+Behavior:
+- Code must exist, be active, not expired, and not exceed `maxUses`.
+- Adds user as `Member` with `Active` status.
+- Existing left member can rejoin; banned member cannot.
+
+### Workspace Error Codes
+
+Errors are returned as `ProblemDetails`.
+
+| Error Code | Meaning |
+|---|---|
+| `Workspace.NotFound` | Workspace does not exist or is archived. |
+| `Workspace.Forbidden` | Current user is not allowed to access or modify the workspace. |
+| `Workspace.InvitationNotFound` | Invitation does not exist or does not belong to current user's email. |
+| `Workspace.InvitationExpired` | Invitation has expired. |
+| `Workspace.InvitationInactive` | Shared invite code is inactive. |
+| `Workspace.InvitationMaxUsesReached` | Shared invite code reached max uses. |
+| `Workspace.InvitationConflict` | Duplicate pending email invitation exists. |
+| `Workspace.MemberConflict` | User is already an active member. |
+| `Workspace.LastOwnerRequired` | Workspace must keep at least one active owner. |
+
+---
+
 ## Response and Error Pattern
 
 Application handlers return `Result<T>` or `Result`.

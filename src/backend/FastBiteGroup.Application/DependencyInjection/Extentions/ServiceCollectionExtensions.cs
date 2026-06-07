@@ -21,6 +21,9 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssembly(
             AssemblyReference.Assembly,
             includeInternalTypes: true);
+        services.AddValidatorsFromAssembly(
+            FastBiteGroup.Contract.AssemblyReference.Assembly,
+            includeInternalTypes: true);
 
         return services;
     }

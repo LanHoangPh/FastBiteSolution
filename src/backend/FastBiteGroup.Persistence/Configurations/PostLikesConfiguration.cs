@@ -9,6 +9,7 @@ internal sealed class PostLikesConfiguration : IEntityTypeConfiguration<PostLike
 
         // Mỗi user chỉ được like 1 post 1 lần
         builder.HasIndex(x => new { x.PostID, x.UserID }).IsUnique();
+        builder.HasQueryFilter(x => x.Post != null && !x.Post.IsDeleted);
 
         builder.HasOne(pl => pl.Post)
                .WithMany(p => p.Likes)

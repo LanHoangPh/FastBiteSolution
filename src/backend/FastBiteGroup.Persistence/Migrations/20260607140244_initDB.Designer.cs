@@ -3,6 +3,7 @@ using System;
 using FastBiteGroup.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FastBiteGroup.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260607140244_initDB")]
+    partial class initDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -706,18 +709,10 @@ namespace FastBiteGroup.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("InvitedByUserID")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("InvitedEmail")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid?>("InvitedUserID")
+                    b.Property<Guid>("InvitedUserID")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("RespondedAt")
@@ -725,8 +720,7 @@ namespace FastBiteGroup.Persistence.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -738,12 +732,11 @@ namespace FastBiteGroup.Persistence.Migrations
 
                     b.HasIndex("InvitedByUserID");
 
-                    b.HasIndex("InvitedUserID");
-
                     b.HasIndex("WorkspaceID");
 
-                    b.HasIndex("InvitedEmail", "WorkspaceID")
-                        .HasDatabaseName("IX_UserWorkspaceInvitations_InvitedEmail_WorkspaceID");
+                    b.HasIndex("InvitedUserID", "WorkspaceID")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Unique_User_Workspace_Invitation");
 
                     b.ToTable("UserWorkspaceInvitations", (string)null);
                 });
@@ -960,11 +953,6 @@ namespace FastBiteGroup.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -1481,7 +1469,8 @@ namespace FastBiteGroup.Persistence.Migrations
                     b.HasOne("FastBiteGroup.Persistence.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("InvitedUserID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FastBiteGroup.Domain.Entities.Workspace", "Workspace")
                         .WithMany("DirectUserInvitations")

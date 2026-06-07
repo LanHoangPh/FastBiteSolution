@@ -1,8 +1,3 @@
-using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Persistence.Constants;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace FastBiteGroup.Persistentce.Configurations
 {
     internal sealed class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>
@@ -11,6 +6,7 @@ namespace FastBiteGroup.Persistentce.Configurations
         {
             builder.ToTable(TableNames.Workspaces);
             builder.HasKey(x => x.WorkspaceID);
+            builder.Ignore(x => x.Id);
 
             builder.Property(x => x.WorkspaceName).IsRequired().HasMaxLength(255);
             builder.Property(x => x.Description).HasMaxLength(1000);

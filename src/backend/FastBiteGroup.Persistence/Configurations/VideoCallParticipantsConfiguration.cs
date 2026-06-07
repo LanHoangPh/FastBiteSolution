@@ -9,6 +9,7 @@ internal sealed class VideoCallParticipantsConfiguration : IEntityTypeConfigurat
 
         // Ràng buộc unique: Một user chỉ tham gia 1 session 1 lần
         builder.HasIndex(x => new { x.VideoCallSessionID, x.UserID }).IsUnique();
+        builder.HasQueryFilter(x => x.VideoCallSession != null && !x.VideoCallSession.IsDeleted);
 
         // Mối quan hệ với VideoCallSession
         builder.HasOne(vp => vp.VideoCallSession)

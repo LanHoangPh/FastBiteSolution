@@ -34,7 +34,7 @@ namespace FastBiteGroup.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "date", nullable: false),
                     FullName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     AvatarUrl = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     Bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -637,7 +637,7 @@ namespace FastBiteGroup.Persistence.Migrations
                 name: "VideoCallSessions",
                 columns: table => new
                 {
-                    VideoCallSessionID = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "NEWID()"),
+                    VideoCallSessionID = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     ConversationID = table.Column<int>(type: "integer", nullable: false),
                     InitiatorUserID = table.Column<Guid>(type: "uuid", nullable: false),
@@ -920,7 +920,7 @@ namespace FastBiteGroup.Persistence.Migrations
                 table: "Conversations",
                 column: "WorkspaceID",
                 unique: true,
-                filter: "[WorkspaceID] IS NOT NULL");
+                filter: "\"WorkspaceID\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GlobalSettings_UpdatedBy",
@@ -1008,7 +1008,7 @@ namespace FastBiteGroup.Persistence.Migrations
                 name: "IX_Posts_WorkspaceID_CreatedAt",
                 table: "Posts",
                 columns: new[] { "WorkspaceID", "CreatedAt" },
-                filter: "[IsDeleted] = 0");
+                filter: "\"IsDeleted\" = FALSE");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_Token",

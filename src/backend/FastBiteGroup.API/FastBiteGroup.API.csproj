@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="logs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Aspire\FastBiteGroup.ServiceDefaults\FastBiteGroup.ServiceDefaults.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Application\FastBiteGroup.Application.csproj" />
     <ProjectReference Include="..\FastBiteGroup.Contract\FastBiteGroup.Contract.csproj" />

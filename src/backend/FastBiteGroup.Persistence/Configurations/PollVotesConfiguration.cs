@@ -9,6 +9,7 @@ internal sealed class PollVotesConfiguration : IEntityTypeConfiguration<PollVote
 
         // Ràng buộc unique: Một user chỉ vote 1 lần cho 1 option
         builder.HasIndex(x => new { x.PollOptionID, x.UserID }).IsUnique();
+        builder.HasQueryFilter(x => x.PollOption != null && x.PollOption.Poll != null && !x.PollOption.Poll.IsDeleted);
 
         // Mối quan hệ với PollOption
         builder.HasOne(pv => pv.PollOption)
@@ -23,5 +24,4 @@ internal sealed class PollVotesConfiguration : IEntityTypeConfiguration<PollVote
                .OnDelete(DeleteBehavior.Restrict);
     }
 }
-
 

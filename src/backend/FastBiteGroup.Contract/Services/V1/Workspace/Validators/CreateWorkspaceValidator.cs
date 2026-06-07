@@ -8,16 +8,19 @@ public class CreateWorkspaceValidator : AbstractValidator<CreateWorkspaceCommand
     public CreateWorkspaceValidator()
     {
         RuleFor(x => x.WorkspaceName)
-            .NotEmpty().WithMessage("Tên Workspace không được để trống.")
-            .MaximumLength(255).WithMessage("Tên Workspace tối đa 255 ký tự.");
+            .NotEmpty().WithMessage("Workspace name is required.")
+            .MaximumLength(255).WithMessage("Workspace name must not exceed 255 characters.");
 
         RuleFor(x => x.Description)
-            .MaximumLength(1000).WithMessage("Mô tả tối đa 1000 ký tự.");
-            
+            .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters.");
+
         RuleFor(x => x.WorkspaceType)
-            .IsInEnum().WithMessage("Loại Workspace không hợp lệ.");
+            .InclusiveBetween(1, 3).WithMessage("Workspace type is not valid.");
 
         RuleFor(x => x.Privacy)
-            .IsInEnum().WithMessage("Quyền riêng tư không hợp lệ.");
+            .InclusiveBetween(1, 2).WithMessage("Workspace privacy is not valid.");
+
+        RuleFor(x => x.WorkspaceAvatarUrl)
+            .MaximumLength(2048).WithMessage("Workspace avatar URL must not exceed 2048 characters.");
     }
 }

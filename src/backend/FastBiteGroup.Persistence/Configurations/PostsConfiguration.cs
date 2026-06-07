@@ -1,8 +1,3 @@
-using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Persistence.Constants;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace FastBiteGroup.Persistentce.Configurations;
 
 internal sealed class PostsConfiguration : IEntityTypeConfiguration<Posts>
@@ -23,7 +18,7 @@ internal sealed class PostsConfiguration : IEntityTypeConfiguration<Posts>
 
         // Index được lọc tối ưu cho việc lấy bài đăng trong group
         builder.HasIndex(x => new { x.WorkspaceID, x.CreatedAt })
-               .HasFilter("[IsDeleted] = 0");
+               .HasFilter("\"IsDeleted\" = FALSE");
 
         // Mối quan hệ với tác giả (Author)
         builder.HasOne<AppUser>()

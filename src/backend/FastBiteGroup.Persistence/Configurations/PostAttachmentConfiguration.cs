@@ -9,6 +9,11 @@ public class PostAttachmentConfiguration : IEntityTypeConfiguration<PostAttachme
         builder.HasKey(pa => new { pa.PostID, pa.FileID });
 
         builder.Property(pa => pa.AttachedAt).IsRequired();
+        builder.HasQueryFilter(pa =>
+            pa.Post != null &&
+            !pa.Post.IsDeleted &&
+            pa.SharedFile != null &&
+            !pa.SharedFile.IsDeleted);
 
         builder.HasOne(pa => pa.Post)
                .WithMany(p => p.Attachments) // Giả sử class Posts có ICollection<PostAttachment> Attachments

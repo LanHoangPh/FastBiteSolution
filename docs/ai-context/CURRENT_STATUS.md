@@ -10,6 +10,8 @@ Build passing. Architecture tests passing 10/10.
 
 The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.Driver scaffold for future document-oriented workloads.
 
+Workspace/Tenant MVP is implemented for onboarding, sidebar workspace switching, email invitations, shared invite codes, member listing, workspace update, and archive.
+
 ---
 
 ## Completed Work
@@ -20,6 +22,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 - `AppRefreshToken` entity with refresh-token rotation/revocation behavior.
 - Entity base abstractions and audit/soft-delete interfaces.
 - Repository interfaces: `IRepositoryBase<TEntity, TKey>`, `IRefreshTokenRepository`.
+- Workspace tenant entities and rules: `Workspace`, `WorkspaceMember`, `UserWorkspaceInvitation`, `WorkspaceInvitation`, workspace role enum, and member status enum.
 - `IUnitOfWork` abstraction for EF Core transaction boundaries.
 - Domain exceptions inherit `DomainException`.
 
@@ -28,6 +31,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 - Command/query abstractions for MediatR.
 - `Result`, `Result<T>`, validation result, `Error`, paged result.
 - Auth contracts: login, register, verify email, refresh, logout, revoke all, forgot password, reset password, google login.
+- Workspace contracts: create, update, archive, get my workspaces, get detail, list members, invite by email, get my invitations, accept invitation, create invite link, join by code.
 - Product contracts: create, update, delete, get all, get by id, product response.
 - Outbox contracts: `IntegrationOutboxMessage`, `IIntegrationOutboxStore`.
 
@@ -36,7 +40,9 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 - `ApplicationDbContext` with Identity persistence.
 - `AppUser`, `AppRole`.
 - EF configurations for products and refresh tokens.
-- Existing EF migration under `src/backend/FastBiteGroup.Persistence/Migrations`.
+- Initial EF migration `initDB` under `src/backend/FastBiteGroup.Persistence/Migrations`.
+- PostgreSQL-compatible EF mappings for filtered indexes, Identity tables, Workspace PK, soft-delete query filters, and app-generated video call session IDs.
+- Workspace tenant migration `WorkspaceTenantMvp` adds member status and email-based workspace invitations.
 - `EFUnitOfWork` with transaction support.
 - `RepositoryBase<TEntity, TKey>` with `AsNoTracking()` for reads.
 - `RefreshTokenRepository` with bulk revoke.
@@ -59,6 +65,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 ### Application
 
 - Auth handlers: login, register, verify email, forgot password, reset password, google login, refresh token, logout, revoke all sessions.
+- Workspace handlers: create, update, archive, get my workspaces, get detail, list members, invite by email, get my invitations, accept invitation, create invite link, join by code.
 - Product handlers: create, update, delete, get all, get by id.
 - Validators for auth/product commands.
 - AutoMapper profile for product response mapping.
@@ -67,6 +74,7 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 ### Presentation/API
 
 - Auth API: register, verify email, login, refresh, logout, revoke all, forgot password, reset password, google login.
+- Workspace API: onboarding/sidebar, detail, members, email invitations, invite links, join, update, archive.
 - Product API: get all, get by id, create, update, delete.
 - API composition in `Program.cs`.
 - JWT auth, token blacklist middleware, global exception handler.
@@ -81,9 +89,9 @@ The project has a working PostgreSQL/EF Core foundation and an optional MongoDB.
 |---|---|
 | Solution build | Passing |
 | Architecture tests | 10/10 passing |
-| Contract tests | Build/pass available |
+| Contract tests | Passing, includes Workspace validators |
 | Domain tests | Build/pass available |
-| Application tests | Build/pass available (Expanded with extensive tests for Auth Flows: OTP, Forgot Password, Reset Password, etc.) |
+| Application tests | Passing, includes Auth flows and Workspace handlers |
 | Infrastructure tests | Build/pass available (OTP Service Mocking tests) |
 | Integration tests | Require live PostgreSQL/Redis environment |
 
@@ -91,11 +99,19 @@ Last verified commands:
 
 ```bash
 dotnet build FastBiteSolution.slnx
+dotnet test tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj
+dotnet test tests/backend/FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj
 dotnet test tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj
 ```
 
 Known warnings:
 - NuGet vulnerability warnings for transitive packages `SharpCompress` and `Snappier`.
+
+Migration notes:
+- The initial migration was regenerated on 2026-06-07 after normalizing Domain entity and EF configuration mismatches.
+- Workspace tenant migration `20260607143431_WorkspaceTenantMvp` was added on 2026-06-07.
+- Local/dev PostgreSQL data should be reset before applying the regenerated `initDB`; reusing an older dev database can produce duplicate-table errors such as `relation "RefreshTokens" already exists`.
+- `PendingModelChangesWarning` is intentionally not suppressed and should continue to fail fast when EF model and migration snapshot drift.
 
 ---
 

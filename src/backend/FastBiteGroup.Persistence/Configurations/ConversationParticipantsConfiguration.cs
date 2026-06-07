@@ -9,6 +9,7 @@ internal sealed class ConversationParticipantsConfiguration : IEntityTypeConfigu
 
         // Ràng buộc unique
         builder.HasIndex(x => new { x.ConversationID, x.UserID }).IsUnique();
+        builder.HasQueryFilter(x => x.Conversation != null && !x.Conversation.IsDeleted);
 
         // Mối quan hệ với Conversation
         builder.HasOne(cp => cp.Conversation)

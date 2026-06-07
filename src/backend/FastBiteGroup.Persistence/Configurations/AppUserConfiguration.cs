@@ -9,6 +9,7 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 
         builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
+        builder.Property(x => x.DateOfBirth).HasColumnType("date");
         builder.Property(x => x.FullName).IsRequired().HasMaxLength(255);
         builder.Property(x => x.AvatarUrl).HasMaxLength(2048);
         builder.Property(x => x.Bio).HasMaxLength(500);
@@ -28,5 +29,4 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 
     }
 }
-
 

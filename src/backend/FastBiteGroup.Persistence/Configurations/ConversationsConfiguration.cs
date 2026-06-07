@@ -1,8 +1,3 @@
-using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Persistence.Constants;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace FastBiteGroup.Persistentce.Configurations;
 
 internal sealed class ConversationsConfiguration : IEntityTypeConfiguration<Conversation>
@@ -18,7 +13,7 @@ internal sealed class ConversationsConfiguration : IEntityTypeConfiguration<Conv
         builder.Property(x => x.WorkspaceID).IsRequired(false);
         builder.HasIndex(x => x.WorkspaceID)
                .IsUnique()
-               .HasFilter("[WorkspaceID] IS NOT NULL"); 
+               .HasFilter("\"WorkspaceID\" IS NOT NULL");
 
         builder.Property(x => x.ConversationType)
                .IsRequired()

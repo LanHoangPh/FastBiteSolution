@@ -1,4 +1,5 @@
 using FastBiteGroup.Contract.Abstractions.Message;
+using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 
 namespace FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 
@@ -8,4 +9,4 @@ public record CreateWorkspaceCommand(
     int WorkspaceType,
     int Privacy,
     string? WorkspaceAvatarUrl
-) : ICommand;
+) : ICommand<WorkspaceResponse>;

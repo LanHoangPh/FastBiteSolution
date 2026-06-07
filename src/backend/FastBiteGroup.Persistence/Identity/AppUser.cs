@@ -9,7 +9,7 @@ public class AppUser : IdentityUser<Guid>
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; }
-    public string? FullName { get; set; }
+    public string FullName { get; set; } = string.Empty;
     public string? AvatarUrl { get; set; }
     public string? Bio { get; set; }
     public bool IsActive { get; set; } = true;

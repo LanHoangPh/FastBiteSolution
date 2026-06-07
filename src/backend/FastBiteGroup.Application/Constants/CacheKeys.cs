@@ -9,5 +9,8 @@ public static class CacheKeys
     public static string UserProfileCacheKey(Guid userId) =>
         $"user:profile:{userId}";
 
+    public static string UserWorkspaces(Guid userId) =>
+        $"workspaces:user:{userId}";
+
     public static string ProductsCacheKey => "products:all";
 }

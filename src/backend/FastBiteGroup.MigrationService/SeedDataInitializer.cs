@@ -60,7 +60,10 @@ public sealed class SeedDataInitializer(
                 UserName = adminOptions.UserName,
                 FirstName = adminOptions.FirstName,
                 LastName = adminOptions.LastName,
+                FullName = $"{adminOptions.FirstName} {adminOptions.LastName}".Trim(),
                 DateOfBirth = adminOptions.DateOfBirth,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
                 EmailConfirmed = true
             };
 

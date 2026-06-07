@@ -7,7 +7,7 @@ internal sealed class VideoCallSessionsConfiguration : IEntityTypeConfiguration<
         builder.ToTable(TableNames.VideoCallSessions);
 
         builder.HasKey(x => x.VideoCallSessionID);
-        builder.Property(x => x.VideoCallSessionID).HasDefaultValueSql("NEWID()");
+        builder.Property(x => x.VideoCallSessionID).ValueGeneratedNever();
 
         builder.Property(x => x.Title).HasMaxLength(255);
 
@@ -24,7 +24,6 @@ internal sealed class VideoCallSessionsConfiguration : IEntityTypeConfiguration<
         builder.HasOne(v => v.Conversation)
                .WithMany()
                .HasForeignKey(v => v.ConversationID)
-               .IsRequired(false)
                .OnDelete(DeleteBehavior.Cascade);
 
         // Mối quan hệ với User khởi tạo

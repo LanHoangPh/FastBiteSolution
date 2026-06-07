@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace FastBiteGroupMCA.Persistentce.Configurations
 {
     internal sealed class ContentReportsConfiguration : IEntityTypeConfiguration<ContentReport>
@@ -22,8 +16,10 @@ namespace FastBiteGroupMCA.Persistentce.Configurations
                    .IsRequired();
 
             builder.Property(x => x.Status)
-                   .HasConversion<string>() 
+                   .HasConversion<string>()
                    .IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted && !x.Workspace.IsDeleted);
 
             // FK: User báo cáo
             builder.HasOne<AppUser>()
