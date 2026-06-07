@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FastBiteGroup.Domain.Entities;
 
@@ -8,8 +8,8 @@ public class Conversation : IAuditable
     public EnumConversationType ConversationType { get; set; }
     public string? Title { get; set; }
     public string? AvatarUrl { get; set; }
-    public Guid? ExplicitGroupID { get; set; }
-    public virtual Group? Group { get; set; }
+    public Guid? WorkspaceID { get; set; }
+    public virtual Workspace? Workspace { get; set; }
     [MaxLength(200)]
     public string? LastMessagePreview { get; set; } // Nội dung xem trước ("Đã gửi một ảnh", "Hello world"...)
     public DateTime? LastMessageTimestamp { get; set; } // Thời gian của tin nhắn cuối
@@ -23,4 +23,3 @@ public class Conversation : IAuditable
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 }
-

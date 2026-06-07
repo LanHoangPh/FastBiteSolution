@@ -1,9 +1,9 @@
-﻿namespace FastBiteGroup.Domain.Entities;
+namespace FastBiteGroup.Domain.Entities;
 
 public class Posts : IDateTracking, ISoftDelete
 {
     public int PostID { get; set; }
-    public Guid GroupID { get; set; }
+    public Guid WorkspaceID { get; set; }
     public Guid AuthorUserID { get; set; }
     public string? Title { get; set; }
     public string ContentJson { get; set; } = string.Empty; // sẽ chứa Json để lưu nội dung bài viết
@@ -15,7 +15,7 @@ public class Posts : IDateTracking, ISoftDelete
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
     public Guid? UpdatedByUserID { get; set; }
-    public virtual Group? Group { get; set; }
+    public virtual Workspace? Workspace { get; set; }
     public virtual ICollection<PostComments> Comments { get; set; } = new HashSet<PostComments>();
     public virtual ICollection<PostLikes> Likes { get; set; } = new HashSet<PostLikes>();
     public virtual ICollection<PostAttachment> Attachments { get; set; } = new HashSet<PostAttachment>();

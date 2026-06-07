@@ -1,4 +1,9 @@
-﻿namespace FastBiteGroupMCA.Persistentce.Configurations;
+using FastBiteGroup.Domain.Entities;
+using FastBiteGroup.Persistence.Constants;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace FastBiteGroup.Persistentce.Configurations;
 
 internal sealed class ConversationsConfiguration : IEntityTypeConfiguration<Conversation>
 {
@@ -10,25 +15,22 @@ internal sealed class ConversationsConfiguration : IEntityTypeConfiguration<Conv
         builder.Property(x => x.Title).HasMaxLength(255);
         builder.Property(x => x.AvatarUrl).HasMaxLength(2048);
 
-        // Đảm bảo rằng một GroupID chỉ có thể xuất hiện một lần trong bảng Conversation
-        builder.HasIndex(x => x.ExplicitGroupID)
+        builder.Property(x => x.WorkspaceID).IsRequired(false);
+        builder.HasIndex(x => x.WorkspaceID)
                .IsUnique()
-               .HasFilter("[ExplicitGroupID] IS NOT NULL"); // Áp dụng cho các bản ghi không null
+               .HasFilter("[WorkspaceID] IS NOT NULL"); 
 
         builder.Property(x => x.ConversationType)
                .IsRequired()
                .HasConversion<string>()
                .HasMaxLength(50);
 
-        // Mối quan hệ tùy chọn với Group
-        builder.HasOne(c => c.Group)
-               .WithOne()
-               .HasForeignKey<Conversation>(c => c.ExplicitGroupID)
+        builder.HasOne(c => c.Workspace)
+               .WithOne(g => g.Conversation)
+               .HasForeignKey<Conversation>(c => c.WorkspaceID)
                .IsRequired(false);
 
         // Cấu hình query filter cho Soft Delete
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
-
-

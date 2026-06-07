@@ -14,7 +14,12 @@
     <Project Path="src/backend/FastBiteGroup.Persistence/FastBiteGroup.Persistence.csproj" />
     <Project Path="src/backend/FastBiteGroup.Presentation/FastBiteGroup.Presentation.csproj" />
   </Folder>
-  <Folder Name="/src/desktop/" />
+  <Folder Name="/src/desktop/">
+    <Project Path="src/desktop/FastBiteGroup.Desktop.UI/FastBiteGroup.Desktop.UI.csproj" />
+    <Project Path="src/desktop/FastBiteGroup.Desktop.Application/FastBiteGroup.Desktop.Application.csproj" />
+    <Project Path="src/desktop/FastBiteGroup.Desktop.Infrastructure/FastBiteGroup.Desktop.Infrastructure.csproj" />
+    <Project Path="src/desktop/FastBiteGroup.Desktop.Domain/FastBiteGroup.Desktop.Domain.csproj" />
+  </Folder>
   <Folder Name="/src/frontend/" />
   <Folder Name="/tests/" />
   <Folder Name="/tests/backend/">

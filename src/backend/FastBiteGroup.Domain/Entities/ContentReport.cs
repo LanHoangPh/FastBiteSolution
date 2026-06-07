@@ -1,4 +1,4 @@
-﻿using FastBiteGroup.Domain.Abstractions;
+using FastBiteGroup.Domain.Abstractions;
 
 namespace FastBiteGroup.Domain.Entities;
 
@@ -13,7 +13,7 @@ public class ContentReport : EntityAuditBase<int>
     public Guid ReportedContentOwnerId { get; set; }
     public string Reason { get; set; } = string.Empty;
     public EnumContentReportStatus Status { get; set; } = EnumContentReportStatus.Pending;
-    public Guid GroupID { get; set; }
-    public Group Group { get; set; } = null!;
+    public Guid WorkspaceID { get; set; }
+    public Workspace Workspace { get; set; } = null!;
 }
 

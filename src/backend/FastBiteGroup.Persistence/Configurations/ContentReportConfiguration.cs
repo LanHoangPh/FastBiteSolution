@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,12 +32,10 @@ namespace FastBiteGroupMCA.Persistentce.Configurations
                .OnDelete(DeleteBehavior.Restrict);
 
             // FK: Nhóm chứa nội dung
-            builder.HasOne(x => x.Group)
-                .WithMany(g => g.ContentReports)
-                .HasForeignKey(x => x.GroupID)
+            builder.HasOne(cr => cr.Workspace)
+               .WithMany(g => g.ContentReports)
+               .HasForeignKey(cr => cr.WorkspaceID)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
-
-

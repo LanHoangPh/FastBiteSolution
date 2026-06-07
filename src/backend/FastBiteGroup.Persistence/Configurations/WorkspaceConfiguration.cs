@@ -1,17 +1,22 @@
-﻿namespace FastBiteGroupMCA.Persistentce.Configurations
-{
-    internal sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
-    {
-        public void Configure(EntityTypeBuilder<Group> builder)
-        {
-            builder.ToTable(TableNames.Groups);
-            builder.HasKey(x => x.GroupID);
+using FastBiteGroup.Domain.Entities;
+using FastBiteGroup.Persistence.Constants;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-            builder.Property(x => x.GroupName).IsRequired().HasMaxLength(255);
+namespace FastBiteGroup.Persistentce.Configurations
+{
+    internal sealed class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>
+    {
+        public void Configure(EntityTypeBuilder<Workspace> builder)
+        {
+            builder.ToTable(TableNames.Workspaces);
+            builder.HasKey(x => x.WorkspaceID);
+
+            builder.Property(x => x.WorkspaceName).IsRequired().HasMaxLength(255);
             builder.Property(x => x.Description).HasMaxLength(1000);
 
             // Cấu hình Enum
-            builder.Property(x => x.GroupType)
+            builder.Property(x => x.WorkspaceType)
                    .IsRequired()
                    .HasConversion<string>()
                    .HasMaxLength(50);
@@ -20,7 +25,7 @@
                      .HasConversion<string>()
                      .HasMaxLength(50);
 
-            // Mối quan hệ: Một User có thể tạo nhiều Group
+            // Mối quan hệ: Một User có thể tạo nhiều Workspace
             builder.HasOne<AppUser>()
                    .WithMany()
                    .HasForeignKey(g => g.CreatedByUserID)
@@ -37,5 +42,3 @@
         }
     }
 }
-
-

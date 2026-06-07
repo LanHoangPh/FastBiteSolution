@@ -56,8 +56,15 @@ public static class ServiceCollectionExtensions
             configuration.GetSection(nameof(SendGridOptions)));
         services.AddTransient<IEmailSender, SendGridEmailSender>();
 
-        // Background Jobs
-        services.AddHostedService<IntegrationOutboxProcessorService>();
+        var mongoConnectionString = configuration.GetConnectionString("MongoDBConnection")
+            ?? configuration.GetConnectionString("MongoDb")
+            ?? configuration.GetConnectionString("mongodb")
+            ?? configuration["MongoDbOptions:ConnectionString"];
+
+        if (!string.IsNullOrWhiteSpace(mongoConnectionString))
+        {
+            services.AddHostedService<IntegrationOutboxProcessorService>();
+        }
 
         return services;
     }

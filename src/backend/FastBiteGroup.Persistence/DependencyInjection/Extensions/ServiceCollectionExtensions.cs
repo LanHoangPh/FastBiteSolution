@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
             options.Password.RequireDigit = true;
             options.Password.RequireLowercase = true;
             options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireNonAlphanumeric = true;
             options.Password.RequiredLength = 8;
 
             // Lockout
@@ -80,6 +80,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, EFUnitOfWork>();
         services.AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 
         return services;
     }
@@ -92,11 +93,18 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddMongoPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("MongoDBConnection")
-            ?? configuration.GetConnectionString("MongoDb");
+        var mongoDbOptions = configuration
+            .GetSection(nameof(MongoDbOptions))
+            .Get<MongoDbOptions>() ?? new MongoDbOptions();
+
+        var connectionString = configuration.GetConnectionString(mongoDbOptions.ConnectionString)
+            ?? configuration["MongoDbOptions:ConnectionString"];
 
         if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            services.AddScoped<IIntegrationOutboxStore, DisabledIntegrationOutboxStore>();
             return services;
+        }
 
         services.AddOptions<MongoDbOptions>()
             .Bind(configuration.GetSection(nameof(MongoDbOptions)))

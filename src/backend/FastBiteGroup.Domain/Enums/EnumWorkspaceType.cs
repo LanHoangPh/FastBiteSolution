@@ -1,6 +1,6 @@
-﻿namespace FastBiteGroup.Domain.Enum;
+namespace FastBiteGroup.Domain.Enum;
 
-public enum EnumGroupType
+public enum EnumWorkspaceType
 {
     Private = 1,    // Nhóm riêng tư, chỉ mời mới vào được
     Public = 2,     // Nhóm công khai, ai cũng có thể tham gia

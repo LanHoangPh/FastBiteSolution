@@ -1,11 +1,13 @@
-﻿namespace FastBiteGroup.Domain.Entities;
+using FastBiteGroup.Domain.Enum;
 
-public class UserGroupInvitation : IDateTracking
+namespace FastBiteGroup.Domain.Entities;
+
+public class UserWorkspaceInvitation : IDateTracking
 {
     public int InvitationID { get; set; }
 
-    public Guid GroupID { get; set; }
-    public virtual Group? Group { get; set; }
+    public Guid WorkspaceID { get; set; }
+    public virtual Workspace? Workspace { get; set; }
     public Guid InvitedUserID { get; set; }
     public Guid InvitedByUserID { get; set; }
     public EnumInvitationStatus Status { get; set; } = EnumInvitationStatus.Pending;

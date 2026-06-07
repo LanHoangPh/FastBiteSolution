@@ -14,9 +14,9 @@ public sealed class ApplicationDbContext
     public DbSet<Conversation> Conversations => Set<Conversation>();
     public DbSet<ConversationParticipants> ConversationParticipants => Set<ConversationParticipants>();
     public DbSet<GlobalSettings> GlobalSettings => Set<GlobalSettings>();
-    public DbSet<Group> Groups => Set<Group>();
-    public DbSet<GroupInvitations> GroupInvitations => Set<GroupInvitations>();
-    public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+    public DbSet<Workspace> Workspaces => Set<Workspace>();
+    public DbSet<WorkspaceInvitation> WorkspaceInvitations => Set<WorkspaceInvitation>();
+    public DbSet<WorkspaceMember> WorkspaceMembers => Set<WorkspaceMember>();
     public DbSet<LoginHistory> LoginHistories => Set<LoginHistory>();
     public DbSet<PollOptions> PollOptions => Set<PollOptions>();
     public DbSet<Polls> Polls => Set<Polls>();
@@ -27,7 +27,7 @@ public sealed class ApplicationDbContext
     public DbSet<Posts> Posts => Set<Posts>();
     public DbSet<AppRefreshToken> RefreshTokens => Set<AppRefreshToken>();
     public DbSet<SharedFiles> SharedFiles => Set<SharedFiles>();
-    public DbSet<UserGroupInvitation> UserGroupInvitations => Set<UserGroupInvitation>();
+    public DbSet<UserWorkspaceInvitation> UserWorkspaceInvitations => Set<UserWorkspaceInvitation>();
     public DbSet<VideoCallParticipants> VideoCallParticipants => Set<VideoCallParticipants>();
     public DbSet<VideoCallSessions> VideoCallSessions => Set<VideoCallSessions>();
 

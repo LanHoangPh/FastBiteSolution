@@ -1,5 +1,4 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
-using FastBiteGroup.Application.Abstractions.Caching;
 using System.Text.Json;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Outbox;
@@ -16,18 +15,18 @@ internal sealed class RegisterCommandHandler
     : ICommandHandler<AuthCommands.RegisterCommand, RegisterResponse>
 {
     private readonly IUserAuthService _userAuthService;
-    private readonly ICacheService _cacheService;
+    private readonly IOtpService _otpService;
     private readonly IIntegrationOutboxStore _outboxStore;
     private readonly ILogger<RegisterCommandHandler> _logger;
 
     public RegisterCommandHandler(
         IUserAuthService userAuthService,
-        ICacheService cacheService,
+        IOtpService otpService,
         IIntegrationOutboxStore outboxStore,
         ILogger<RegisterCommandHandler>? logger = null)
     {
         _userAuthService = userAuthService;
-        _cacheService = cacheService;
+        _otpService = otpService;
         _outboxStore = outboxStore;
         _logger = logger ?? NullLogger<RegisterCommandHandler>.Instance;
     }
@@ -56,10 +55,12 @@ internal sealed class RegisterCommandHandler
             return Result.Failure<RegisterResponse>(new Error("Auth.RegistrationFailed", errorMessage!));
         }
 
-        // 3. Generate 6-digit OTP
-        var otp = Random.Shared.Next(100000, 999999).ToString();
-        var cacheKey = $"OTP_REG_{user.Email.ToUpperInvariant()}";
-        await _cacheService.SetAsync(cacheKey, otp, TimeSpan.FromMinutes(10), cancellationToken);
+        // 3. Generate 6-digit OTP using the same purpose consumed by VerifyEmailCommandHandler.
+        var otp = await _otpService.GenerateOtpAsync(
+            "REGISTER",
+            user.Email,
+            TimeSpan.FromMinutes(10),
+            cancellationToken);
 
         // 4. Generate Magic Link Token
         var magicLinkToken = await _userAuthService.GenerateEmailConfirmationTokenAsync(user.Email, cancellationToken);
@@ -79,9 +80,7 @@ internal sealed class RegisterCommandHandler
 
         await _outboxStore.AddAsync(outboxMessage, cancellationToken);
 
-        _logger.LogInformation(
-            "Registration outbox message saved for {Email}. OTP: {Otp}",
-            user.Email, otp);
+        _logger.LogInformation("Registration outbox message saved for {Email}.", user.Email);
 
         return Result.Success(new RegisterResponse("User registered successfully. Please check your email to activate the account."));
     }

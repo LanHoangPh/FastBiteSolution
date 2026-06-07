@@ -26,9 +26,9 @@ internal static class TableNames
     internal const string ConversationParticipants = nameof(ConversationParticipants);
     internal const string Conversations = nameof(Conversations);
     internal const string GlobalSettings = nameof(GlobalSettings);
-    internal const string Groups = nameof(Groups);
-    internal const string GroupInvitations = nameof(GroupInvitations);
-    internal const string GroupMembers = nameof(GroupMembers);
+    internal const string Workspaces = nameof(Workspaces);
+    internal const string WorkspaceInvitations = nameof(WorkspaceInvitations);
+    internal const string WorkspaceMembers = nameof(WorkspaceMembers);
     internal const string LoginHistories = nameof(LoginHistories);
     internal const string PollOptions = nameof(PollOptions);
     internal const string Polls = nameof(Polls);
@@ -38,7 +38,7 @@ internal static class TableNames
     internal const string PostLikes = nameof(PostLikes);
     internal const string Posts = nameof(Posts);
     internal const string SharedFiles = nameof(SharedFiles);
-    internal const string UserGroupInvitations = nameof(UserGroupInvitations);
+    internal const string UserWorkspaceInvitations = nameof(UserWorkspaceInvitations);
     internal const string VideoCallParticipants = nameof(VideoCallParticipants);
     internal const string VideoCallSessions = nameof(VideoCallSessions);
 }

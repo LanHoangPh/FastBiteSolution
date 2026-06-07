@@ -77,7 +77,12 @@ internal sealed class UserAuthService : IUserAuthService
             return (null, error);
         }
 
-        await _userManager.AddToRoleAsync(user, "Customer");
+        var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(user);
+            return (null, FormatIdentityErrors(roleResult));
+        }
 
         // Reload roles for the DTO (AddToRoleAsync does not populate the user's roles in memory)
         var roles = await _userManager.GetRolesAsync(user);
@@ -110,7 +115,13 @@ internal sealed class UserAuthService : IUserAuthService
             return (null, error);
         }
 
-        await _userManager.AddToRoleAsync(user, "Customer");
+        var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(user);
+            return (null, FormatIdentityErrors(roleResult));
+        }
+
         var roles = await _userManager.GetRolesAsync(user);
 
         return (MapToDto(user, roles), null);
@@ -163,9 +174,11 @@ internal sealed class UserAuthService : IUserAuthService
             return Result.Success();
         }
 
-        var error = string.Join(", ", result.Errors.Select(e => e.Description));
-        return Result.Failure(new Error("UserAuth.ResetFailed", error));
+        return Result.Failure(new Error("UserAuth.ResetFailed", FormatIdentityErrors(result)));
     }
+
+    private static string FormatIdentityErrors(IdentityResult result) =>
+        string.Join(", ", result.Errors.Select(e => e.Description));
 
     private static UserDto MapToDto(AppUser user, IList<string> roles) =>
         new(

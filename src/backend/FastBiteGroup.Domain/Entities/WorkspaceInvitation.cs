@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FastBiteGroup.Domain.Entities;
 
-public class GroupInvitations : IDateTracking
+public class WorkspaceInvitation : IDateTracking
 {
     public int InvitationID { get; set; }
     public string InvitationCode { get; set; } = string.Empty;
-    public Guid GroupID { get; set; }
+    public Guid WorkspaceID { get; set; }
     public Guid CreatedByUserID { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -17,6 +17,5 @@ public class GroupInvitations : IDateTracking
     [Timestamp]
     public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 
-    public virtual Group? Group { get; set; }
+    public virtual Workspace? Workspace { get; set; }
 }
-
