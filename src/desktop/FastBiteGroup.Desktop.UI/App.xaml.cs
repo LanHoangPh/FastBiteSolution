@@ -2,11 +2,12 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using FastBiteGroup.Desktop.Application;
+using FastBiteGroup.Desktop.Infrastructure;
+using FastBiteGroup.Desktop.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FastBiteGroup.Desktop.Application;
-using FastBiteGroup.Desktop.Infrastructure;
 using Serilog;
 
 namespace FastBiteGroup.Desktop.UI;
@@ -17,28 +18,31 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-        // 1. Setup Global Exception Handling
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-        // 2. Build Configuration
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        // 3. Setup Serilog
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FastBite", "logs", "log-.txt"), rollingInterval: RollingInterval.Day)
+            .WriteTo.File(
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "FastBite",
+                    "logs",
+                    "log-.txt"),
+                rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
         AppHost = Host.CreateDefaultBuilder()
-            .UseSerilog() // Use Serilog instead of default .NET Logger
-            .ConfigureAppConfiguration(config => 
+            .UseSerilog()
+            .ConfigureAppConfiguration(config =>
             {
                 config.AddConfiguration(configuration);
             })
@@ -47,10 +51,11 @@ public partial class App : System.Windows.Application
                 services.AddApplicationServices();
                 services.AddInfrastructureServices();
 
-                // Services
-                services.AddSingleton<FastBiteGroup.Desktop.Application.Abstractions.INavigationService, FastBiteGroup.Desktop.UI.Services.NavigationService>();
+                services.AddSingleton<
+                    FastBiteGroup.Desktop.Application.Abstractions.INavigationService,
+                    FastBiteGroup.Desktop.UI.Services.NavigationService>();
+                services.AddSingleton<IThemeService, ThemeService>();
 
-                // ViewModels & Views
                 services.AddSingleton<MainWindow>();
             })
             .Build();
@@ -60,6 +65,8 @@ public partial class App : System.Windows.Application
     {
         Log.Information("Starting FastBite Desktop Application...");
         await AppHost!.StartAsync();
+
+        AppHost.Services.GetRequiredService<IThemeService>().Initialize();
 
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
@@ -77,17 +84,22 @@ public partial class App : System.Windows.Application
         base.OnExit(e);
     }
 
-    // --- Global Exception Handlers ---
-    private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    private void OnDispatcherUnhandledException(
+        object sender,
+        System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
-        Log.Fatal(e.Exception, "Unhandled UI Exception occurred");
-        MessageBox.Show($"Đã xảy ra lỗi hệ thống: {e.Exception.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-        e.Handled = true; // Prevent crash if possible
+        Log.Fatal(e.Exception, "Unhandled UI exception occurred");
+        MessageBox.Show(
+            $"An unexpected application error occurred: {e.Exception.Message}",
+            "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+        e.Handled = true;
     }
 
     private void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
-        Log.Fatal(e.Exception, "Unobserved Task Exception occurred");
+        Log.Fatal(e.Exception, "Unobserved task exception occurred");
         e.SetObserved();
     }
 
@@ -95,8 +107,9 @@ public partial class App : System.Windows.Application
     {
         if (e.ExceptionObject is Exception ex)
         {
-            Log.Fatal(ex, "Fatal AppDomain Exception occurred");
+            Log.Fatal(ex, "Fatal AppDomain exception occurred");
         }
+
         Log.CloseAndFlush();
     }
 }

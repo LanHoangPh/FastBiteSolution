@@ -1,12 +1,184 @@
-﻿<Window x:Class="FastBiteGroup.Desktop.UI.MainWindow"
+<Window x:Class="FastBiteGroup.Desktop.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FastBiteGroup.Desktop.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="FastBite Desktop"
+        MinHeight="520"
+        MinWidth="860"
+        Height="980"
+        Width="1628"
+        Background="{DynamicResource BackgroundBrush}"
+        FontFamily="{DynamicResource MainFont}">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
 
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock FontSize="{DynamicResource FontSizeTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Text="FastBite Desktop" />
+
+                    <TextBlock Margin="16,2,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="{DynamicResource FontSizeCaption}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Text="Ready" />
+                </StackPanel>
+
+                <Grid Grid.Column="1" VerticalAlignment="Center">
+                    <Button x:Name="SettingsButton"
+                            Style="{DynamicResource HeaderMenuButtonStyle}"
+                            Click="OnSettingsClick"
+                            Content="Settings" />
+
+                    <Popup x:Name="SettingsPopup"
+                           PlacementTarget="{Binding ElementName=SettingsButton}"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           AllowsTransparency="True"
+                           PopupAnimation="Fade">
+                        <Border MinWidth="220"
+                                Margin="0,6,0,0"
+                                Background="{DynamicResource SurfaceBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16"
+                                                  Direction="270"
+                                                  Opacity="0.22"
+                                                  ShadowDepth="4"
+                                                  Color="#FF000000" />
+                            </Border.Effect>
+
+                            <StackPanel>
+                                <TextBlock Margin="12,10,12,6"
+                                           FontSize="{DynamicResource FontSizeCaption}"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Text="Appearance" />
+
+                                <Button x:Name="ThemeSystemButton"
+                                        Style="{DynamicResource PopupMenuButtonStyle}"
+                                        Click="OnThemeSystemClick">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="ThemeSystemCheck"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Text="✓" />
+                                        <TextBlock Grid.Column="1"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   Text="System" />
+                                    </Grid>
+                                </Button>
+
+                                <Button x:Name="ThemeLightButton"
+                                        Style="{DynamicResource PopupMenuButtonStyle}"
+                                        Click="OnThemeLightClick">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="ThemeLightCheck"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Text="✓" />
+                                        <TextBlock Grid.Column="1"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   Text="Light" />
+                                    </Grid>
+                                </Button>
+
+                                <Button x:Name="ThemeDarkButton"
+                                        Style="{DynamicResource PopupMenuButtonStyle}"
+                                        Click="OnThemeDarkClick">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="ThemeDarkCheck"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Text="✓" />
+                                        <TextBlock Grid.Column="1"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   Text="Dark" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="20">
+            <Border Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="32">
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            MaxWidth="520">
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="{DynamicResource FontSizeHeader}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Text="Desktop shell is running" />
+                    <TextBlock Margin="0,12,0,0"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontSize="{DynamicResource FontSizeBody}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Text="The WPF host, dependency injection, configuration, logging, and .NET 8 runtime are loaded." />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center"
+                           FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           Text="Target framework: net8.0-windows" />
+
+                <TextBlock x:Name="ThemeStatusText"
+                           Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+            </Grid>
+        </Border>
     </Grid>
 </Window>

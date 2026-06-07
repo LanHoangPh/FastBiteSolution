@@ -9,7 +9,6 @@ internal static class ApiExtensions
         //IResourceBuilder<RedisResource> cache,
         //IResourceBuilder<IResourceWithConnectionString> databasepos,
         IResourceBuilder<IResourceWithConnectionString> cacheredis,
-        
         IResourceBuilder<ParameterResource> mediatrLicense,
         IResourceBuilder<ParameterResource> autoMapperLicense,
         IResourceBuilder<ParameterResource> secretKey,

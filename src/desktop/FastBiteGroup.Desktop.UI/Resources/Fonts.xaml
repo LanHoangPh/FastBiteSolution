@@ -1,14 +1,14 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
-    
-    <!-- Font mặc định -->
+
+    <!-- Default font -->
     <FontFamily x:Key="MainFont">Segoe UI</FontFamily>
-    
-    <!-- Kích cỡ chữ -->
+
+    <!-- Font sizes -->
     <system:Double x:Key="FontSizeHeader">24</system:Double>
     <system:Double x:Key="FontSizeTitle">18</system:Double>
     <system:Double x:Key="FontSizeBody">14</system:Double>
     <system:Double x:Key="FontSizeCaption">12</system:Double>
-    
+
 </ResourceDictionary>

@@ -1,23 +1,62 @@
-﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using FastBiteGroup.Desktop.UI.Services;
 
 namespace FastBiteGroup.Desktop.UI;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly IThemeService _themeService;
+
+    public MainWindow(IThemeService themeService)
     {
+        _themeService = themeService;
         InitializeComponent();
+        _themeService.ApplySyncfusionTheme(this);
+        RefreshThemeMenu();
+    }
+
+    private void OnSettingsClick(object sender, RoutedEventArgs e)
+    {
+        SettingsPopup.IsOpen = !SettingsPopup.IsOpen;
+    }
+
+    private void OnThemeSystemClick(object sender, RoutedEventArgs e)
+    {
+        SetTheme(AppThemeMode.System);
+    }
+
+    private void OnThemeLightClick(object sender, RoutedEventArgs e)
+    {
+        SetTheme(AppThemeMode.Light);
+    }
+
+    private void OnThemeDarkClick(object sender, RoutedEventArgs e)
+    {
+        SetTheme(AppThemeMode.Dark);
+    }
+
+    private void SetTheme(AppThemeMode mode)
+    {
+        _themeService.SetTheme(mode);
+        _themeService.ApplySyncfusionTheme(this);
+        RefreshThemeMenu();
+        SettingsPopup.IsOpen = false;
+    }
+
+    private void RefreshThemeMenu()
+    {
+        SetThemeCheck(ThemeSystemCheck, _themeService.CurrentMode == AppThemeMode.System);
+        SetThemeCheck(ThemeLightCheck, _themeService.CurrentMode == AppThemeMode.Light);
+        SetThemeCheck(ThemeDarkCheck, _themeService.CurrentMode == AppThemeMode.Dark);
+
+        ThemeStatusText.Text = _themeService.CurrentMode == AppThemeMode.System
+            ? $"Theme: System ({_themeService.CurrentResolvedTheme})"
+            : $"Theme: {_themeService.CurrentMode}";
+    }
+
+    private static void SetThemeCheck(TextBlock checkText, bool isChecked)
+    {
+        checkText.Visibility = isChecked ? Visibility.Visible : Visibility.Hidden;
     }
 }

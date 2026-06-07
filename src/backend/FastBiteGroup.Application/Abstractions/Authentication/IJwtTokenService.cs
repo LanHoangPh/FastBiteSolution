@@ -14,7 +14,6 @@ public interface IJwtTokenService
 
     /// <summary>
     /// Extracts the JTI from an access token without validating lifetime.
-    /// Returns null if the token is malformed or signature is invalid.
     /// </summary>
     string? GetJtiFromExpiredToken(string accessToken);
 

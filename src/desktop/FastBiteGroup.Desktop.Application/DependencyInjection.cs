@@ -6,9 +6,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        // Đăng ký UseCases, Validators, Mappers tại đây
-        // Ví dụ: services.AddTransient<LoginUseCase>();
-
+        // Register use cases, validators, and mappers here.
         return services;
     }
 }

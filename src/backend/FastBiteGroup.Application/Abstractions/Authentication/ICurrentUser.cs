@@ -1,18 +1,4 @@
 namespace FastBiteGroup.Application.Abstractions.Authentication;
-
-/// <summary>
-/// Provides ambient identity information extracted from the current request's JWT token.
-/// Implemented in Infrastructure using IHttpContextAccessor + ClaimsPrincipal.
-/// 
-/// Design rationale:
-///   - Application layer defines this interface — zero dependency on ASP.NET HTTP primitives.
-///   - Command/Query handlers inject this instead of ClaimsPrincipal directly.
-///   - Scoped lifetime: one instance per HTTP request.
-/// 
-/// Null-safety:
-///   - IsAuthenticated should be checked before accessing UserId / Email / Roles.
-///   - Anonymous endpoints that use ICurrentUser should guard with IsAuthenticated.
-/// </summary>
 public interface ICurrentUser
 {
     /// <summary>The authenticated user's ID extracted from the 'sub' claim.</summary>
