@@ -1,8 +1,9 @@
+using FastBiteGroup.Domain.Abstractions;
+
 namespace FastBiteGroup.Domain.Entities;
 
-public class WorkspaceMember
+public class WorkspaceMember : EntityBase<int>
 {
-    public int WorkspaceMemberID { get; set; }
     public EnumWorkspaceRole Role { get; set; } = EnumWorkspaceRole.Member;
     public EnumWorkspaceMemberStatus Status { get; set; } = EnumWorkspaceMemberStatus.Active;
     public DateTime JoinedAt { get; set; }

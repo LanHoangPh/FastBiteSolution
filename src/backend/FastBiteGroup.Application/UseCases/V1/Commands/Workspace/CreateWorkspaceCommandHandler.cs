@@ -40,7 +40,7 @@ public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceComm
 
         var workspace = new FastBiteGroup.Domain.Entities.Workspace
         {
-            WorkspaceID = workspaceId,
+            Id = workspaceId,
             WorkspaceName = request.WorkspaceName.Trim(),
             Description = request.Description?.Trim(),
             WorkspaceType = (EnumWorkspaceType)request.WorkspaceType,

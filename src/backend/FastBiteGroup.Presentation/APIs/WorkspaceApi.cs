@@ -24,17 +24,20 @@ public class WorkspaceApi : ApiEndpoint, IEndpoint
 
         group.MapPost("/", CreateWorkspace)
             .WithName("CreateWorkspace")
+            .WithSummary("Create a new workspace")
             .Produces<WorkspaceResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapGet("/me", GetMyWorkspaces)
             .WithName("GetMyWorkspaces")
+            .WithSummary("Get all workspaces the current user is a member of")
             .Produces<List<WorkspaceResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapGet("/invitations/me", GetMyWorkspaceInvitations)
             .WithName("GetMyWorkspaceInvitations")
+            .WithSummary("Get all pending workspace invitations for the current user")
             .Produces<List<WorkspaceInvitationResponse>>(StatusCodes.Status200OK);
 
         group.MapPost("/invitations/{invitationId:int}/accept", AcceptWorkspaceInvitation)

@@ -6,6 +6,7 @@ namespace FastBiteGroupMCA.Persistentce.Configurations
         {
             builder.ToTable("ContentReports");
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasColumnName("ReportedContentID");
 
             builder.Property(x => x.Reason)
                    .IsRequired()

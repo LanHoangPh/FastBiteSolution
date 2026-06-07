@@ -11,24 +11,21 @@ namespace FastBiteGroup.Application.Tests.UseCases.V1.Commands.Auth;
 public class RegisterCommandHandlerTests
 {
     private readonly IUserAuthService _userAuthServiceMock;
-    private readonly IOtpService _otpServiceMock;
     private readonly IIntegrationOutboxStore _outboxStoreMock;
     private readonly RegisterCommandHandler _handler;
 
     public RegisterCommandHandlerTests()
     {
         _userAuthServiceMock = Substitute.For<IUserAuthService>();
-        _otpServiceMock = Substitute.For<IOtpService>();
         _outboxStoreMock = Substitute.For<IIntegrationOutboxStore>();
 
         _handler = new RegisterCommandHandler(
             _userAuthServiceMock,
-            _otpServiceMock,
             _outboxStoreMock);
     }
 
     [Fact]
-    public async Task Handle_GivenValidRequest_ReturnsSuccessAndGeneratesOTP()
+    public async Task Handle_GivenValidRequest_ReturnsSuccessAndGeneratesEmailConfirmationToken()
     {
         // Arrange
         var command = new AuthCommands.RegisterCommand("test@test.com", "Password123!@", "First", "Last", new DateTime(1990, 1, 1));
@@ -58,9 +55,7 @@ public class RegisterCommandHandlerTests
             .Returns((userDto, (string?)null));
 
         _userAuthServiceMock.GenerateEmailConfirmationTokenAsync(command.Email, Arg.Any<CancellationToken>())
-            .Returns("fake-magic-link-token");
-        _otpServiceMock.GenerateOtpAsync("REGISTER", command.Email, TimeSpan.FromMinutes(10), Arg.Any<CancellationToken>())
-            .Returns("123456");
+            .Returns("fake-email-confirmation-token");
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -69,10 +64,8 @@ public class RegisterCommandHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Message.Should().Contain("successfully");
 
-        await _otpServiceMock.Received(1).GenerateOtpAsync(
-            "REGISTER",
+        await _userAuthServiceMock.Received(1).GenerateEmailConfirmationTokenAsync(
             command.Email,
-            TimeSpan.FromMinutes(10),
             Arg.Any<CancellationToken>());
 
         await _outboxStoreMock.Received(1).AddAsync(Arg.Any<IntegrationOutboxMessage>(), Arg.Any<CancellationToken>());

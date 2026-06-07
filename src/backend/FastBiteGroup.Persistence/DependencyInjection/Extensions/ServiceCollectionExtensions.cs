@@ -7,6 +7,7 @@ using FastBiteGroup.Persistence.Mongo.Messages;
 using FastBiteGroup.Persistence.Mongo.Notifications;
 using FastBiteGroup.Persistence.Mongo.Outbox;
 using FastBiteGroup.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -66,9 +67,13 @@ public static class ServiceCollectionExtensions
 
             // User
             options.User.RequireUniqueEmail = true;
+
+            options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultProvider;
+            options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
         })
         .AddRoles<AppRoles>()
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddTokenProvider<EmailTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
         return services;
     }

@@ -1,6 +1,7 @@
 using FastBiteGroup.Application.Abstractions.Emails;
 using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
+using System.Net;
 using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.BackgroundJobs;
@@ -54,11 +55,22 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
                     var payload = JsonSerializer.Deserialize<UserRegisteredIntegrationEvent>(message.Payload);
                     if (payload != null)
                     {
+                        var email = WebUtility.UrlEncode(payload.Email);
+                        var token = WebUtility.UrlEncode(payload.EmailConfirmationToken);
+                        var verificationUrl = $"https://localhost:5001/api/v1/auth/verify-email?email={email}&token={token}";
+
                         var htmlBody = $@"
-                            <h2>Welcome to FastBite!</h2>
-                            <p>Here is your 6-digit OTP: <strong>{payload.Otp}</strong></p>
-                            <p>Or click this link to verify your email automatically:</p>
-                            <a href=""https://localhost:5001/api/v1/auth/verify-email?email={payload.Email}&code={payload.MagicLinkToken}"">Verify Account</a>
+                            <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
+                                <h2 style=""color: #222;"">Confirm your FastBite account</h2>
+                                <p>Hello,</p>
+                                <p>You recently created a FastBite account. Click the button below to confirm your email address.</p>
+                                <p style=""margin: 24px 0;"">
+                                    <a href=""{verificationUrl}"" style=""background-color: #111827; color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 6px; display: inline-block;"">Confirm email</a>
+                                </p>
+                                <p style=""color: #555; font-size: 14px;"">If you did not create a FastBite account, you can safely ignore this email.</p>
+                                <hr style=""border: 0; border-top: 1px solid #eee; margin: 20px 0;"" />
+                                <p style=""color: #999; font-size: 12px;"">&copy; {DateTime.UtcNow.Year} FastBite. All rights reserved.</p>
+                            </div>
                         ";
 
                         await emailSender.SendEmailAsync(

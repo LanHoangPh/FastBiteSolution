@@ -15,18 +15,15 @@ internal sealed class RegisterCommandHandler
     : ICommandHandler<AuthCommands.RegisterCommand, RegisterResponse>
 {
     private readonly IUserAuthService _userAuthService;
-    private readonly IOtpService _otpService;
     private readonly IIntegrationOutboxStore _outboxStore;
     private readonly ILogger<RegisterCommandHandler> _logger;
 
     public RegisterCommandHandler(
         IUserAuthService userAuthService,
-        IOtpService otpService,
         IIntegrationOutboxStore outboxStore,
         ILogger<RegisterCommandHandler>? logger = null)
     {
         _userAuthService = userAuthService;
-        _otpService = otpService;
         _outboxStore = outboxStore;
         _logger = logger ?? NullLogger<RegisterCommandHandler>.Instance;
     }
@@ -55,22 +52,14 @@ internal sealed class RegisterCommandHandler
             return Result.Failure<RegisterResponse>(new Error("Auth.RegistrationFailed", errorMessage!));
         }
 
-        // 3. Generate 6-digit OTP using the same purpose consumed by VerifyEmailCommandHandler.
-        var otp = await _otpService.GenerateOtpAsync(
-            "REGISTER",
-            user.Email,
-            TimeSpan.FromMinutes(10),
-            cancellationToken);
+        // 3. Generate Identity's purpose-specific email confirmation token.
+        var emailConfirmationToken = await _userAuthService.GenerateEmailConfirmationTokenAsync(user.Email, cancellationToken);
 
-        // 4. Generate Magic Link Token
-        var magicLinkToken = await _userAuthService.GenerateEmailConfirmationTokenAsync(user.Email, cancellationToken);
-
-        // 5. Publish to Outbox
+        // 4. Publish to Outbox
         var integrationEvent = new UserRegisteredIntegrationEvent(
             user.Id,
             user.Email,
-            otp,
-            magicLinkToken);
+            emailConfirmationToken);
 
         var outboxMessage = new IntegrationOutboxMessage(
             Guid.NewGuid(),

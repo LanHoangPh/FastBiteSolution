@@ -44,6 +44,7 @@ Base route:
 |---|---|---|---|
 | POST | `/register` | `RegisterCommand` | Implemented |
 | POST | `/verify-email` | `VerifyEmailCommand` | Implemented |
+| GET | `/verify-email?email={email}&token={token}` | `VerifyEmailCommand` | Implemented |
 | POST | `/login` | `LoginCommand` | Implemented |
 | POST | `/refresh` | `RefreshTokenCommand` | Implemented |
 | POST | `/logout` | `LogoutCommand` | Implemented |
@@ -53,6 +54,31 @@ Base route:
 | POST | `/google-login` | `GoogleLoginCommand` | Implemented |
 
 Logout extracts the JWT `jti` from claims rather than trusting the request body.
+
+### Email Verification
+
+Email confirmation uses ASP.NET Identity confirmation tokens, not OTP. OTP remains reserved for password reset and similar short-lived verification flows.
+
+#### POST `/api/v1/auth/verify-email`
+
+Request body:
+
+```json
+{
+  "email": "member@example.com",
+  "token": "identity-email-confirmation-token"
+}
+```
+
+Response:
+- `200 OK` + `AuthResponse`
+
+#### GET `/api/v1/auth/verify-email?email={email}&token={token}`
+
+Used by email magic links. The token must be URL-encoded in the link.
+
+Response:
+- `200 OK` + `AuthResponse`
 
 ---
 
@@ -410,7 +436,7 @@ Revoke all
   -> bulk revoke refresh tokens for user
 
 Verify Email
-  -> validate OTP or Magic Link Token
+  -> validate ASP.NET Identity email confirmation token
   -> set EmailConfirmed to true and IsActive to true
   -> issue new token pair (auto login)
 

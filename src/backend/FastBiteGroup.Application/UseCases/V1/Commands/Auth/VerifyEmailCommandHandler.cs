@@ -15,20 +15,17 @@ internal sealed class VerifyEmailCommandHandler
     : ICommandHandler<AuthCommands.VerifyEmailCommand, AuthResponse>
 {
     private readonly IUserAuthService _userAuthService;
-    private readonly IOtpService _otpService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly ILogger<VerifyEmailCommandHandler> _logger;
 
     public VerifyEmailCommandHandler(
         IUserAuthService userAuthService,
-        IOtpService otpService,
         IJwtTokenService jwtTokenService,
         IRefreshTokenRepository refreshTokenRepository,
         ILogger<VerifyEmailCommandHandler>? logger = null)
     {
         _userAuthService = userAuthService;
-        _otpService = otpService;
         _jwtTokenService = jwtTokenService;
         _refreshTokenRepository = refreshTokenRepository;
         _logger = logger ?? NullLogger<VerifyEmailCommandHandler>.Instance;
@@ -50,32 +47,16 @@ internal sealed class VerifyEmailCommandHandler
             return Result.Failure<AuthResponse>(new Error("Auth.EmailAlreadyConfirmed", "Email is already confirmed."));
         }
 
-        bool isValid = false;
-
-        // 2. Try OTP validation first
-        var validationResult = await _otpService.ValidateOtpAsync("REGISTER", request.Email, request.Code, maxAttempts: 5, ct: cancellationToken);
-
-        if (validationResult == OtpValidationResult.MaxAttemptsReached)
-        {
-            _logger.LogWarning("OTP brute-force attempt blocked for email: {Email}", request.Email);
-            return Result.Failure<AuthResponse>(new Error("Auth.OtpLimitReached", "Too many failed OTP attempts. Please register again."));
-        }
-
-        if (validationResult == OtpValidationResult.Success)
-        {
-            isValid = await _userAuthService.ActivateUserAsync(request.Email, cancellationToken);
-        }
-
-        // 3. If not OTP or OTP failed, try Magic Link Token validation
-        if (!isValid)
-        {
-            isValid = await _userAuthService.ConfirmEmailWithTokenAsync(request.Email, request.Code, cancellationToken);
-        }
+        // 2. Confirm email using ASP.NET Identity's purpose-specific token.
+        var isValid = await _userAuthService.ConfirmEmailWithTokenAsync(
+            request.Email,
+            request.Token,
+            cancellationToken);
 
         if (!isValid)
         {
             _logger.LogWarning("Verification failed for email: {Email}", request.Email);
-            return Result.Failure<AuthResponse>(new Error("Auth.InvalidCode", "Invalid or expired verification code."));
+            return Result.Failure<AuthResponse>(new Error("Auth.InvalidToken", "Invalid or expired email confirmation token."));
         }
 
         // Refetch user to get updated state (IsActive, EmailConfirmed)

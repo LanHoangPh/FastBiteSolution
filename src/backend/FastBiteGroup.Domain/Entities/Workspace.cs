@@ -5,7 +5,7 @@ namespace FastBiteGroup.Domain.Entities;
 
 public class Workspace : EntityBase<Guid>, IDateTracking, ISoftDelete
 {
-    public Guid WorkspaceID { get; set; }
+    
     public string WorkspaceName { get; set; } = string.Empty;
     public string? Description { get; set; }
     public EnumWorkspaceType WorkspaceType { get; set; } = EnumWorkspaceType.Public;
@@ -18,8 +18,8 @@ public class Workspace : EntityBase<Guid>, IDateTracking, ISoftDelete
     public DateTimeOffset? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
-    [Timestamp]
-    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+    //[Timestamp]
+    //public byte[] RowVersion { get; set; } = Array.Empty<byte>();
     public int? ConversationId { get; set; }
     public virtual Conversation? Conversation { get; set; }
 

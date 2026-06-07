@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using FastBiteGroup.Domain.Abstractions;
 
 namespace FastBiteGroup.Domain.Entities;
 
-public class WorkspaceInvitation : IDateTracking
+public class WorkspaceInvitation : EntityBase<int>, IDateTracking
 {
-    public int InvitationID { get; set; }
     public string InvitationCode { get; set; } = string.Empty;
     public Guid WorkspaceID { get; set; }
     public Guid CreatedByUserID { get; set; }

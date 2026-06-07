@@ -1,11 +1,10 @@
 using FastBiteGroup.Domain.Enum;
+using FastBiteGroup.Domain.Abstractions;
 
 namespace FastBiteGroup.Domain.Entities;
 
-public class UserWorkspaceInvitation : IDateTracking
+public class UserWorkspaceInvitation : EntityBase<int>, IDateTracking
 {
-    public int InvitationID { get; set; }
-
     public Guid WorkspaceID { get; set; }
     public virtual Workspace? Workspace { get; set; }
     public Guid? InvitedUserID { get; set; }

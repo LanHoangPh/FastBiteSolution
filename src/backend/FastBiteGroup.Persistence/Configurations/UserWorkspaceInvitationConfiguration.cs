@@ -5,14 +5,15 @@ internal sealed class UserWorkspaceInvitationConfiguration : IEntityTypeConfigur
     public void Configure(EntityTypeBuilder<UserWorkspaceInvitation> builder)
     {
         builder.ToTable(TableNames.UserWorkspaceInvitations);
-        builder.HasKey(x => x.InvitationID);
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasColumnName("InvitationID");
 
         builder.HasIndex(x => new { x.InvitedEmail, x.WorkspaceID })
                .HasDatabaseName("IX_UserWorkspaceInvitations_InvitedEmail_WorkspaceID");
 
         builder.HasQueryFilter(x => x.Workspace != null && !x.Workspace.IsDeleted);
 
-        builder.Property(x => x.InvitationID)
+        builder.Property(x => x.Id)
                .ValueGeneratedOnAdd();
 
         builder.Property(x => x.InvitedEmail)

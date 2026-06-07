@@ -24,7 +24,7 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
                 m.LeftAt == null))
             .OrderByDescending(w => w.CreatedAt)
             .Select(w => new WorkspaceSummary(
-                w.WorkspaceID,
+                w.Id,
                 w.WorkspaceName,
                 w.Description,
                 w.WorkspaceType,
@@ -49,13 +49,13 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
     {
         return await _context.Workspaces
             .AsNoTracking()
-            .Where(w => w.WorkspaceID == workspaceId && !w.IsArchived)
+            .Where(w => w.Id == workspaceId && !w.IsArchived)
             .Where(w => w.Members.Any(m =>
                 m.UserID == userId &&
                 m.Status == EnumWorkspaceMemberStatus.Active &&
                 m.LeftAt == null))
             .Select(w => new WorkspaceSummary(
-                w.WorkspaceID,
+                w.Id,
                 w.WorkspaceName,
                 w.Description,
                 w.WorkspaceType,
@@ -79,7 +79,7 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
     {
         return await _context.Workspaces
             .Include(w => w.Members)
-            .FirstOrDefaultAsync(w => w.WorkspaceID == workspaceId, cancellationToken);
+            .FirstOrDefaultAsync(w => w.Id == workspaceId, cancellationToken);
     }
 
     public async Task<WorkspaceMember?> GetMemberForUpdateAsync(
@@ -121,7 +121,7 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
                 member => member.UserID,
                 user => user.Id,
                 (member, user) => new WorkspaceMemberSummary(
-                    member.WorkspaceMemberID,
+                    member.Id,
                     member.UserID,
                     user.Email ?? string.Empty,
                     user.FullName,
@@ -176,7 +176,7 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
                 !i.Workspace.IsArchived)
             .OrderByDescending(i => i.CreatedAt)
             .Select(i => new WorkspaceInvitationSummary(
-                i.InvitationID,
+                i.Id,
                 i.WorkspaceID,
                 i.Workspace!.WorkspaceName,
                 i.Workspace.Description,
@@ -195,7 +195,7 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
         return await _context.UserWorkspaceInvitations
             .Include(i => i.Workspace)
             .FirstOrDefaultAsync(i =>
-                i.InvitationID == invitationId &&
+                i.Id == invitationId &&
                 i.InvitedEmail == invitedEmail &&
                 i.Status == EnumInvitationStatus.Pending,
                 cancellationToken);

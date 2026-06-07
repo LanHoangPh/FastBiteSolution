@@ -13,7 +13,6 @@ namespace FastBiteGroup.Application.Tests.UseCases.V1.Commands.Auth;
 public class VerifyEmailCommandHandlerTests
 {
     private readonly Mock<IUserAuthService> _userAuthServiceMock;
-    private readonly Mock<IOtpService> _otpServiceMock;
     private readonly Mock<IJwtTokenService> _jwtTokenServiceMock;
     private readonly Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
     private readonly Mock<ILogger<VerifyEmailCommandHandler>> _loggerMock;
@@ -23,14 +22,12 @@ public class VerifyEmailCommandHandlerTests
     public VerifyEmailCommandHandlerTests()
     {
         _userAuthServiceMock = new Mock<IUserAuthService>();
-        _otpServiceMock = new Mock<IOtpService>();
         _jwtTokenServiceMock = new Mock<IJwtTokenService>();
         _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
         _loggerMock = new Mock<ILogger<VerifyEmailCommandHandler>>();
 
         _handler = new VerifyEmailCommandHandler(
             _userAuthServiceMock.Object,
-            _otpServiceMock.Object,
             _jwtTokenServiceMock.Object,
             _refreshTokenRepositoryMock.Object,
             _loggerMock.Object);
@@ -40,7 +37,7 @@ public class VerifyEmailCommandHandlerTests
     public async Task Handle_WhenUserNotFound_ShouldReturnFailure()
     {
         // Arrange
-        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
+        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "email-confirmation-token");
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserDto?)null);
 
@@ -56,7 +53,7 @@ public class VerifyEmailCommandHandlerTests
     public async Task Handle_WhenEmailAlreadyConfirmed_ShouldReturnFailure()
     {
         // Arrange
-        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
+        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "email-confirmation-token");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, true, true, null, new List<string>());
 
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
@@ -71,40 +68,16 @@ public class VerifyEmailCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenOtpLimitReached_ShouldReturnFailure()
+    public async Task Handle_WhenTokenConfirmationFails_ShouldReturnFailure()
     {
         // Arrange
-        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
+        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "invalid-token");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
 
         _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
-        _otpServiceMock.Setup(x => x.ValidateOtpAsync("REGISTER", command.Email, command.Code, 5, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(OtpValidationResult.MaxAttemptsReached);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Auth.OtpLimitReached");
-    }
-
-    [Fact]
-    public async Task Handle_WhenBothOtpAndMagicLinkFail_ShouldReturnFailure()
-    {
-        // Arrange
-        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "invalid-code");
-        var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
-
-        _userAuthServiceMock.Setup(x => x.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
-
-        _otpServiceMock.Setup(x => x.ValidateOtpAsync("REGISTER", command.Email, command.Code, 5, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(OtpValidationResult.InvalidCode);
-
-        _userAuthServiceMock.Setup(x => x.ConfirmEmailWithTokenAsync(command.Email, command.Code, It.IsAny<CancellationToken>()))
+        _userAuthServiceMock.Setup(x => x.ConfirmEmailWithTokenAsync(command.Email, command.Token, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act
@@ -112,14 +85,14 @@ public class VerifyEmailCommandHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Auth.InvalidCode");
+        result.Error.Code.Should().Be("Auth.InvalidToken");
     }
 
     [Fact]
     public async Task Handle_WhenSuccess_ShouldReturnAuthResponse()
     {
         // Arrange
-        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "123456");
+        var command = new AuthCommands.VerifyEmailCommand("test@example.com", "email-confirmation-token");
         var user = new UserDto(Guid.NewGuid(), command.Email, "testuser", "Test", "User", "Test User", null, null, false, true, null, new List<string>());
         var verifiedUser = new UserDto(user.Id, command.Email, "testuser", "Test", "User", "Test User", null, null, true, true, null, new List<string>());
 
@@ -133,10 +106,7 @@ public class VerifyEmailCommandHandlerTests
             .ReturnsAsync(user)
             .ReturnsAsync(verifiedUser);
 
-        _otpServiceMock.Setup(x => x.ValidateOtpAsync("REGISTER", command.Email, command.Code, 5, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(OtpValidationResult.Success);
-
-        _userAuthServiceMock.Setup(x => x.ActivateUserAsync(command.Email, It.IsAny<CancellationToken>()))
+        _userAuthServiceMock.Setup(x => x.ConfirmEmailWithTokenAsync(command.Email, command.Token, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _jwtTokenServiceMock.Setup(x => x.GenerateAccessToken(user.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles))

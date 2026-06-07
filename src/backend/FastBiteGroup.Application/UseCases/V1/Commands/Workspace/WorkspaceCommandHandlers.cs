@@ -120,8 +120,8 @@ public sealed class InviteWorkspaceMemberCommandHandler : ICommandHandler<Invite
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new WorkspaceInvitationResponse(
-            invitation.InvitationID,
-            workspace.WorkspaceID,
+            invitation.Id,
+            workspace.Id,
             workspace.WorkspaceName,
             workspace.Description,
             workspace.WorkspaceAvatarUrl,

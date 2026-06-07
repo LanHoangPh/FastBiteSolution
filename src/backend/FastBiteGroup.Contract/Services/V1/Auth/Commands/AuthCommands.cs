@@ -28,7 +28,7 @@ public static class AuthCommands
 
     public sealed record VerifyEmailCommand(
         string Email,
-        string Code) : ICommand<AuthResponse>;
+        string Token) : ICommand<AuthResponse>;
 
     public sealed record RevokeAllSessionsCommand(
         Guid UserId) : ICommand;

@@ -13,8 +13,7 @@ internal static class DatabaseExtensions
     internal static IResourceBuilder<MongoDBDatabaseResource> AddApplicationMongoDB(
         this IDistributedApplicationBuilder builder)
     {
-        var postgres = builder.AddMongoDB("mongodb")
-            .WithDataVolume();
+        var postgres = builder.AddMongoDB("mongodb");
 
         return postgres.AddDatabase("MongoDBConnection");
     }

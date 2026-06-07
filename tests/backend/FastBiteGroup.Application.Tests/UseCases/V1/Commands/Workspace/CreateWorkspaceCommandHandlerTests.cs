@@ -56,7 +56,7 @@ public class CreateWorkspaceCommandHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.CurrentUserRole.Should().Be("Owner");
         capturedWorkspace.Should().NotBeNull();
-        capturedWorkspace!.WorkspaceID.Should().NotBeEmpty();
+        capturedWorkspace!.Id.Should().NotBeEmpty();
         capturedWorkspace.Members.Should().ContainSingle(m =>
             m.UserID == userId &&
             m.Role == EnumWorkspaceRole.Owner &&

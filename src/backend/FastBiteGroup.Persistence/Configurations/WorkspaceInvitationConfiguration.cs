@@ -5,7 +5,8 @@ internal sealed class WorkspaceInvitationConfiguration : IEntityTypeConfiguratio
     public void Configure(EntityTypeBuilder<WorkspaceInvitation> builder)
     {
         builder.ToTable(TableNames.WorkspaceInvitations);
-        builder.HasKey(x => x.InvitationID);
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasColumnName("InvitationID");
 
         builder.Property(x => x.InvitationCode).IsRequired().HasMaxLength(50);
         builder.Property(x => x.CreatedAt).IsRequired();

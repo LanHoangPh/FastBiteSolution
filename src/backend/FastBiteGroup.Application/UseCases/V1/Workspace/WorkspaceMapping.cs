@@ -65,7 +65,7 @@ internal static class WorkspaceMapping
     public static WorkspaceInviteLinkResponse ToResponse(this WorkspaceInvitation invitation)
     {
         return new WorkspaceInviteLinkResponse(
-            invitation.InvitationID,
+            invitation.Id,
             invitation.WorkspaceID,
             invitation.InvitationCode,
             invitation.CreatedAt,

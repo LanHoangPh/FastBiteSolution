@@ -5,7 +5,8 @@ internal sealed class WorkspaceMemberConfiguration : IEntityTypeConfiguration<Wo
     public void Configure(EntityTypeBuilder<WorkspaceMember> builder)
     {
         builder.ToTable(TableNames.WorkspaceMembers);
-        builder.HasKey(x => x.WorkspaceMemberID);
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasColumnName("WorkspaceMemberID");
 
         builder.HasIndex(x => new { x.WorkspaceID, x.UserID }).IsUnique();
         builder.HasQueryFilter(x => x.Workspace != null && !x.Workspace.IsDeleted);

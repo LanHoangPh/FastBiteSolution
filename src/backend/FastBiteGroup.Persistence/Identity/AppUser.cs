@@ -20,7 +20,5 @@ public class AppUser : IdentityUser<Guid>
     public DateTime? UpdatedAt { get; set; }
     public EnumMessagingPrivacy MessagingPrivacy { get; set; } = EnumMessagingPrivacy.FromSharedGroupMembers;
     public string? OneSignalPlayerId { get; set; }
-    [Timestamp]
-    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 }
 

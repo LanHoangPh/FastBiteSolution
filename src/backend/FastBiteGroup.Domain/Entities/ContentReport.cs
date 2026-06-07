@@ -4,7 +4,6 @@ namespace FastBiteGroup.Domain.Entities;
 
 public class ContentReport : EntityAuditBase<int>
 {
-    public int ReportedContentID { get; set; }
     public EnumReportedContentType ReportedContentType { get; set; }
     public Guid ReportedByUserID { get; set; }
     /// <summary>

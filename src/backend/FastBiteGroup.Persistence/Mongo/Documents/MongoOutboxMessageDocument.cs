@@ -1,6 +1,6 @@
 namespace FastBiteGroup.Persistence.Mongo.Documents;
 
-public sealed class MongoOutboxMessageDocument : MongoDocumentBase<Guid>
+public sealed class MongoOutboxMessageDocument : MongoGuidDocumentBase
 {
     public string Type { get; init; } = string.Empty;
 

@@ -18,23 +18,23 @@ public class WorkspaceCommandHandlersTests
     public async Task InviteWorkspaceMember_WhenPendingInvitationExists_ReturnsConflict()
     {
         var userId = Guid.NewGuid();
-        var workspaceId = Guid.NewGuid();
+        var Id = Guid.NewGuid();
         var repository = Substitute.For<IWorkspaceRepository>();
         var userAuthService = Substitute.For<IUserAuthService>();
         var unitOfWork = Substitute.For<IUnitOfWork>();
         var currentUser = Substitute.For<ICurrentUser>();
 
         currentUser.UserId.Returns(userId);
-        repository.GetActiveMemberAsync(workspaceId, userId, Arg.Any<CancellationToken>())
-            .Returns(new WorkspaceMember { WorkspaceID = workspaceId, UserID = userId, Role = EnumWorkspaceRole.Admin, Status = EnumWorkspaceMemberStatus.Active });
-        repository.GetWorkspaceForUpdateAsync(workspaceId, Arg.Any<CancellationToken>())
-            .Returns(new FastBiteGroup.Domain.Entities.Workspace { WorkspaceID = workspaceId, WorkspaceName = "Acme" });
-        repository.HasPendingInvitationAsync(workspaceId, "dev@acme.com", Arg.Any<CancellationToken>())
+        repository.GetActiveMemberAsync(Id, userId, Arg.Any<CancellationToken>())
+            .Returns(new WorkspaceMember { WorkspaceID = Id, UserID = userId, Role = EnumWorkspaceRole.Admin, Status = EnumWorkspaceMemberStatus.Active });
+        repository.GetWorkspaceForUpdateAsync(Id, Arg.Any<CancellationToken>())
+            .Returns(new FastBiteGroup.Domain.Entities.Workspace { Id = Id, WorkspaceName = "Acme" });
+        repository.HasPendingInvitationAsync(Id, "dev@acme.com", Arg.Any<CancellationToken>())
             .Returns(true);
 
         var handler = new InviteWorkspaceMemberCommandHandler(repository, userAuthService, unitOfWork, currentUser);
 
-        var result = await handler.Handle(new InviteWorkspaceMemberCommand(workspaceId, "Dev@Acme.com"), CancellationToken.None);
+        var result = await handler.Handle(new InviteWorkspaceMemberCommand(Id, "Dev@Acme.com"), CancellationToken.None);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(WorkspaceErrors.InvitationAlreadyExists);
@@ -66,7 +66,7 @@ public class WorkspaceCommandHandlersTests
     [Fact]
     public async Task JoinWorkspace_WhenInviteCodeExpired_ReturnsExpired()
     {
-        var workspaceId = Guid.NewGuid();
+        var Id = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var repository = Substitute.For<IWorkspaceRepository>();
         var unitOfWork = Substitute.For<IUnitOfWork>();
@@ -77,11 +77,11 @@ public class WorkspaceCommandHandlersTests
         repository.GetWorkspaceInvitationByCodeForUpdateAsync("ABC", Arg.Any<CancellationToken>())
             .Returns(new WorkspaceInvitation
             {
-                WorkspaceID = workspaceId,
+                WorkspaceID = Id,
                 InvitationCode = "ABC",
                 IsActive = true,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(-1),
-                Workspace = new FastBiteGroup.Domain.Entities.Workspace { WorkspaceID = workspaceId }
+                Workspace = new FastBiteGroup.Domain.Entities.Workspace { Id = Id }
             });
 
         var handler = new JoinWorkspaceCommandHandler(repository, unitOfWork, currentUser, cache);
@@ -95,7 +95,7 @@ public class WorkspaceCommandHandlersTests
     [Fact]
     public async Task ArchiveWorkspace_WhenCurrentUserIsNotOwner_ReturnsForbidden()
     {
-        var workspaceId = Guid.NewGuid();
+        var Id = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var repository = Substitute.For<IWorkspaceRepository>();
         var unitOfWork = Substitute.For<IUnitOfWork>();
@@ -103,12 +103,12 @@ public class WorkspaceCommandHandlersTests
         var cache = Substitute.For<ICacheService>();
 
         currentUser.UserId.Returns(userId);
-        repository.GetActiveMemberAsync(workspaceId, userId, Arg.Any<CancellationToken>())
-            .Returns(new WorkspaceMember { WorkspaceID = workspaceId, UserID = userId, Role = EnumWorkspaceRole.Admin, Status = EnumWorkspaceMemberStatus.Active });
+        repository.GetActiveMemberAsync(Id, userId, Arg.Any<CancellationToken>())
+            .Returns(new WorkspaceMember { WorkspaceID = Id, UserID = userId, Role = EnumWorkspaceRole.Admin, Status = EnumWorkspaceMemberStatus.Active });
 
         var handler = new ArchiveWorkspaceCommandHandler(repository, unitOfWork, currentUser, cache);
 
-        var result = await handler.Handle(new ArchiveWorkspaceCommand(workspaceId), CancellationToken.None);
+        var result = await handler.Handle(new ArchiveWorkspaceCommand(Id), CancellationToken.None);
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(WorkspaceErrors.Forbidden);

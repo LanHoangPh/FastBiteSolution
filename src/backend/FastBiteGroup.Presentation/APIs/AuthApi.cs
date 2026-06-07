@@ -32,7 +32,15 @@ public class AuthApi : ApiEndpoint, IEndpoint
         // POST /api/v1/auth/verify-email
         group.MapPost("/verify-email", VerifyEmail)
             .AllowAnonymous()
-            .WithSummary("Verify email via OTP or Magic Link Token and receive JWT token pair")
+            .WithSummary("Verify email via Identity confirmation token and receive JWT token pair")
+            .Produces<AuthResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        // GET /api/v1/auth/verify-email?email={email}&token={token}
+        group.MapGet("/verify-email", VerifyEmailByLink)
+            .AllowAnonymous()
+            .WithSummary("Verify email via magic link and receive JWT token pair")
             .Produces<AuthResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest);
@@ -108,6 +116,16 @@ public class AuthApi : ApiEndpoint, IEndpoint
         CancellationToken ct)
     {
         var result = await sender.Send(command, ct);
+        return result.IsFailure ? HandleFailure(result) : Results.Ok(result.Value);
+    }
+
+    private static async Task<IResult> VerifyEmailByLink(
+        [FromQuery] string email,
+        [FromQuery] string token,
+        ISender sender,
+        CancellationToken ct)
+    {
+        var result = await sender.Send(new AuthCommands.VerifyEmailCommand(email, token), ct);
         return result.IsFailure ? HandleFailure(result) : Results.Ok(result.Value);
     }
 
