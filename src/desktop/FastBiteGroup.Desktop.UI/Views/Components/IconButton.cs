@@ -3,34 +3,12 @@ using System.Windows.Controls;
 
 namespace FastBiteGroup.Desktop.UI.Views.Components;
 
-public enum ButtonVariant
-{
-    Primary,
-    Secondary,
-    Outline,
-    Ghost,
-    Destructive
-}
-
-public enum ButtonSize
-{
-    Small,
-    Medium,
-    Large
-}
-
-public enum IconPosition
-{
-    Left,
-    Right
-}
-
-public class ModernButton : Button
+public class IconButton : Button
 {
     public static readonly DependencyProperty VariantProperty = DependencyProperty.Register(
         nameof(Variant),
         typeof(ButtonVariant),
-        typeof(ModernButton),
+        typeof(IconButton),
         new PropertyMetadata(ButtonVariant.Primary));
 
     public ButtonVariant Variant
@@ -42,7 +20,7 @@ public class ModernButton : Button
     public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
         nameof(Size),
         typeof(ButtonSize),
-        typeof(ModernButton),
+        typeof(IconButton),
         new PropertyMetadata(ButtonSize.Medium));
 
     public ButtonSize Size
@@ -51,22 +29,10 @@ public class ModernButton : Button
         set => SetValue(SizeProperty, value);
     }
 
-    public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
-        nameof(IsLoading),
-        typeof(bool),
-        typeof(ModernButton),
-        new PropertyMetadata(false));
-
-    public bool IsLoading
-    {
-        get => (bool)GetValue(IsLoadingProperty);
-        set => SetValue(IsLoadingProperty, value);
-    }
-
     public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
         nameof(Icon),
         typeof(object),
-        typeof(ModernButton),
+        typeof(IconButton),
         new PropertyMetadata(null));
 
     public object? Icon
@@ -75,23 +41,11 @@ public class ModernButton : Button
         set => SetValue(IconProperty, value);
     }
 
-    public static readonly DependencyProperty IconPositionProperty = DependencyProperty.Register(
-        nameof(IconPosition),
-        typeof(IconPosition),
-        typeof(ModernButton),
-        new PropertyMetadata(IconPosition.Left));
-
-    public IconPosition IconPosition
-    {
-        get => (IconPosition)GetValue(IconPositionProperty);
-        set => SetValue(IconPositionProperty, value);
-    }
-
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
         nameof(CornerRadius),
         typeof(CornerRadius),
-        typeof(ModernButton),
-        new PropertyMetadata(new CornerRadius(8))); // Default 8px corner radius
+        typeof(IconButton),
+        new PropertyMetadata(new CornerRadius(4)));
 
     public CornerRadius CornerRadius
     {
@@ -99,10 +53,10 @@ public class ModernButton : Button
         set => SetValue(CornerRadiusProperty, value);
     }
 
-    static ModernButton()
+    static IconButton()
     {
         DefaultStyleKeyProperty.OverrideMetadata(
-            typeof(ModernButton),
-            new FrameworkPropertyMetadata(typeof(ModernButton)));
+            typeof(IconButton),
+            new FrameworkPropertyMetadata(typeof(IconButton)));
     }
 }

@@ -5,10 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:components="clr-namespace:FastBiteGroup.Desktop.UI.Views.Components"
         mc:Ignorable="d"
-        Title="FastBite Premium Interface Demo" 
+        Title="{Binding AppTitle}" 
         Height="780" Width="1180"
         Style="{StaticResource AppWindowStyle}"
         WindowStartupLocation="CenterScreen">
+        
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <DataTemplate x:Key="MetricCardTemplate">
+            <Border Style="{StaticResource CardBorderStyle}" Margin="5,0">
+                <StackPanel>
+                    <TextBlock Text="{Binding Label}" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Value}" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
+                    <TextBlock Text="{Binding Description}" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -37,11 +50,9 @@
                         <TextBlock Text="F" FontWeight="Bold" Foreground="{DynamicResource PrimaryForegroundBrush}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Text="FastBite Desktop" Style="{StaticResource TitleTextBlockStyle}" FontSize="20" Margin="12,0,0,0" VerticalAlignment="Center" />
-                    <TextBlock Margin="16,2,0,0"
-                               VerticalAlignment="Center"
-                               FontSize="12"
-                               Foreground="{DynamicResource MutedForegroundBrush}"
-                               Text="Premium Design System Active" />
+                    
+                    <!-- SearchBox -->
+                    <components:SearchBox Width="280" Margin="32,0,0,0" PlaceholderText="Search anything..." VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Settings & Theme Dropdown -->
@@ -51,19 +62,19 @@
                               Style="{StaticResource ToggleSwitchStyle}" 
                               Margin="0,0,16,0" 
                               VerticalAlignment="Center"
-                              Checked="OnThemeToggleChecked"
-                              Unchecked="OnThemeToggleUnchecked"/>
+                              IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"/>
                     
                     <Grid VerticalAlignment="Center">
                         <Button x:Name="SettingsButton"
                                 Style="{DynamicResource HeaderMenuButtonStyle}"
-                                Click="OnSettingsClick"
+                                Command="{Binding ToggleSettingsPopupCommand}"
                                 Content="Appearance Settings" />
 
                     <!-- Custom Styled Popup to respect Dark Theme -->
                     <Popup x:Name="SettingsPopup"
                            PlacementTarget="{Binding ElementName=SettingsButton}"
                            Placement="Bottom"
+                           IsOpen="{Binding IsSettingsPopupOpen}"
                            StaysOpen="False"
                            AllowsTransparency="True"
                            PopupAnimation="Slide">
@@ -72,8 +83,8 @@
                                 Background="{DynamicResource PopoverBrush}"
                                 BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1"
-                                CornerRadius="{StaticResource RadiusMd}"
-                                Effect="{StaticResource ShadowMd}">
+                                CornerRadius="{DynamicResource RadiusMd}"
+                                Effect="{DynamicResource ShadowMd}">
                             
                             <StackPanel Margin="0,4">
                                 <TextBlock Margin="12,10,12,6"
@@ -84,17 +95,18 @@
 
                                 <Button x:Name="ThemeSystemButton"
                                         Style="{DynamicResource PopupMenuButtonStyle}"
-                                        Click="OnThemeSystemClick">
+                                        Command="{Binding SetSystemThemeCommand}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="ThemeSystemCheck"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource AccentForegroundBrush}"
-                                                   FontWeight="Bold"
-                                                   Text="✓" />
+                                        <Path Data="M 0 5 L 3 8 L 8 0" 
+                                              Stroke="{DynamicResource AccentForegroundBrush}" 
+                                              StrokeThickness="2" 
+                                              VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center"
+                                              Visibility="{Binding IsSystemThemeSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         <TextBlock Grid.Column="1"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Text="System Default" />
@@ -103,17 +115,18 @@
 
                                 <Button x:Name="ThemeLightButton"
                                         Style="{DynamicResource PopupMenuButtonStyle}"
-                                        Click="OnThemeLightClick">
+                                        Command="{Binding SetLightThemeCommand}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="ThemeLightCheck"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource AccentForegroundBrush}"
-                                                   FontWeight="Bold"
-                                                   Text="✓" />
+                                        <Path Data="M 0 5 L 3 8 L 8 0" 
+                                              Stroke="{DynamicResource AccentForegroundBrush}" 
+                                              StrokeThickness="2" 
+                                              VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center"
+                                              Visibility="{Binding IsLightThemeSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         <TextBlock Grid.Column="1"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Text="Light Mode" />
@@ -122,17 +135,18 @@
 
                                 <Button x:Name="ThemeDarkButton"
                                         Style="{DynamicResource PopupMenuButtonStyle}"
-                                        Click="OnThemeDarkClick">
+                                        Command="{Binding SetDarkThemeCommand}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="ThemeDarkCheck"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource AccentForegroundBrush}"
-                                                   FontWeight="Bold"
-                                                   Text="✓" />
+                                        <Path Data="M 0 5 L 3 8 L 8 0" 
+                                              Stroke="{DynamicResource AccentForegroundBrush}" 
+                                              StrokeThickness="2" 
+                                              VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center"
+                                              Visibility="{Binding IsDarkThemeSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         <TextBlock Grid.Column="1"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Text="Dark Mode" />
@@ -164,11 +178,55 @@
                     </Grid.RowDefinitions>
 
                     <!-- Nav Links -->
-                    <StackPanel Grid.Row="0">
-                        <Button Content="Dashboard" Style="{StaticResource SidebarActiveButtonStyle}" />
-                        <Button Content="Conversations" Style="{StaticResource SidebarButtonStyle}" />
-                        <Button Content="Settings" Style="{StaticResource SidebarButtonStyle}" />
-                    </StackPanel>
+                    <ListBox Grid.Row="0" 
+                             ItemsSource="{Binding SidebarItems}" 
+                             SelectedItem="{Binding SelectedSidebarItem}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,0,0,4"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource RadiusMd}">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MutedBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MutedBrush}"/>
+                                                    <Setter Property="TextElement.FontWeight" Value="SemiBold"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="12,10">
+                                    <Path Data="{Binding IconGeometry}" 
+                                          Fill="{DynamicResource ForegroundBrush}"
+                                          Width="18" Height="18"
+                                          Margin="0,0,12,0" 
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Title}" 
+                                               Foreground="{DynamicResource ForegroundBrush}"
+                                               FontSize="14"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
                     <!-- Bottom User Card -->
                     <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
@@ -176,20 +234,29 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Border CornerRadius="14" Width="28" Height="28" Background="{DynamicResource PrimaryBrush}">
-                                <TextBlock Text="U" Foreground="{DynamicResource PrimaryForegroundBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="User Admin" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" FontSize="12" />
+                            
+                            <components:Avatar Initials="UA" Size="Medium" Status="Online" />
+                            
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="User Admin" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" FontSize="14" />
+                                <TextBlock Text="user@fastbite.local" Foreground="{DynamicResource MutedForegroundBrush}" FontSize="12" Margin="0,2,0,0" />
                             </StackPanel>
+                            
+                            <components:IconButton Grid.Column="2" Variant="Ghost" Size="Small" VerticalAlignment="Center">
+                                <components:IconButton.Icon>
+                                    <Path Data="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" 
+                                          Fill="{DynamicResource MutedForegroundBrush}" Width="16" Height="16"/>
+                                </components:IconButton.Icon>
+                            </components:IconButton>
                         </Grid>
                     </Border>
                 </Grid>
             </Border>
 
             <!-- 2. Main content area -->
-            <Grid Grid.Column="1" Margin="{StaticResource WindowPadding}">
+            <Grid Grid.Column="1" Margin="{DynamicResource WindowPadding}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" /> <!-- Sub-Header -->
                     <RowDefinition Height="Auto" /> <!-- Analytics Cards -->
@@ -197,35 +264,18 @@
                 </Grid.RowDefinitions>
 
                 <!-- Sub header info -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                    <TextBlock Text="Workspace Dashboard" Style="{StaticResource TitleTextBlockStyle}" />
-                    <TextBlock Text="Manage active components and design tokens below." Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,4,0,0" />
-                </StackPanel>
+                <components:SectionHeader Grid.Row="0" Margin="0,0,0,20"
+                                          Title="Workspace Dashboard"
+                                          Subtitle="Manage active components and design tokens below." />
 
                 <!-- Analytics Cards -->
-                <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
-                    <Border Style="{StaticResource ElevatedCardBorderStyle}" Margin="0,0,10,0">
-                        <StackPanel>
-                            <TextBlock Text="CPU LOAD" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
-                            <TextBlock Text="12.4 %" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
-                            <TextBlock Text="Optimal performance" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource CardBorderStyle}" Margin="5,0,5,0">
-                        <StackPanel>
-                            <TextBlock Text="ACTIVE SESSIONS" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
-                            <TextBlock Text="842" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
-                            <TextBlock Text="Normal load" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource InteractiveCardBorderStyle}" Margin="10,0,0,0">
-                        <StackPanel>
-                            <TextBlock Text="INTERACTIVE (HOVER ME)" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
-                            <TextBlock Text="Hover State" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
-                            <TextBlock Text="Changes border color" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
-                    </Border>
-                </UniformGrid>
+                <ItemsControl ItemsSource="{Binding DashboardMetrics}" Margin="0,0,0,20" Grid.Row="1" ItemTemplate="{StaticResource MetricCardTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
 
                 <!-- Split Grid -->
                 <Grid Grid.Row="2">
@@ -243,7 +293,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Config Form" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,12" />
+                            <components:SectionHeader Grid.Row="0" Margin="0,0,0,12" Title="Config Form" />
 
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
@@ -251,7 +301,7 @@
                                     <TextBox Text="Sample Input Text" Style="{StaticResource AppTextBoxStyle}" Margin="0,0,0,12" />
 
                                     <TextBlock Text="Password Field" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                                    <PasswordBox Password="SamplePassword" Style="{StaticResource AppPasswordBoxStyle}" Margin="0,0,0,12" />
+                                    <PasswordBox Style="{StaticResource AppPasswordBoxStyle}" Margin="0,0,0,12" />
 
                                     <TextBlock Text="Dropdown Selector" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                     <ComboBox SelectedIndex="0" Style="{StaticResource AppComboBoxStyle}" Margin="0,0,0,12">
@@ -292,13 +342,13 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="System Access Logs" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{DynamicResource ForegroundBrush}" Margin="16,14,16,10" />
+                                <components:SectionHeader Grid.Row="0" Margin="16,14,16,10" Title="System Access Logs" />
                                 
-                                <DataGrid x:Name="AccessLogGrid" Grid.Row="1" Style="{StaticResource AppDataGridStyle}">
+                                <DataGrid x:Name="AccessLogGrid" Grid.Row="1" ItemsSource="{Binding AccessLogs}" Style="{StaticResource AppDataGridStyle}">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Time" Width="2*" Binding="{Binding Time}" />
                                         <DataGridTextColumn Header="User" Width="3*" Binding="{Binding User}" />
-                                        <DataGridTextColumn Header="IP Address" Width="3*" Binding="{Binding IP}" />
+                                        <DataGridTextColumn Header="IP Address" Width="3*" Binding="{Binding IpAddress}" />
                                         <DataGridTextColumn Header="Status" Width="2*" Binding="{Binding Status}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
@@ -347,6 +397,7 @@
                            Text="WPF Environment: .NET 8" />
 
                 <TextBlock x:Name="ThemeStatusText"
+                           Text="{Binding ThemeStatusText}"
                            Grid.Column="1"
                            VerticalAlignment="Center"
                            FontSize="12"

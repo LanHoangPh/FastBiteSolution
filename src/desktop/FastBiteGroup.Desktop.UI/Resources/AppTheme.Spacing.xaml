@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <!-- Radius Tokens -->
     <CornerRadius x:Key="RadiusSm">18</CornerRadius>
@@ -19,5 +20,16 @@
     <Thickness x:Key="ControlPadding">14,10</Thickness>
     <Thickness x:Key="CardPadding">20</Thickness>
     <Thickness x:Key="WindowPadding">24</Thickness>
+
+    <!-- Component Dimensions -->
+    <system:Double x:Key="IconSizeSm">12</system:Double>
+    <system:Double x:Key="IconSizeMd">16</system:Double>
+    <system:Double x:Key="IconSizeLg">20</system:Double>
+    
+    <system:Double x:Key="IconButtonSizeSm">28</system:Double>
+    <system:Double x:Key="IconButtonSizeMd">36</system:Double>
+    <system:Double x:Key="IconButtonSizeLg">44</system:Double>
+
+    <Thickness x:Key="FocusRingThickness">2</Thickness>
 
 </ResourceDictionary>

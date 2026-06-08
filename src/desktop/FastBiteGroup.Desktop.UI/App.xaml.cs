@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
+using FastBiteGroup.Desktop.UI.ViewModels;
+
 namespace FastBiteGroup.Desktop.UI;
 
 public partial class App : System.Windows.Application
@@ -56,6 +58,7 @@ public partial class App : System.Windows.Application
                     FastBiteGroup.Desktop.UI.Services.NavigationService>();
                 services.AddSingleton<IThemeService, ThemeService>();
 
+                services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
             })
             .Build();
@@ -64,12 +67,26 @@ public partial class App : System.Windows.Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         Log.Information("Starting FastBite Desktop Application...");
-        await AppHost!.StartAsync();
+        
+        try
+        {
+            await AppHost!.StartAsync();
 
-        AppHost.Services.GetRequiredService<IThemeService>().Initialize();
+            AppHost.Services.GetRequiredService<IThemeService>().Initialize();
 
-        var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+            var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Failed to start application");
+            MessageBox.Show(
+                "An unexpected application error occurred during startup. Please check the logs.",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown(1);
+        }
 
         base.OnStartup(e);
     }
@@ -77,9 +94,20 @@ public partial class App : System.Windows.Application
     protected override async void OnExit(ExitEventArgs e)
     {
         Log.Information("Exiting FastBite Desktop Application...");
-        await AppHost!.StopAsync();
-        AppHost.Dispose();
-        Log.CloseAndFlush();
+        
+        try
+        {
+            await AppHost!.StopAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error occurred while stopping the application host");
+        }
+        finally
+        {
+            AppHost?.Dispose();
+            Log.CloseAndFlush();
+        }
 
         base.OnExit(e);
     }
@@ -90,7 +118,7 @@ public partial class App : System.Windows.Application
     {
         Log.Fatal(e.Exception, "Unhandled UI exception occurred");
         MessageBox.Show(
-            $"An unexpected application error occurred: {e.Exception.Message}",
+            "An unexpected application error occurred. Please restart the application.",
             "Error",
             MessageBoxButton.OK,
             MessageBoxImage.Error);

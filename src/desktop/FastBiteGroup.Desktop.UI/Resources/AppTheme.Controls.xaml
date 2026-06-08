@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:components="clr-namespace:FastBiteGroup.Desktop.UI.Views.Components">
 
-    <!-- Style Window mặc định -->
+    <!-- Default Window Style -->
     <Style x:Key="AppWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
@@ -12,6 +12,72 @@
     </Style>
 
     <!-- ==================== BUTTON STYLES ==================== -->
+
+    <Style x:Key="HeaderMenuButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource RadiusMd}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource MutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PopupMenuButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="{DynamicResource RadiusSm}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource MutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Primary Button Style -->
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
@@ -258,7 +324,7 @@
                                               VerticalAlignment="Center"
                                               Margin="{TemplateBinding Padding}" />
                         </Border>
-                        <!-- Indicator Bar màu Primary ở góc trái để tạo cảm giác tinh tế -->
+                        <!-- Primary colored indicator bar on the left edge -->
                         <Border HorizontalAlignment="Left"
                                 VerticalAlignment="Stretch"
                                 Width="4"
@@ -542,7 +608,7 @@
                                 Height="18" 
                                 HorizontalAlignment="Left" 
                                 VerticalAlignment="Center">
-                            <!-- Thiết kế Path dấu tích chuyên nghiệp -->
+                            <!-- Professional checkmark path design -->
                             <Path x:Name="mark" 
                                   Data="M 3.5 9.5 L 7 13 L 14.5 4" 
                                   Stroke="{DynamicResource PrimaryForegroundBrush}" 
@@ -601,7 +667,7 @@
         <Setter Property="SelectionMode" Value="Single" />
     </Style>
 
-    <!-- Cột Header DataGrid -->
+    <!-- DataGrid Column Header -->
     <Style TargetType="DataGridColumnHeader">
         <Setter Property="Background" Value="{DynamicResource MutedBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
@@ -624,7 +690,7 @@
         </Setter>
     </Style>
 
-    <!-- Dòng DataGrid -->
+    <!-- DataGrid Row -->
     <Style TargetType="DataGridRow">
         <Setter Property="Background" Value="Transparent" />
         <Style.Triggers>
@@ -634,7 +700,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Ô dữ liệu Cell DataGrid -->
+    <!-- DataGrid Cell -->
     <Style TargetType="DataGridCell">
         <Setter Property="Padding" Value="12,0" />
         <Setter Property="BorderThickness" Value="0" />
@@ -670,16 +736,16 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <StackPanel Orientation="Horizontal">
-                        <!-- Khung công tắc hành trình -->
+                        <!-- Switch container -->
                         <Grid x:Name="SwitchContainer" Width="40" Height="22" VerticalAlignment="Center">
-                            <!-- Đường ray chạy nền của công tắc -->
+                            <!-- Switch track -->
                             <Border x:Name="Track"
                                     Background="{DynamicResource InputBrush}"
                                     BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="11" />
                             
-                            <!-- Nút tròn trượt (Thumb) -->
+                            <!-- Thumb -->
                             <Border x:Name="Thumb"
                                     Background="{DynamicResource MutedForegroundBrush}"
                                     Width="16"
@@ -694,7 +760,7 @@
                             </Border>
                         </Grid>
                         
-                        <!-- Nội dung nhãn văn bản đi kèm -->
+                        <!-- Attached label content -->
                         <ContentPresenter x:Name="ContentPresenter"
                                           Margin="10,0,0,0"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -702,12 +768,12 @@
                     </StackPanel>
                     
                     <ControlTemplate.Triggers>
-                        <!-- Khi trỏ chuột vào nút -->
+                        <!-- On mouse over -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource MutedForegroundBrush}" />
                         </Trigger>
                         
-                        <!-- Trạng thái Đang bật (Checked) -->
+                        <!-- Checked state -->
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Track" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                             <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
@@ -734,7 +800,7 @@
                             </Trigger.ExitActions>
                         </Trigger>
 
-                        <!-- Trạng thái bị khóa (Disabled) -->
+                        <!-- Disabled state -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
@@ -766,6 +832,20 @@
                             CornerRadius="{TemplateBinding CornerRadius}">
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}">
+                            <!-- Loading Spinner -->
+                            <Path x:Name="LoadingSpinner"
+                                  Width="14" Height="14"
+                                  Margin="0,0,8,0"
+                                  Data="M 7,1 A 6,6 0 1,1 1,7"
+                                  Stroke="{TemplateBinding Foreground}"
+                                  StrokeThickness="2"
+                                  Visibility="Collapsed"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform>
+                                    <RotateTransform x:Name="SpinnerTransform" Angle="0" />
+                                </Path.RenderTransform>
+                            </Path>
+                            
                             <!-- Icon (Left) -->
                             <ContentPresenter x:Name="IconLeftHost"
                                               Content="{TemplateBinding Icon}"
@@ -825,6 +905,20 @@
                             <Setter Property="Foreground" Value="{DynamicResource DestructiveForegroundBrush}"/>
                         </Trigger>
 
+                        <!-- Size Triggers -->
+                        <Trigger Property="Size" Value="Small">
+                            <Setter Property="Padding" Value="10,6"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter TargetName="LoadingSpinner" Property="Width" Value="12"/>
+                            <Setter TargetName="LoadingSpinner" Property="Height" Value="12"/>
+                        </Trigger>
+                        <Trigger Property="Size" Value="Large">
+                            <Setter Property="Padding" Value="20,12"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter TargetName="LoadingSpinner" Property="Width" Value="16"/>
+                            <Setter TargetName="LoadingSpinner" Property="Height" Value="16"/>
+                        </Trigger>
+
                         <!-- Icon Position Triggers -->
                         <Trigger Property="IconPosition" Value="Right">
                             <Setter TargetName="IconLeftHost" Property="Visibility" Value="Collapsed"/>
@@ -835,6 +929,28 @@
                         <Trigger Property="Icon" Value="{x:Null}">
                             <Setter TargetName="IconLeftHost" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="IconRightHost" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+
+                        <!-- IsLoading Trigger -->
+                        <Trigger Property="IsLoading" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter TargetName="IconLeftHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="IconRightHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="LoadingSpinner" Property="Visibility" Value="Visible" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="SpinStoryboard">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SpinnerTransform"
+                                                         Storyboard.TargetProperty="Angle"
+                                                         From="0" To="360"
+                                                         Duration="0:0:1"
+                                                         RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="SpinStoryboard" />
+                            </Trigger.ExitActions>
                         </Trigger>
 
                         <!-- Visual State Triggers (Common) -->
@@ -860,6 +976,286 @@
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource MutedBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
                             <Setter TargetName="Root" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== ICON BUTTON STYLE ==================== -->
+    <Style TargetType="{x:Type components:IconButton}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Width" Value="{DynamicResource IconButtonSizeMd}" />
+        <Setter Property="Height" Value="{DynamicResource IconButtonSizeMd}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource RadiusMd}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:IconButton}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <ContentPresenter Content="{TemplateBinding Icon}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Hover State -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource MutedBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                        </Trigger>
+                        <!-- Pressed State -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.7" />
+                        </Trigger>
+                        <!-- Disabled State -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                        
+                        <!-- Variant Overrides -->
+                        <Trigger Property="Variant" Value="Primary">
+                            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Variant" Value="Primary"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Opacity" Value="0.85" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                        </MultiTrigger>
+
+                        <Trigger Property="Variant" Value="Secondary">
+                            <Setter Property="Background" Value="{DynamicResource SecondaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SecondaryForegroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                        </Trigger>
+
+                        <!-- Size Overrides -->
+                        <Trigger Property="Size" Value="Small">
+                            <Setter Property="Width" Value="{DynamicResource IconButtonSizeSm}" />
+                            <Setter Property="Height" Value="{DynamicResource IconButtonSizeSm}" />
+                        </Trigger>
+                        <Trigger Property="Size" Value="Large">
+                            <Setter Property="Width" Value="{DynamicResource IconButtonSizeLg}" />
+                            <Setter Property="Height" Value="{DynamicResource IconButtonSizeLg}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== STATUS BADGE STYLE ==================== -->
+    <Style TargetType="{x:Type components:StatusBadge}">
+        <Setter Property="Background" Value="{DynamicResource MutedBrush}" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:StatusBadge}">
+                    <Ellipse Fill="{TemplateBinding Background}"
+                             Width="{TemplateBinding Width}"
+                             Height="{TemplateBinding Height}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Status" Value="Success">
+                            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Warning">
+                            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Error">
+                            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Online">
+                            <Setter Property="Background" Value="{DynamicResource OnlineBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Away">
+                            <Setter Property="Background" Value="{DynamicResource AwayBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Busy">
+                            <Setter Property="Background" Value="{DynamicResource BusyBrush}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Offline">
+                            <Setter Property="Background" Value="{DynamicResource OfflineBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== AVATAR STYLE ==================== -->
+    <Style TargetType="{x:Type components:Avatar}">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:Avatar}">
+                    <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Border x:Name="RootBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{TemplateBinding Width}">
+                            <!-- We use CornerRadius = Width so it's always a circle -->
+                            <Grid>
+                                <!-- Initials -->
+                                <TextBlock Text="{TemplateBinding Initials}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontSize="{TemplateBinding FontSize}" />
+                                
+                                <!-- Image (if provided) -->
+                                <Border CornerRadius="{TemplateBinding Width}"
+                                        x:Name="ImageBorder"
+                                        Visibility="Visible">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{TemplateBinding ImageSource}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Status Dot -->
+                        <components:StatusBadge x:Name="StatusDot"
+                                                Status="{TemplateBinding Status}"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,-2,-2"
+                                                Visibility="Visible">
+                            <components:StatusBadge.RenderTransform>
+                                <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
+                            </components:StatusBadge.RenderTransform>
+                        </components:StatusBadge>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- If ImageSource is present, show ImageBorder -->
+                        <Trigger Property="ImageSource" Value="{x:Null}">
+                            <Setter TargetName="ImageBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        
+                        <!-- If Status is null, hide StatusDot -->
+                        <Trigger Property="Status" Value="{x:Null}">
+                            <Setter TargetName="StatusDot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!-- Size Triggers -->
+                        <Trigger Property="Size" Value="Small">
+                            <Setter Property="Width" Value="24" />
+                            <Setter Property="Height" Value="24" />
+                            <Setter Property="FontSize" Value="10" />
+                        </Trigger>
+                        <Trigger Property="Size" Value="Medium">
+                            <Setter Property="Width" Value="36" />
+                            <Setter Property="Height" Value="36" />
+                            <Setter Property="FontSize" Value="14" />
+                        </Trigger>
+                        <Trigger Property="Size" Value="Large">
+                            <Setter Property="Width" Value="48" />
+                            <Setter Property="Height" Value="48" />
+                            <Setter Property="FontSize" Value="18" />
+                        </Trigger>
+                        <Trigger Property="Size" Value="ExtraLarge">
+                            <Setter Property="Width" Value="64" />
+                            <Setter Property="Height" Value="64" />
+                            <Setter Property="FontSize" Value="24" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== SEARCH BOX STYLE ==================== -->
+    <Style TargetType="{x:Type components:SearchBox}">
+        <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="36,8,36,8" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CornerRadius" Value="{DynamicResource RadiusMd}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:SearchBox}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
+                            <!-- Search Icon -->
+                            <Path Data="M10,2A8,8 0 1,0 18,10A8,8 0 0,0 10,2M10,16A6,6 0 1,1 16,10A6,6 0 0,1 10,16M21.71,20.29L18,16.61A9.9,9.9 0 1,1 19.39,15.21L23.12,18.88A1,1 0 0,1 21.71,20.29Z"
+                                  Fill="{DynamicResource MutedForegroundBrush}"
+                                  Width="16" Height="16"
+                                  HorizontalAlignment="Left"
+                                  Margin="12,0,0,0" />
+                            
+                            <!-- Placeholder -->
+                            <TextBlock x:Name="PlaceholderText"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource MutedForegroundBrush}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       Margin="{TemplateBinding Padding}"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed" />
+                            
+                            <!-- Input -->
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="0"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            
+                            <!-- Clear Button -->
+                            <Button x:Name="PART_ClearButton"
+                                    Command="{Binding ClearCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,8,0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Visibility="Visible">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Transparent" Padding="4">
+                                            <Path Data="M19,6.41L17.59,5 12,10.59 6.41,5 5,6.41 10.59,12 5,17.59 6.41,19 12,13.41 17.59,19 19,17.59 13.41,12Z"
+                                                  Fill="{DynamicResource MutedForegroundBrush}"
+                                                  Width="14" Height="14"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Focus Trigger -->
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource RingBrush}" />
+                        </Trigger>
+                        <!-- Placeholder / ClearButton Triggers -->
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="PART_ClearButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="PART_ClearButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

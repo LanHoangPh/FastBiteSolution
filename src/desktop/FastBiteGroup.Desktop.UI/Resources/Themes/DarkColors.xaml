@@ -39,10 +39,17 @@
     <Color x:Key="SidebarBorderColor">#FF353A3E</Color>
     <Color x:Key="SidebarRingColor">#FF51F0A8</Color>
 
-    <!-- Success, Warning, Error (Standard & Mapped) -->
+    <!-- Success, Warning, Error, Presence -->
     <Color x:Key="SuccessColor">#FF4ADE80</Color>
+    <Color x:Key="SuccessForegroundColor">#FF000000</Color>
     <Color x:Key="WarningColor">#FFFACC15</Color>
-    <Color x:Key="ErrorColor">#FFFF78A5</Color> <!-- Mapped to Destructive -->
+    <Color x:Key="WarningForegroundColor">#FF000000</Color>
+    <Color x:Key="ErrorColor">#FFFF78A5</Color>
+    <Color x:Key="ErrorForegroundColor">#FF000000</Color>
+    <Color x:Key="OnlineColor">#FF4ADE80</Color>
+    <Color x:Key="AwayColor">#FFFACC15</Color>
+    <Color x:Key="BusyColor">#FFF87171</Color>
+    <Color x:Key="OfflineColor">#FF9CA3AF</Color>
 
     <!-- SolidColorBrushes -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
@@ -90,7 +97,14 @@
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource MutedForegroundColor}"/>
     <SolidColorBrush x:Key="TextOnPrimaryBrush" Color="{StaticResource PrimaryForegroundColor}"/>
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="SuccessForegroundBrush" Color="{StaticResource SuccessForegroundColor}"/>
     <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="WarningForegroundBrush" Color="{StaticResource WarningForegroundColor}"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource ErrorForegroundColor}"/>
+    <SolidColorBrush x:Key="OnlineBrush" Color="{StaticResource OnlineColor}"/>
+    <SolidColorBrush x:Key="AwayBrush" Color="{StaticResource AwayColor}"/>
+    <SolidColorBrush x:Key="BusyBrush" Color="{StaticResource BusyColor}"/>
+    <SolidColorBrush x:Key="OfflineBrush" Color="{StaticResource OfflineColor}"/>
 
 </ResourceDictionary>

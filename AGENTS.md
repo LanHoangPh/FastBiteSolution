@@ -1,6 +1,7 @@
 # AGENTS.md - FastBite Project Memory
 
-> AI Agent Quick Reference. Read this first. For details, see `docs/ai-context/`.
+> AI Agent Quick Reference. Read this first. For the context map, see `docs/ai-context/README.md`.
+> Detailed coding rules live in `docs/ai-context/CODING_GUIDELINES.md`.
 
 ---
 
@@ -102,10 +103,12 @@ Challenge requirements: Why is it needed? Is there a simpler way? Does it align 
 
 ### 2. Before Making Any Changes
 Always read the full context in the following order:
-1. `docs/ai-context/PRODUCT_REQUIREMENTS.md`
-2. `docs/ai-context/PROJECT_CONTEXT.md`
-3. `docs/ai-context/ARCHITECTURE.md`
-4. `docs/ai-context/CURRENT_STATUS.md`
+1. `docs/ai-context/README.md`
+2. `docs/ai-context/PRODUCT_REQUIREMENTS.md`
+3. `docs/ai-context/PROJECT_CONTEXT.md`
+4. `docs/ai-context/ARCHITECTURE.md`
+5. `docs/ai-context/CURRENT_STATUS.md`
+6. `docs/ai-context/CODING_GUIDELINES.md`
 
 ### 3. Never
 - Change architecture layer dependencies without explicit request.
