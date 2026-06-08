@@ -1,7 +1,14 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
+        <!-- Existing files -->
         <ResourceDictionary Source="Fonts.xaml" />
         <ResourceDictionary Source="ButtonStyles.xaml" />
+
+        <!-- New web-derived design system files -->
+        <ResourceDictionary Source="AppTheme.Typography.xaml" />
+        <ResourceDictionary Source="AppTheme.Spacing.xaml" />
+        <ResourceDictionary Source="AppTheme.Effects.xaml" />
+        <ResourceDictionary Source="AppTheme.Controls.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

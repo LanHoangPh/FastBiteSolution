@@ -3,23 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:components="clr-namespace:FastBiteGroup.Desktop.UI.Views.Components"
         mc:Ignorable="d"
-        Title="FastBite Desktop"
-        MinHeight="520"
-        MinWidth="860"
-        Height="980"
-        Width="1628"
-        Background="{DynamicResource BackgroundBrush}"
-        FontFamily="{DynamicResource MainFont}">
+        Title="FastBite Premium Interface Demo" 
+        Height="780" Width="1180"
+        Style="{StaticResource AppWindowStyle}"
+        WindowStartupLocation="CenterScreen">
+    
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Row 0: Top Header Bar -->
             <RowDefinition Height="56" />
+            <!-- Row 1: Main Work Area -->
             <RowDefinition Height="*" />
+            <!-- Row 2: Status Bar -->
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
+        <!-- ==================== ROW 0: HEADER BAR ==================== -->
         <Border Grid.Row="0"
-                Background="{DynamicResource SurfaceBrush}"
+                Background="{DynamicResource SidebarBrush}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,0,1">
             <Grid Margin="20,0">
@@ -29,66 +32,72 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock FontSize="{DynamicResource FontSizeTitle}"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               Text="FastBite Desktop" />
-
+                    <!-- Premium App Icon -->
+                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="8" Width="32" Height="32">
+                        <TextBlock Text="F" FontWeight="Bold" Foreground="{DynamicResource PrimaryForegroundBrush}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="FastBite Desktop" Style="{StaticResource TitleTextBlockStyle}" FontSize="20" Margin="12,0,0,0" VerticalAlignment="Center" />
                     <TextBlock Margin="16,2,0,0"
                                VerticalAlignment="Center"
-                               FontSize="{DynamicResource FontSizeCaption}"
-                               Foreground="{DynamicResource TextSecondaryBrush}"
-                               Text="Ready" />
+                               FontSize="12"
+                               Foreground="{DynamicResource MutedForegroundBrush}"
+                               Text="Premium Design System Active" />
                 </StackPanel>
 
-                <Grid Grid.Column="1" VerticalAlignment="Center">
-                    <Button x:Name="SettingsButton"
-                            Style="{DynamicResource HeaderMenuButtonStyle}"
-                            Click="OnSettingsClick"
-                            Content="Settings" />
+                <!-- Settings & Theme Dropdown -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox x:Name="ThemeToggleSwitch" 
+                              Content="Dark Mode" 
+                              Style="{StaticResource ToggleSwitchStyle}" 
+                              Margin="0,0,16,0" 
+                              VerticalAlignment="Center"
+                              Checked="OnThemeToggleChecked"
+                              Unchecked="OnThemeToggleUnchecked"/>
+                    
+                    <Grid VerticalAlignment="Center">
+                        <Button x:Name="SettingsButton"
+                                Style="{DynamicResource HeaderMenuButtonStyle}"
+                                Click="OnSettingsClick"
+                                Content="Appearance Settings" />
 
+                    <!-- Custom Styled Popup to respect Dark Theme -->
                     <Popup x:Name="SettingsPopup"
                            PlacementTarget="{Binding ElementName=SettingsButton}"
                            Placement="Bottom"
                            StaysOpen="False"
                            AllowsTransparency="True"
-                           PopupAnimation="Fade">
+                           PopupAnimation="Slide">
                         <Border MinWidth="220"
                                 Margin="0,6,0,0"
-                                Background="{DynamicResource SurfaceBrush}"
+                                Background="{DynamicResource PopoverBrush}"
                                 BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1"
-                                CornerRadius="6">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="16"
-                                                  Direction="270"
-                                                  Opacity="0.22"
-                                                  ShadowDepth="4"
-                                                  Color="#FF000000" />
-                            </Border.Effect>
-
-                            <StackPanel>
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Effect="{StaticResource ShadowMd}">
+                            
+                            <StackPanel Margin="0,4">
                                 <TextBlock Margin="12,10,12,6"
-                                           FontSize="{DynamicResource FontSizeCaption}"
+                                           FontSize="12"
                                            FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                           Text="Appearance" />
+                                           Foreground="{DynamicResource MutedForegroundBrush}"
+                                           Text="Switch Theme Mode" />
 
                                 <Button x:Name="ThemeSystemButton"
                                         Style="{DynamicResource PopupMenuButtonStyle}"
                                         Click="OnThemeSystemClick">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock x:Name="ThemeSystemCheck"
                                                    VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Foreground="{DynamicResource AccentForegroundBrush}"
+                                                   FontWeight="Bold"
                                                    Text="✓" />
                                         <TextBlock Grid.Column="1"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   Text="System" />
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   Text="System Default" />
                                     </Grid>
                                 </Button>
 
@@ -97,16 +106,17 @@
                                         Click="OnThemeLightClick">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock x:Name="ThemeLightCheck"
                                                    VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Foreground="{DynamicResource AccentForegroundBrush}"
+                                                   FontWeight="Bold"
                                                    Text="✓" />
                                         <TextBlock Grid.Column="1"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   Text="Light" />
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   Text="Light Mode" />
                                     </Grid>
                                 </Button>
 
@@ -115,51 +125,214 @@
                                         Click="OnThemeDarkClick">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="24" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock x:Name="ThemeDarkCheck"
                                                    VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource PrimaryBrush}"
+                                                   Foreground="{DynamicResource AccentForegroundBrush}"
+                                                   FontWeight="Bold"
                                                    Text="✓" />
                                         <TextBlock Grid.Column="1"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   Text="Dark" />
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   Text="Dark Mode" />
                                     </Grid>
                                 </Button>
                             </StackPanel>
                         </Border>
                     </Popup>
                 </Grid>
+            </StackPanel>
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1" Margin="20">
-            <Border Background="{DynamicResource SurfaceBrush}"
-                    BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="32">
-                <StackPanel VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            MaxWidth="520">
-                    <TextBlock HorizontalAlignment="Center"
-                               FontSize="{DynamicResource FontSizeHeader}"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               Text="Desktop shell is running" />
-                    <TextBlock Margin="0,12,0,0"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               FontSize="{DynamicResource FontSizeBody}"
-                               Foreground="{DynamicResource TextSecondaryBrush}"
-                               Text="The WPF host, dependency injection, configuration, logging, and .NET 8 runtime are loaded." />
-                </StackPanel>
+        <!-- ==================== ROW 1: WORKSPACE ==================== -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Sidebar Column -->
+                <ColumnDefinition Width="220" />
+                <!-- Content Column -->
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 1. Sidebar -->
+            <Border Style="{StaticResource SidebarContainerStyle}" Grid.Column="0">
+                <Grid Margin="10,16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Nav Links -->
+                    <StackPanel Grid.Row="0">
+                        <Button Content="Dashboard" Style="{StaticResource SidebarActiveButtonStyle}" />
+                        <Button Content="Conversations" Style="{StaticResource SidebarButtonStyle}" />
+                        <Button Content="Settings" Style="{StaticResource SidebarButtonStyle}" />
+                    </StackPanel>
+
+                    <!-- Bottom User Card -->
+                    <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border CornerRadius="14" Width="28" Height="28" Background="{DynamicResource PrimaryBrush}">
+                                <TextBlock Text="U" Foreground="{DynamicResource PrimaryForegroundBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="User Admin" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
             </Border>
+
+            <!-- 2. Main content area -->
+            <Grid Grid.Column="1" Margin="{StaticResource WindowPadding}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <!-- Sub-Header -->
+                    <RowDefinition Height="Auto" /> <!-- Analytics Cards -->
+                    <RowDefinition Height="*" />    <!-- split form/grid -->
+                </Grid.RowDefinitions>
+
+                <!-- Sub header info -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                    <TextBlock Text="Workspace Dashboard" Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock Text="Manage active components and design tokens below." Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,4,0,0" />
+                </StackPanel>
+
+                <!-- Analytics Cards -->
+                <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
+                    <Border Style="{StaticResource ElevatedCardBorderStyle}" Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="CPU LOAD" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
+                            <TextBlock Text="12.4 %" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
+                            <TextBlock Text="Optimal performance" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="5,0,5,0">
+                        <StackPanel>
+                            <TextBlock Text="ACTIVE SESSIONS" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
+                            <TextBlock Text="842" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
+                            <TextBlock Text="Normal load" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource InteractiveCardBorderStyle}" Margin="10,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="INTERACTIVE (HOVER ME)" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="Bold"/>
+                            <TextBlock Text="Hover State" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" Margin="0,4"/>
+                            <TextBlock Text="Changes border color" Foreground="{DynamicResource AccentForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Split Grid -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="6*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left panel: Form Controls -->
+                    <Border Style="{StaticResource CardBorderStyle}" Grid.Column="0" Margin="0,0,10,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="Config Form" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{DynamicResource ForegroundBrush}" Margin="0,0,0,12" />
+
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Input Field" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBox Text="Sample Input Text" Style="{StaticResource AppTextBoxStyle}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="Password Field" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <PasswordBox Password="SamplePassword" Style="{StaticResource AppPasswordBoxStyle}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="Dropdown Selector" Style="{StaticResource CaptionTextBlockStyle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <ComboBox SelectedIndex="0" Style="{StaticResource AppComboBoxStyle}" Margin="0,0,0,12">
+                                        <ComboBoxItem Content="Item Selector 1" />
+                                        <ComboBoxItem Content="Item Selector 2" />
+                                        <ComboBoxItem Content="Item Selector 3" />
+                                    </ComboBox>
+
+                                    <CheckBox Content="Active Feature Token" Style="{StaticResource AppCheckBoxStyle}" Margin="0,4,0,8" IsChecked="True"/>
+                                    <CheckBox Content="System Push Notification" Style="{StaticResource ToggleSwitchStyle}" Margin="0,4,0,12" IsChecked="True"/>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- Button Area -->
+                            <Grid Grid.Row="2" Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <components:ModernButton Grid.Column="0" Content="Delete" Variant="Destructive" />
+                                <components:ModernButton Grid.Column="2" Content="Save" Variant="Primary" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Right panel: DataGrid & Colors preview -->
+                    <Grid Grid.Column="1" Margin="10,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- DataGrid Card -->
+                        <Border Style="{StaticResource CardBorderStyle}" Grid.Row="0" Padding="0" ClipToBounds="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="System Access Logs" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{DynamicResource ForegroundBrush}" Margin="16,14,16,10" />
+                                
+                                <DataGrid x:Name="AccessLogGrid" Grid.Row="1" Style="{StaticResource AppDataGridStyle}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Time" Width="2*" Binding="{Binding Time}" />
+                                        <DataGridTextColumn Header="User" Width="3*" Binding="{Binding User}" />
+                                        <DataGridTextColumn Header="IP Address" Width="3*" Binding="{Binding IP}" />
+                                        <DataGridTextColumn Header="Status" Width="2*" Binding="{Binding Status}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Color Swatch Card -->
+                        <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Margin="0,12,0,0" Padding="16,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Theme Swatches (Chart 1 - 5)" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="13" />
+                                    <TextBlock Text="Preview generated chart variables." Style="{StaticResource CaptionTextBlockStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Background="{DynamicResource Chart1Brush}" Width="20" Height="20" CornerRadius="10" Margin="4,0" ToolTip="Chart 1" />
+                                    <Border Background="{DynamicResource Chart2Brush}" Width="20" Height="20" CornerRadius="10" Margin="4,0" ToolTip="Chart 2" />
+                                    <Border Background="{DynamicResource Chart3Brush}" Width="20" Height="20" CornerRadius="10" Margin="4,0" ToolTip="Chart 3" />
+                                    <Border Background="{DynamicResource Chart4Brush}" Width="20" Height="20" CornerRadius="10" Margin="4,0" ToolTip="Chart 4" />
+                                    <Border Background="{DynamicResource Chart5Brush}" Width="20" Height="20" CornerRadius="10" Margin="4,0" ToolTip="Chart 5" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
         </Grid>
 
+        <!-- ==================== ROW 2: STATUS BAR ==================== -->
         <Border Grid.Row="2"
-                Background="{DynamicResource SurfaceBrush}"
+                Background="{DynamicResource SidebarBrush}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,1,0,0">
             <Grid Margin="20,0">
@@ -169,15 +342,15 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock VerticalAlignment="Center"
-                           FontSize="{DynamicResource FontSizeCaption}"
-                           Foreground="{DynamicResource TextSecondaryBrush}"
-                           Text="Target framework: net8.0-windows" />
+                           FontSize="12"
+                           Foreground="{DynamicResource MutedForegroundBrush}"
+                           Text="WPF Environment: .NET 8" />
 
                 <TextBlock x:Name="ThemeStatusText"
                            Grid.Column="1"
                            VerticalAlignment="Center"
-                           FontSize="{DynamicResource FontSizeCaption}"
-                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                           FontSize="12"
+                           Foreground="{DynamicResource MutedForegroundBrush}" />
             </Grid>
         </Border>
     </Grid>

@@ -1,11 +1,10 @@
-using System;
+using FastBiteGroup.Desktop.Application.Abstractions;
+using FastBiteGroup.Desktop.Infrastructure.ApiClients;
+using FastBiteGroup.Desktop.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Refit;
-using FastBiteGroup.Desktop.Application.Abstractions;
-using FastBiteGroup.Desktop.Infrastructure.ApiClients;
-using FastBiteGroup.Desktop.Infrastructure.Storage;
 
 namespace FastBiteGroup.Desktop.Infrastructure;
 
