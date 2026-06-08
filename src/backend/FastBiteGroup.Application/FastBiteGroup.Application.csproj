@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Abstractions\Authentication\" />
     <Folder Include="UseCases\V1\Commands\" />
-    <Folder Include="UseCases\V1\Queries\" />
     <Folder Include="UseCases\V2\" />
     <Folder Include="Validators\Identity\" />
   </ItemGroup>

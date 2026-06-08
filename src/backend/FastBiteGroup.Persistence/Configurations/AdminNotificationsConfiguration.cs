@@ -36,6 +36,7 @@ internal sealed class AdminNotificationsConfiguration : IEntityTypeConfiguration
         builder.HasIndex(x => new { x.IsRead, x.Timestamp });
         builder.HasIndex(x => x.TriggeredByUserId);
 
+        // FK to AppUser
         builder.HasOne<AppUser>()
             .WithMany()
             .HasForeignKey(x => x.TriggeredByUserId)

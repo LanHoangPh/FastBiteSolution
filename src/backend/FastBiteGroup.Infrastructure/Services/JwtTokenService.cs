@@ -2,11 +2,6 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 
 namespace FastBiteGroup.Infrastructure.Services;
-
-/// <summary>
-/// JWT token generation and parsing service using symmetric HMAC-SHA256 signing.
-/// Takes primitive user data to avoid coupling Infrastructure to Persistence/AppUser.
-/// </summary>
 internal sealed class JwtTokenService : IJwtTokenService
 {
     private readonly JwtOptions _options;

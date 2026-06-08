@@ -1,5 +1,5 @@
+using FastBiteGroup.Application.Validators;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
-using FastBiteGroup.Contract.Services.V1.Workspace.Validators;
 using FluentAssertions;
 
 namespace FastBiteGroup.Contract.Tests.Workspace;

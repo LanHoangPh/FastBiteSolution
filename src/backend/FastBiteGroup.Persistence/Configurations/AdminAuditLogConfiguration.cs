@@ -38,6 +38,7 @@ internal sealed class AdminAuditLogConfiguration : IEntityTypeConfiguration<Admi
         builder.HasIndex(x => new { x.AdminUserId, x.Timestamp });
         builder.HasIndex(x => x.BatchId);
 
+        // FK : AdminUserId -> AppUser.Id
         builder.HasOne<AppUser>()
             .WithMany()
             .HasForeignKey(x => x.AdminUserId)

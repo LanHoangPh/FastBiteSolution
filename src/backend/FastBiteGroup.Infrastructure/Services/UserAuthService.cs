@@ -3,11 +3,6 @@ using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Persistence.Identity;
 
 namespace FastBiteGroup.Infrastructure.Services;
-
-/// <summary>
-/// Implements IUserAuthService using ASP.NET Core Identity's UserManager.
-/// Lives in Infrastructure to keep Application free of Identity/Persistence coupling.
-/// </summary>
 internal sealed class UserAuthService : IUserAuthService
 {
     private readonly UserManager<AppUser> _userManager;
@@ -100,7 +95,7 @@ internal sealed class UserAuthService : IUserAuthService
             LastName = lastName,
             FullName = $"{firstName} {lastName}".Trim(),
             AvatarUrl = picture,
-            EmailConfirmed = true, // Auto confirmed from Google
+            EmailConfirmed = true, 
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };

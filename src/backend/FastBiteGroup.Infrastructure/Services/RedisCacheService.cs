@@ -2,11 +2,6 @@ using FastBiteGroup.Application.Abstractions.Caching;
 using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.Services;
-
-/// <summary>
-/// Redis implementation of ICacheService using StackExchange.Redis.
-/// Uses IConnectionMultiplexer for connection pooling (singleton).
-/// </summary>
 internal sealed class RedisCacheService : ICacheService
 {
     private readonly IDatabase _db;
