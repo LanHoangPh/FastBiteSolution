@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace FastBiteGroup.Contract.Abstractions.Message;
+﻿namespace FastBiteGroup.Contract.Abstractions.Message;
 
 public interface IDomainEvent : INotification
 {

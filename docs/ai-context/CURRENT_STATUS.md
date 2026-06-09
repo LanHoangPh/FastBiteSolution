@@ -1,6 +1,6 @@
 # CURRENT_STATUS.md - FastBiteGroup
 
-**Last Updated:** 2026-06-07
+**Last Updated:** 2026-06-09
 
 ---
 
@@ -93,16 +93,23 @@ Workspace/Tenant MVP is implemented for onboarding, sidebar workspace switching,
 | Domain tests | Build/pass available |
 | Application tests | Passing, includes Auth flows and Workspace handlers |
 | Infrastructure tests | Build/pass available (OTP Service Mocking tests) |
-| Integration tests | Require live PostgreSQL/Redis environment |
+| Integration tests | Passing with Testcontainers PostgreSQL/Redis in dedicated workflow |
 
 Last verified commands:
 
 ```bash
+dotnet format FastBiteSolution.slnx --verify-no-changes --no-restore
 dotnet build FastBiteSolution.slnx
 dotnet test tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj
 dotnet test tests/backend/FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj
 dotnet test tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj
+dotnet test tests/backend/FastBiteGroup.Infrastructure.Tests/FastBiteGroup.Infrastructure.Tests.csproj
+dotnet test tests/backend/FastBiteGroup.Integration.Tests/FastBiteGroup.Integration.Tests.csproj
 ```
+
+CI notes:
+- Main CI workflow is the required PR gate for formatting, solution build, architecture tests, application tests, contract tests, and infrastructure tests.
+- Integration tests are split into a dedicated `workflow_dispatch` workflow and use Testcontainers for PostgreSQL and Redis.
 
 Known warnings:
 - NuGet vulnerability warnings for transitive packages `SharpCompress` and `Snappier`.

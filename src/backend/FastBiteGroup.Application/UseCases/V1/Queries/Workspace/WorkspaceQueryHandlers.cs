@@ -1,11 +1,7 @@
-using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.UseCases.V1.Workspace;
-using FastBiteGroup.Contract.Abstractions.Message;
-using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Workspace;
 using FastBiteGroup.Contract.Services.V1.Workspace.Queries;
 using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
-using FastBiteGroup.Domain.Abstractions.Repositories;
 
 namespace FastBiteGroup.Application.UseCases.V1.Queries.Workspace;
 

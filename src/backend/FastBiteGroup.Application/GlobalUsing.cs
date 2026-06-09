@@ -1,1 +1,11 @@
-﻿
+﻿global using MediatR;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Logging.Abstractions;
+global using FastBiteGroup.Application.Abstractions.Authentication;
+global using FastBiteGroup.Application.Abstractions.Caching;
+global using FastBiteGroup.Contract.Abstractions.Message;
+global using FastBiteGroup.Contract.Abstractions.Outbox;
+global using FastBiteGroup.Contract.Abstractions.Shared;
+global using FastBiteGroup.Domain.Abstractions.Repositories;
+global using FastBiteGroup.Domain.Entities;
+global using FastBiteGroup.Domain.Enum;

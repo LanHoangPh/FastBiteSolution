@@ -1,4 +1,5 @@
 namespace FastBiteGroup.Application.Abstractions.Authentication;
+
 public interface ICurrentUser
 {
     /// <summary>The authenticated user's ID extracted from the 'sub' claim.</summary>

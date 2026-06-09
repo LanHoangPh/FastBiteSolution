@@ -38,7 +38,11 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         {
             DbAdapter = DbAdapter.Postgres,
             SchemasToInclude = new[] { "public" },
-            TablesToIgnore = new[] { new Respawn.Graph.Table("__EFMigrationsHistory") }
+            TablesToIgnore =
+            [
+                new Respawn.Graph.Table("__EFMigrationsHistory"),
+                new Respawn.Graph.Table("AppRoles")
+            ]
         });
 
         await _respawner.ResetAsync(_dbConnection);

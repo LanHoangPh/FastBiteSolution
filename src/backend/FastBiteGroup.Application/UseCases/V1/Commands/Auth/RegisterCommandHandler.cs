@@ -1,14 +1,8 @@
-using FastBiteGroup.Application.Abstractions.Authentication;
-using System.Text.Json;
-using FastBiteGroup.Contract.Abstractions.Message;
-using FastBiteGroup.Contract.Abstractions.Outbox;
-using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using System.Text.Json;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 

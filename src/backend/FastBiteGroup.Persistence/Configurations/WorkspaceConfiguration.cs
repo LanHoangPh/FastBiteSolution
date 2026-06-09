@@ -5,8 +5,8 @@ namespace FastBiteGroup.Persistentce.Configurations
         public void Configure(EntityTypeBuilder<Workspace> builder)
         {
             builder.ToTable(TableNames.Workspaces);
-            builder.HasKey(x => x.Id); builder.Property(x => x.Id).HasColumnName("WorkspaceID");
-            
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasColumnName("WorkspaceID");
 
             builder.Property(x => x.WorkspaceName).IsRequired().HasMaxLength(255);
             builder.Property(x => x.Description).HasMaxLength(1000);

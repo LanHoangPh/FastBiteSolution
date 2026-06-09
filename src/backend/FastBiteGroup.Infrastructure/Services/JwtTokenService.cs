@@ -2,6 +2,7 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 
 namespace FastBiteGroup.Infrastructure.Services;
+
 internal sealed class JwtTokenService : IJwtTokenService
 {
     private readonly JwtOptions _options;

@@ -1,5 +1,7 @@
 using FastBiteGroup.Persistence;
+using FastBiteGroup.Persistence.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,57 +14,69 @@ namespace FastBiteGroup.Integration.Tests.Infrastructure;
 
 public class IntegrationTestWebAppFactory : WebApplicationFactory<API.Program>, IAsyncLifetime
 {
-    //[Obsolete]
-    //private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder(PostgreSqlBuilder.PostgreSqlImage)
-    //    .WithDatabase("fastbite_test")
-    //    .WithUsername("postgres")
-    //    .WithPassword("postgres")
-    //    .Build();
-    //[Obsolete]
-    //private readonly RedisContainer _redisContainer = new RedisBuilder()
-    //    .Build();
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:17")
+        .WithDatabase("fastbite_test")
+        .WithUsername("postgres")
+        .WithPassword("postgres")
+        .Build();
 
-    //protected override void ConfigureWebHost(IWebHostBuilder builder)
-    //{
-    //    builder.ConfigureAppConfiguration((context, configBuilder) =>
-    //    {
-    //        var configData = new Dictionary<string, string?>
-    //        {
-    //            { "ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString() },
-    //            { "ConnectionStrings:redis", _redisContainer.GetConnectionString() }
-    //        };
+    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:7.4")
+        .Build();
 
-    //        configBuilder.AddInMemoryCollection(configData);
-    //    });
-
-    //    // Ensure database is created and migrated
-    //    builder.ConfigureServices(services =>
-    //    {
-    //        var sp = services.BuildServiceProvider();
-    //        using var scope = sp.CreateScope();
-    //        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //        db.Database.Migrate();
-    //    });
-    //}
-
-    //public async Task InitializeAsync()
-    //{
-    //    await _dbContainer.StartAsync();
-    //    await _redisContainer.StartAsync();
-    //}
-
-    //public new async Task DisposeAsync()
-    //{
-    //    await _dbContainer.StopAsync();
-    //    await _redisContainer.StopAsync();
-    //}
-    public Task InitializeAsync()
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        throw new NotImplementedException();
+        builder.ConfigureAppConfiguration((context, configBuilder) =>
+        {
+            var configData = new Dictionary<string, string?>
+            {
+                { "ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString() },
+                { "ConnectionStrings:redis", _redisContainer.GetConnectionString() }
+            };
+
+            configBuilder.AddInMemoryCollection(configData);
+        });
+
+        builder.ConfigureServices(services =>
+        {
+            var sp = services.BuildServiceProvider();
+            using var scope = sp.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Database.Migrate();
+
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRoles>>();
+            SeedRoleAsync(roleManager, "Admin").GetAwaiter().GetResult();
+            SeedRoleAsync(roleManager, "Customer").GetAwaiter().GetResult();
+        });
     }
 
-    Task IAsyncLifetime.DisposeAsync()
+    public async Task InitializeAsync()
     {
-        throw new NotImplementedException();
+        await _dbContainer.StartAsync();
+        await _redisContainer.StartAsync();
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await _dbContainer.DisposeAsync();
+        await _redisContainer.DisposeAsync();
+    }
+
+    private static async Task SeedRoleAsync(RoleManager<AppRoles> roleManager, string roleName)
+    {
+        if (await roleManager.RoleExistsAsync(roleName))
+        {
+            return;
+        }
+
+        var result = await roleManager.CreateAsync(new AppRoles(roleName)
+        {
+            IsSystemRole = true
+        });
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(error => error.Description));
+            throw new InvalidOperationException($"Could not seed role '{roleName}': {errors}");
+        }
     }
 }

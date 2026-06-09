@@ -2,6 +2,7 @@ using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Integration.Tests.Infrastructure;
 using FluentAssertions;
+using System.Net;
 using System.Net.Http.Json;
 using Xunit;
 
@@ -14,7 +15,7 @@ public class AuthTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task Register_Should_Create_User_And_Return_AuthResponse()
+    public async Task Register_Should_Create_User_And_Return_RegisterResponse()
     {
         // Arrange
         var command = new AuthCommands.RegisterCommand(
@@ -29,11 +30,10 @@ public class AuthTests : BaseIntegrationTest
         var response = await HttpClient.PostAsJsonAsync("/api/v1/auth/register", command);
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+        response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+        var registerResponse = await response.Content.ReadFromJsonAsync<RegisterResponse>();
 
-        authResponse.Should().NotBeNull();
-        authResponse!.AccessToken.Should().NotBeNullOrEmpty();
-        authResponse.RefreshToken.Should().NotBeNullOrEmpty();
+        registerResponse.Should().NotBeNull();
+        registerResponse!.Message.Should().NotBeNullOrWhiteSpace();
     }
 }

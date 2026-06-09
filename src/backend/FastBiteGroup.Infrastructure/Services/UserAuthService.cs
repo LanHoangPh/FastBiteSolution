@@ -3,6 +3,7 @@ using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Persistence.Identity;
 
 namespace FastBiteGroup.Infrastructure.Services;
+
 internal sealed class UserAuthService : IUserAuthService
 {
     private readonly UserManager<AppUser> _userManager;
@@ -95,7 +96,7 @@ internal sealed class UserAuthService : IUserAuthService
             LastName = lastName,
             FullName = $"{firstName} {lastName}".Trim(),
             AvatarUrl = picture,
-            EmailConfirmed = true, 
+            EmailConfirmed = true,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };

@@ -8,9 +8,13 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: windows-latest
+    timeout-minutes: 30
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
@@ -25,7 +29,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: |
+            8.0.x
+            10.0.x
 
       - name: Setup Java (for SonarCloud)
         if: ${{ env.SONAR_TOKEN != '' && env.SONAR_PROJECT_KEY != '' && env.SONAR_ORGANIZATION != '' }}
@@ -52,8 +58,17 @@ jobs:
       - name: Build
         run: dotnet build FastBiteSolution.slnx -c Release --no-restore
 
-      - name: Test
-        run: dotnet test FastBiteSolution.slnx -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      - name: Test architecture
+        run: dotnet test tests/backend/FastBiteGroup.Architecture.Tests/FastBiteGroup.Architecture.Tests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/architecture -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Test application
+        run: dotnet test tests/backend/FastBiteGroup.Application.Tests/FastBiteGroup.Application.Tests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/application -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Test contract
+        run: dotnet test tests/backend/FastBiteGroup.Contract.Tests/FastBiteGroup.Contract.Tests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/contract -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Test infrastructure
+        run: dotnet test tests/backend/FastBiteGroup.Infrastructure.Tests/FastBiteGroup.Infrastructure.Tests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./TestResults/infrastructure -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: End SonarCloud scan
         if: ${{ always() && env.SONAR_TOKEN != '' && env.SONAR_PROJECT_KEY != '' && env.SONAR_ORGANIZATION != '' }}

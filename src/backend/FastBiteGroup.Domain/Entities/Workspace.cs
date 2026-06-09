@@ -5,7 +5,6 @@ namespace FastBiteGroup.Domain.Entities;
 
 public class Workspace : EntityBase<Guid>, IDateTracking, ISoftDelete
 {
-    
     public string WorkspaceName { get; set; } = string.Empty;
     public string? Description { get; set; }
     public EnumWorkspacePrivacy Privacy { get; set; } = EnumWorkspacePrivacy.Public;

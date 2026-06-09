@@ -1,15 +1,7 @@
-using System;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using FastBiteGroup.Application.Abstractions.Authentication;
-using FastBiteGroup.Application.Abstractions.Caching;
-using FastBiteGroup.Contract.Abstractions.Message;
-using FastBiteGroup.Contract.Abstractions.Outbox;
-using FastBiteGroup.Contract.Abstractions.Shared;
 using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
+using System.Text.Json;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
@@ -37,7 +29,6 @@ public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswor
         var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
-            // Return success even if user not found to prevent email enumeration
             return Result.Success();
         }
 
