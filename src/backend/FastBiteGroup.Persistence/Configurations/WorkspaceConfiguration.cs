@@ -12,10 +12,8 @@ namespace FastBiteGroup.Persistentce.Configurations
             builder.Property(x => x.Description).HasMaxLength(1000);
 
             // Cấu hình Enum
-            builder.Property(x => x.WorkspaceType)
-                   .IsRequired()
-                   .HasConversion<string>()
-                   .HasMaxLength(50);
+            builder.Property(x => x.IsChatEnabled).IsRequired().HasDefaultValue(true);
+            builder.Property(x => x.IsFeedEnabled).IsRequired().HasDefaultValue(true);
             builder.Property(x => x.Privacy)
                      .IsRequired()
                      .HasConversion<string>()

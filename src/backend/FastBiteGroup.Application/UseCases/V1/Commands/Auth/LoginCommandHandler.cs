@@ -1,6 +1,7 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
@@ -39,23 +40,20 @@ internal sealed class LoginCommandHandler
         if (user is null)
         {
             _logger.LogWarning("Login failed: invalid credentials.");
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.InvalidCredentials", "Email or password is incorrect."));
+            return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
         if (!user.EmailConfirmed || !user.IsActive)
         {
             _logger.LogWarning("Login failed: account is inactive or email not confirmed. UserId: {UserId}", user.Id);
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.AccountInactive", "Account is not active. Please confirm your email first."));
+            return Result.Failure<AuthResponse>(AuthErrors.AccountInactive);
         }
 
         // 2. Check lockout first
         if (await _userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
         {
             _logger.LogWarning("Login blocked for locked account. UserId: {UserId}", user.Id);
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.AccountLocked", "Account is locked. Please try again later."));
+            return Result.Failure<AuthResponse>(AuthErrors.AccountLocked);
         }
 
         // 3. Verify password
@@ -63,8 +61,7 @@ internal sealed class LoginCommandHandler
         if (!passwordValid)
         {
             _logger.LogWarning("Login failed: invalid credentials. UserId: {UserId}", user.Id);
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.InvalidCredentials", "Email or password is incorrect."));
+            return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
         // 4. Generate tokens

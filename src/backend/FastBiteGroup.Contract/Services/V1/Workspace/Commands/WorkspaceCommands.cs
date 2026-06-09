@@ -7,7 +7,8 @@ public sealed record UpdateWorkspaceCommand(
     Guid WorkspaceId,
     string WorkspaceName,
     string? Description,
-    int WorkspaceType,
+    bool IsChatEnabled,
+    bool IsFeedEnabled,
     int Privacy,
     string? WorkspaceAvatarUrl) : ICommand<WorkspaceResponse>;
 

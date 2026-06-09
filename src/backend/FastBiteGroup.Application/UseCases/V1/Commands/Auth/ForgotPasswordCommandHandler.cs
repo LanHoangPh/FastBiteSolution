@@ -7,6 +7,7 @@ using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
 
@@ -45,7 +46,7 @@ public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswor
         var count = await _cacheService.GetAsync<int>(countKey, cancellationToken);
         if (count >= 3)
         {
-            return Result.Failure(new Error("Auth.TooManyRequests", "Too many OTP requests. Please wait before trying again."));
+            return Result.Failure(AuthErrors.TooManyRequests);
         }
 
         await _cacheService.SetAsync(countKey, count + 1, TimeSpan.FromMinutes(15), cancellationToken);

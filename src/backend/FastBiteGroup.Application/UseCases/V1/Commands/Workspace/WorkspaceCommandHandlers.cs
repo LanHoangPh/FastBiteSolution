@@ -48,14 +48,17 @@ public sealed class UpdateWorkspaceCommandHandler : ICommandHandler<UpdateWorksp
 
         workspace.WorkspaceName = request.WorkspaceName.Trim();
         workspace.Description = request.Description?.Trim();
-        workspace.WorkspaceType = (EnumWorkspaceType)request.WorkspaceType;
+        workspace.IsChatEnabled = request.IsChatEnabled;
+        workspace.IsFeedEnabled = request.IsFeedEnabled;
         workspace.Privacy = (EnumWorkspacePrivacy)request.Privacy;
         workspace.WorkspaceAvatarUrl = request.WorkspaceAvatarUrl?.Trim() ?? string.Empty;
         workspace.UpdatedByUserID = _currentUser.UserId;
         workspace.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        await _cacheService.RemoveAsync(CacheKeys.UserWorkspaces(_currentUser.UserId), cancellationToken);
+
+        foreach (var workspaceMember in workspace.Members.Where(m => m.Status == EnumWorkspaceMemberStatus.Active && m.LeftAt == null))
+            await _cacheService.RemoveAsync(CacheKeys.UserWorkspaces(workspaceMember.UserID), cancellationToken);
 
         var summary = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(request.WorkspaceId, _currentUser.UserId, cancellationToken);
         return summary is null
@@ -224,8 +227,9 @@ public sealed class JoinWorkspaceCommandHandler : ICommandHandler<JoinWorkspaceC
 
     public async Task<Result<WorkspaceResponse>> Handle(JoinWorkspaceCommand request, CancellationToken cancellationToken)
     {
+        var invitationCode = request.InvitationCode.Trim().ToUpperInvariant();
         var invitation = await _workspaceRepository.GetWorkspaceInvitationByCodeForUpdateAsync(
-            request.InvitationCode.Trim(),
+            invitationCode,
             cancellationToken);
 
         if (invitation is null || invitation.Workspace is null)
@@ -363,7 +367,7 @@ public sealed class ArchiveWorkspaceCommandHandler : ICommandHandler<ArchiveWork
             return Result.Failure(WorkspaceErrors.Forbidden);
 
         var workspace = await _workspaceRepository.GetWorkspaceForUpdateAsync(request.WorkspaceId, cancellationToken);
-        if (workspace is null)
+        if (workspace is null || workspace.IsArchived)
             return Result.Failure(WorkspaceErrors.NotFound);
 
         workspace.IsArchived = true;

@@ -22,8 +22,11 @@ public sealed class GetWorkspaceMembersQueryHandler : IQueryHandler<GetWorkspace
 
     public async Task<Result<List<WorkspaceMemberResponse>>> Handle(GetWorkspaceMembersQuery request, CancellationToken cancellationToken)
     {
-        var member = await _workspaceRepository.GetActiveMemberAsync(request.WorkspaceId, _currentUser.UserId, cancellationToken);
-        if (member is null)
+        var workspace = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(
+            request.WorkspaceId,
+            _currentUser.UserId,
+            cancellationToken);
+        if (workspace is null)
             return Result.Failure<List<WorkspaceMemberResponse>>(WorkspaceErrors.Forbidden);
 
         var members = await _workspaceRepository.GetActiveMembersAsync(request.WorkspaceId, cancellationToken);

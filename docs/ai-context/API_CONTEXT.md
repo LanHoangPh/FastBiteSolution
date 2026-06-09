@@ -123,7 +123,8 @@ Workspace is the tenant boundary for future Channels, Messages, Social Feed, and
   "workspaceId": "0f5e0d4e-1b8f-4b3c-930f-9a8a68a8c7b1",
   "workspaceName": "Acme Team",
   "description": "Internal workspace",
-  "workspaceType": "Private",
+  "isChatEnabled": true,
+  "isFeedEnabled": true,
   "privacy": "Private",
   "workspaceAvatarUrl": "https://cdn.example.com/logo.png",
   "currentUserRole": "Owner",
@@ -172,14 +173,14 @@ Request body:
 {
   "workspaceName": "Acme Team",
   "description": "Internal workspace",
-  "workspaceType": 1,
+  "isChatEnabled": true,
+  "isFeedEnabled": true,
   "privacy": 2,
   "workspaceAvatarUrl": "https://cdn.example.com/logo.png"
 }
 ```
 
 Enum values:
-- `workspaceType`: `1 = Private`, `2 = Public`, `3 = Community`
 - `privacy`: `1 = Public`, `2 = Private`
 
 Response:
@@ -207,7 +208,8 @@ Request body:
 {
   "workspaceName": "Acme Team",
   "description": "Updated description",
-  "workspaceType": 1,
+  "isChatEnabled": true,
+  "isFeedEnabled": true,
   "privacy": 2,
   "workspaceAvatarUrl": "https://cdn.example.com/new-logo.png"
 }

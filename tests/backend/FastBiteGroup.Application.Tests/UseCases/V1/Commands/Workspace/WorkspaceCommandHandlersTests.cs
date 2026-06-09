@@ -15,6 +15,70 @@ namespace FastBiteGroup.Application.Tests.UseCases.V1.Commands.Workspace;
 public class WorkspaceCommandHandlersTests
 {
     [Fact]
+    public async Task UpdateWorkspace_WhenWorkspaceChanges_RemovesCacheForAllActiveMembers()
+    {
+        var workspaceId = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var repository = Substitute.For<IWorkspaceRepository>();
+        var unitOfWork = Substitute.For<IUnitOfWork>();
+        var currentUser = Substitute.For<ICurrentUser>();
+        var cache = Substitute.For<ICacheService>();
+        var workspace = new FastBiteGroup.Domain.Entities.Workspace
+        {
+            Id = workspaceId,
+            WorkspaceName = "Acme",
+            Privacy = EnumWorkspacePrivacy.Private,
+            Members = new List<WorkspaceMember>
+            {
+                new()
+                {
+                    WorkspaceID = workspaceId,
+                    UserID = ownerId,
+                    Role = EnumWorkspaceRole.Owner,
+                    Status = EnumWorkspaceMemberStatus.Active
+                },
+                new()
+                {
+                    WorkspaceID = workspaceId,
+                    UserID = memberId,
+                    Role = EnumWorkspaceRole.Member,
+                    Status = EnumWorkspaceMemberStatus.Active
+                }
+            }
+        };
+
+        currentUser.UserId.Returns(ownerId);
+        repository.GetActiveMemberAsync(workspaceId, ownerId, Arg.Any<CancellationToken>())
+            .Returns(new WorkspaceMember { WorkspaceID = workspaceId, UserID = ownerId, Role = EnumWorkspaceRole.Owner, Status = EnumWorkspaceMemberStatus.Active });
+        repository.GetWorkspaceForUpdateAsync(workspaceId, Arg.Any<CancellationToken>())
+            .Returns(workspace);
+        repository.GetWorkspaceSummaryForMemberAsync(workspaceId, ownerId, Arg.Any<CancellationToken>())
+            .Returns(new WorkspaceSummary(
+                workspaceId,
+                "Acme Updated",
+                null,
+                true,
+                false,
+                EnumWorkspacePrivacy.Private,
+                string.Empty,
+                EnumWorkspaceRole.Owner,
+                DateTimeOffset.UtcNow,
+                false,
+                2));
+
+        var handler = new UpdateWorkspaceCommandHandler(repository, unitOfWork, currentUser, cache);
+
+        var result = await handler.Handle(
+            new UpdateWorkspaceCommand(workspaceId, "Acme Updated", null, true, false, 2, null),
+            CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        await cache.Received(1).RemoveAsync(Application.Constants.CacheKeys.UserWorkspaces(ownerId), Arg.Any<CancellationToken>());
+        await cache.Received(1).RemoveAsync(Application.Constants.CacheKeys.UserWorkspaces(memberId), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task InviteWorkspaceMember_WhenPendingInvitationExists_ReturnsConflict()
     {
         var userId = Guid.NewGuid();
@@ -90,6 +154,23 @@ public class WorkspaceCommandHandlersTests
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(WorkspaceErrors.InvitationExpired);
+    }
+
+    [Fact]
+    public async Task JoinWorkspace_WhenInviteCodeIsLowercase_LooksUpUppercaseCode()
+    {
+        var repository = Substitute.For<IWorkspaceRepository>();
+        var unitOfWork = Substitute.For<IUnitOfWork>();
+        var currentUser = Substitute.For<ICurrentUser>();
+        var cache = Substitute.For<ICacheService>();
+
+        currentUser.UserId.Returns(Guid.NewGuid());
+
+        var handler = new JoinWorkspaceCommandHandler(repository, unitOfWork, currentUser, cache);
+
+        await handler.Handle(new JoinWorkspaceCommand("abc123"), CancellationToken.None);
+
+        await repository.Received(1).GetWorkspaceInvitationByCodeForUpdateAsync("ABC123", Arg.Any<CancellationToken>());
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
@@ -39,12 +40,12 @@ internal sealed class VerifyEmailCommandHandler
         var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
-            return Result.Failure<AuthResponse>(new Error("Auth.UserNotFound", "User not found."));
+            return Result.Failure<AuthResponse>(AuthErrors.UserNotFound);
         }
 
         if (user.EmailConfirmed)
         {
-            return Result.Failure<AuthResponse>(new Error("Auth.EmailAlreadyConfirmed", "Email is already confirmed."));
+            return Result.Failure<AuthResponse>(AuthErrors.EmailAlreadyConfirmed);
         }
 
         // 2. Confirm email using ASP.NET Identity's purpose-specific token.
@@ -56,7 +57,7 @@ internal sealed class VerifyEmailCommandHandler
         if (!isValid)
         {
             _logger.LogWarning("Verification failed for email: {Email}", request.Email);
-            return Result.Failure<AuthResponse>(new Error("Auth.InvalidToken", "Invalid or expired email confirmation token."));
+            return Result.Failure<AuthResponse>(AuthErrors.InvalidEmailConfirmationToken);
         }
 
         // Refetch user to get updated state (IsActive, EmailConfirmed)

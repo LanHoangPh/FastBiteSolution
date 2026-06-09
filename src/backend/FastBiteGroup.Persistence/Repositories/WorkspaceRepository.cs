@@ -27,7 +27,8 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
                 w.Id,
                 w.WorkspaceName,
                 w.Description,
-                w.WorkspaceType,
+                w.IsChatEnabled,
+                w.IsFeedEnabled,
                 w.Privacy,
                 w.WorkspaceAvatarUrl,
                 w.Members
@@ -58,7 +59,8 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
                 w.Id,
                 w.WorkspaceName,
                 w.Description,
-                w.WorkspaceType,
+                w.IsChatEnabled,
+                w.IsFeedEnabled,
                 w.Privacy,
                 w.WorkspaceAvatarUrl,
                 w.Members
@@ -114,6 +116,8 @@ public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRe
             .AsNoTracking()
             .Where(m =>
                 m.WorkspaceID == workspaceId &&
+                m.Workspace != null &&
+                !m.Workspace.IsArchived &&
                 m.Status == EnumWorkspaceMemberStatus.Active &&
                 m.LeftAt == null)
             .Join(
