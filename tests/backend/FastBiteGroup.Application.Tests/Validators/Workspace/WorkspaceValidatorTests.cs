@@ -10,7 +10,7 @@ public class WorkspaceValidatorTests
     public void CreateWorkspaceValidator_WhenNameEmpty_ShouldFail()
     {
         var validator = new CreateWorkspaceValidator();
-        var command = new CreateWorkspaceCommand(string.Empty, null, 1, 1, null);
+        var command = new CreateWorkspaceCommand(string.Empty, null, true, true, 1, null);
 
         var result = validator.Validate(command);
 
@@ -22,12 +22,11 @@ public class WorkspaceValidatorTests
     public void CreateWorkspaceValidator_WhenEnumValuesInvalid_ShouldFail()
     {
         var validator = new CreateWorkspaceValidator();
-        var command = new CreateWorkspaceCommand("Acme", null, 99, 99, null);
+        var command = new CreateWorkspaceCommand("Acme", null, true, true, 99, null);
 
         var result = validator.Validate(command);
 
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == nameof(CreateWorkspaceCommand.WorkspaceType));
         result.Errors.Should().Contain(e => e.PropertyName == nameof(CreateWorkspaceCommand.Privacy));
     }
 

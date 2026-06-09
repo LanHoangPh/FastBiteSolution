@@ -1,5 +1,6 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
@@ -57,7 +58,7 @@ internal sealed class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCom
             if (newUser is null)
             {
                 _logger.LogError("Failed to auto-register user from Google payload: {Error}", error);
-                return Result.Failure<AuthResponse>(new Error("GoogleLogin.RegistrationFailed", error ?? "Auto-registration failed."));
+                return Result.Failure<AuthResponse>(AuthErrors.GoogleRegistrationFailed(error));
             }
 
             user = newUser;

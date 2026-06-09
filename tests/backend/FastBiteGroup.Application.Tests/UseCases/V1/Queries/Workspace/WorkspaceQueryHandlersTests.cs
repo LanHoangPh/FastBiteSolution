@@ -23,7 +23,7 @@ public class WorkspaceQueryHandlersTests
         var cache = Substitute.For<ICacheService>();
         var cached = new List<WorkspaceResponse>
         {
-            new(Guid.NewGuid(), "Cached", null, "Private", "Private", string.Empty, "Owner", DateTimeOffset.UtcNow, false, 1)
+            new(Guid.NewGuid(), "Cached", null, true, true, "Private", string.Empty, "Owner", DateTimeOffset.UtcNow, false, 1)
         };
 
         currentUser.UserId.Returns(userId);
@@ -68,8 +68,19 @@ public class WorkspaceQueryHandlersTests
         var currentUser = Substitute.For<ICurrentUser>();
 
         currentUser.UserId.Returns(userId);
-        repository.GetActiveMemberAsync(workspaceId, userId, Arg.Any<CancellationToken>())
-            .Returns(new WorkspaceMember { WorkspaceID = workspaceId, UserID = userId, Status = EnumWorkspaceMemberStatus.Active });
+        repository.GetWorkspaceSummaryForMemberAsync(workspaceId, userId, Arg.Any<CancellationToken>())
+            .Returns(new WorkspaceSummary(
+                workspaceId,
+                "Acme",
+                null,
+                true,
+                true,
+                EnumWorkspacePrivacy.Private,
+                string.Empty,
+                EnumWorkspaceRole.Owner,
+                DateTimeOffset.UtcNow,
+                false,
+                1));
         repository.GetActiveMembersAsync(workspaceId, Arg.Any<CancellationToken>())
             .Returns(new List<WorkspaceMemberSummary>
             {

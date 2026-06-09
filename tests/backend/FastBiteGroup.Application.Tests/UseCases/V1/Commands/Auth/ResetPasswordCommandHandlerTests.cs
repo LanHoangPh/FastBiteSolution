@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Domain.Abstractions.Repositories;
 using FluentAssertions;
@@ -80,7 +81,7 @@ public class ResetPasswordCommandHandlerTests
         _otpServiceMock.Setup(x => x.ValidateOtpAsync("RESET_PWD", command.Email, command.Otp, 5, It.IsAny<CancellationToken>()))
             .ReturnsAsync(OtpValidationResult.Success);
         _userAuthServiceMock.Setup(x => x.ResetPasswordAsync(command.Email, command.NewPassword, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure(new Error("Auth.ResetFailed", "Failed to reset password")));
+            .ReturnsAsync(Result.Failure(AuthErrors.ResetFailed("Failed to reset password")));
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);

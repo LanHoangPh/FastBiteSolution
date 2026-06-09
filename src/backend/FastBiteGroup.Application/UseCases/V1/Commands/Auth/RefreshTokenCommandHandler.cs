@@ -1,6 +1,7 @@
 using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
@@ -39,8 +40,7 @@ internal sealed class RefreshTokenCommandHandler
         if (jti is null)
         {
             _logger.LogWarning("Refresh token failed: access token could not be parsed.");
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.InvalidToken", "Access token is invalid or cannot be parsed."));
+            return Result.Failure<AuthResponse>(AuthErrors.InvalidToken);
         }
 
         // 2. Load the refresh token as a tracked entity (single query — avoids double round-trip)
@@ -50,8 +50,7 @@ internal sealed class RefreshTokenCommandHandler
         if (refreshToken is null)
         {
             _logger.LogWarning("Refresh token failed: refresh token was not found.");
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.InvalidRefreshToken", "Refresh token not found."));
+            return Result.Failure<AuthResponse>(AuthErrors.InvalidRefreshToken);
         }
 
         // 3. Validate state
@@ -66,17 +65,14 @@ internal sealed class RefreshTokenCommandHandler
                 await _refreshTokenRepository.RevokeAllForUserAsync(refreshToken.UserId, cancellationToken);
             }
 
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.RefreshTokenExpiredOrRevoked",
-                    "Refresh token has expired or been revoked. Please log in again."));
+            return Result.Failure<AuthResponse>(AuthErrors.RefreshTokenExpiredOrRevoked);
         }
 
         // 4. Validate JTI linkage
         if (refreshToken.Jti != jti)
         {
             _logger.LogWarning("Refresh token failed: access token and refresh token mismatch. UserId: {UserId}", refreshToken.UserId);
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.TokenMismatch", "Access token and refresh token do not match."));
+            return Result.Failure<AuthResponse>(AuthErrors.TokenMismatch);
         }
 
         // 5. Get user
@@ -84,8 +80,7 @@ internal sealed class RefreshTokenCommandHandler
         if (user is null)
         {
             _logger.LogWarning("Refresh token failed: associated user was not found. UserId: {UserId}", refreshToken.UserId);
-            return Result.Failure<AuthResponse>(
-                new Error("Auth.UserNotFound", "Associated user was not found."));
+            return Result.Failure<AuthResponse>(AuthErrors.AssociatedUserNotFound);
         }
 
         // 6. Generate new tokens

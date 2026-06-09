@@ -13,8 +13,7 @@ public class UpdateWorkspaceValidator : AbstractValidator<UpdateWorkspaceCommand
             .MaximumLength(255).WithMessage("Workspace name must not exceed 255 characters.");
         RuleFor(x => x.Description)
             .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters.");
-        RuleFor(x => x.WorkspaceType)
-            .InclusiveBetween(1, 3).WithMessage("Workspace type is not valid.");
+
         RuleFor(x => x.Privacy)
             .InclusiveBetween(1, 2).WithMessage("Workspace privacy is not valid.");
         RuleFor(x => x.WorkspaceAvatarUrl)

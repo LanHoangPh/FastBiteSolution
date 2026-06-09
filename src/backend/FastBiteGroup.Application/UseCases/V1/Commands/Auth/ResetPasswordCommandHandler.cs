@@ -5,6 +5,7 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 using FastBiteGroup.Application.Abstractions.Caching;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Domain.Abstractions.Repositories;
 
@@ -31,7 +32,7 @@ public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordC
         var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
-            return Result.Failure(new Error("Auth.UserNotFound", "User not found."));
+            return Result.Failure(AuthErrors.UserNotFound);
         }
 
         // Validate OTP from IOtpService
@@ -39,12 +40,12 @@ public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordC
 
         if (validationResult == OtpValidationResult.MaxAttemptsReached)
         {
-            return Result.Failure(new Error("Auth.AccountBlocked", "Too many failed OTP attempts. Please request a new OTP."));
+            return Result.Failure(AuthErrors.AccountBlocked);
         }
 
         if (validationResult != OtpValidationResult.Success)
         {
-            return Result.Failure(new Error("Auth.InvalidOtp", "OTP is invalid or has expired."));
+            return Result.Failure(AuthErrors.InvalidOtp);
         }
 
         // OTP is valid, proceed to reset password. 

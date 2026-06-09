@@ -6,7 +6,8 @@ namespace FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 public record CreateWorkspaceCommand(
     string WorkspaceName,
     string? Description,
-    int WorkspaceType,
+    bool IsChatEnabled,
+    bool IsFeedEnabled,
     int Privacy,
     string? WorkspaceAvatarUrl
 ) : ICommand<WorkspaceResponse>;

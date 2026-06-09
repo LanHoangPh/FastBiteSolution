@@ -8,8 +8,9 @@ public class Workspace : EntityBase<Guid>, IDateTracking, ISoftDelete
     
     public string WorkspaceName { get; set; } = string.Empty;
     public string? Description { get; set; }
-    public EnumWorkspaceType WorkspaceType { get; set; } = EnumWorkspaceType.Public;
     public EnumWorkspacePrivacy Privacy { get; set; } = EnumWorkspacePrivacy.Public;
+    public bool IsChatEnabled { get; set; } = true;
+    public bool IsFeedEnabled { get; set; } = true;
     public string WorkspaceAvatarUrl { get; set; } = string.Empty;
     public bool IsArchived { get; set; } // trạng thái nhóm có bị lưu trữ hay không
     public Guid CreatedByUserID { get; set; }

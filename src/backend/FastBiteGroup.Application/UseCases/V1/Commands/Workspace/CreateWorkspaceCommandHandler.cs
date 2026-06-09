@@ -4,6 +4,7 @@ using FastBiteGroup.Application.Constants;
 using FastBiteGroup.Application.UseCases.V1.Workspace;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Workspace;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 using FastBiteGroup.Domain.Abstractions;
@@ -43,7 +44,8 @@ public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceComm
             Id = workspaceId,
             WorkspaceName = request.WorkspaceName.Trim(),
             Description = request.Description?.Trim(),
-            WorkspaceType = (EnumWorkspaceType)request.WorkspaceType,
+            IsChatEnabled = request.IsChatEnabled,
+            IsFeedEnabled = request.IsFeedEnabled,
             Privacy = (EnumWorkspacePrivacy)request.Privacy,
             WorkspaceAvatarUrl = request.WorkspaceAvatarUrl?.Trim() ?? string.Empty,
             CreatedByUserID = userId,
@@ -67,7 +69,7 @@ public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceComm
 
         var summary = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(workspaceId, userId, cancellationToken);
         return summary is null
-            ? Result.Failure<WorkspaceResponse>(Contract.Services.V1.Workspace.WorkspaceErrors.NotFound)
+            ? Result.Failure<WorkspaceResponse>(WorkspaceErrors.NotFound)
             : Result.Success(summary.ToResponse());
     }
 }

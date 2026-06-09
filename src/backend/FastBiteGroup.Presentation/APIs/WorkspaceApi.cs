@@ -42,22 +42,26 @@ public class WorkspaceApi : ApiEndpoint, IEndpoint
 
         group.MapPost("/invitations/{invitationId:int}/accept", AcceptWorkspaceInvitation)
             .WithName("AcceptWorkspaceInvitation")
+            .WithSummary("Accept a workspace invitation")
             .Produces<WorkspaceResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapPost("/join", JoinWorkspace)
             .WithName("JoinWorkspace")
+            .WithSummary("Join a workspace using an invitation code")
             .Produces<WorkspaceResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapGet("/{workspaceId:guid}", GetWorkspaceById)
             .WithName("GetWorkspaceById")
+            .WithSummary("Get workspace details by ID")
             .Produces<WorkspaceDetailResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
         group.MapGet("/{workspaceId:guid}/members", GetWorkspaceMembers)
             .WithName("GetWorkspaceMembers")
+            .WithSummary("Get all members of a workspace")
             .Produces<List<WorkspaceMemberResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
@@ -156,7 +160,8 @@ public class WorkspaceApi : ApiEndpoint, IEndpoint
             workspaceId,
             request.WorkspaceName,
             request.Description,
-            request.WorkspaceType,
+            request.IsChatEnabled,
+            request.IsFeedEnabled,
             request.Privacy,
             request.WorkspaceAvatarUrl);
 
@@ -203,7 +208,8 @@ public class WorkspaceApi : ApiEndpoint, IEndpoint
     private sealed record UpdateWorkspaceRequest(
         string WorkspaceName,
         string? Description,
-        int WorkspaceType,
+        bool IsChatEnabled,
+        bool IsFeedEnabled,
         int Privacy,
         string? WorkspaceAvatarUrl);
 

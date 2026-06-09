@@ -99,7 +99,7 @@ Add to `src/backend/FastBiteGroup.Contract/Services/V1/<Feature>`:
 - Commands for write flows.
 - Queries for read flows.
 - Response records for API output.
-- Error codes when the feature needs clear conventions.
+- Error codes when the feature needs clear conventions under `Services/V1/<Feature>`. You can refer to the writing style in `WorkspaceErrors.cs`.
 
 Contract rules:
 

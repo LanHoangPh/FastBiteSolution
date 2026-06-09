@@ -3,6 +3,7 @@ using System.Text.Json;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Contract.Abstractions.Shared;
+using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
@@ -38,7 +39,7 @@ internal sealed class RegisterCommandHandler
         {
             _logger.LogWarning("Registration failed: email already exists.");
             return Result.Failure<RegisterResponse>(
-                new Error("Auth.EmailAlreadyExists", $"Email '{request.Email}' is already registered."));
+                AuthErrors.EmailAlreadyExists(request.Email));
         }
 
         // 2. Create user (inactive, email not confirmed)
@@ -49,7 +50,7 @@ internal sealed class RegisterCommandHandler
         if (user is null)
         {
             _logger.LogWarning("Registration failed while creating user. Error: {Error}", errorMessage);
-            return Result.Failure<RegisterResponse>(new Error("Auth.RegistrationFailed", errorMessage!));
+            return Result.Failure<RegisterResponse>(AuthErrors.RegistrationFailed(errorMessage!));
         }
 
         // 3. Generate Identity's purpose-specific email confirmation token.

@@ -39,7 +39,8 @@ public class CreateWorkspaceCommandHandlerTests
                     workspaceId,
                     "Acme",
                     "Team",
-                    EnumWorkspaceType.Private,
+                    true,
+                    true,
                     EnumWorkspacePrivacy.Private,
                     string.Empty,
                     EnumWorkspaceRole.Owner,
@@ -49,7 +50,7 @@ public class CreateWorkspaceCommandHandlerTests
             });
 
         var handler = new CreateWorkspaceCommandHandler(repository, unitOfWork, currentUser, cache);
-        var command = new CreateWorkspaceCommand("Acme", "Team", 1, 2, null);
+        var command = new CreateWorkspaceCommand("Acme", "Team", true, true, 2, null);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
