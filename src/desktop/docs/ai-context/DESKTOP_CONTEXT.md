@@ -47,7 +47,18 @@ FastBiteGroup.Desktop.Infrastructure/
 
 FastBiteGroup.Desktop.UI/
   Resources/
+    AppTheme.Controls.xaml
+    AppTheme.Effects.xaml
+    AppTheme.Spacing.xaml
+    AppTheme.Typography.xaml
+    MainTheme.xaml
+    Themes/
+      LightColors.xaml
+      DarkColors.xaml
   Services/
+  ViewModels/
+  Views/
+    Components/
   App.xaml
   App.xaml.cs
   MainWindow.xaml
@@ -57,9 +68,12 @@ FastBiteGroup.Desktop.UI/
 ## Current App Shape
 
 - The UI project is the composition root.
-- `App.xaml.cs` builds the host, registers desktop services, starts the WPF shell, and initializes theme state.
-- `MainWindow` is currently a shell with a Settings popup and theme selection.
+- `App.xaml.cs` builds the host, registers desktop services and ViewModels, starts the WPF shell, and initializes theme state.
+- `MainWindow` is a dashboard shell with sidebar navigation, settings popup, theme selection, metrics, access logs, and reusable component usage.
+- `MainWindowViewModel` owns shell display state, theme commands, sidebar state, dashboard metrics, and access log placeholder data.
+- The app has reusable WPF components under `Views/Components`.
 - The app does not yet have real login, workspace, or chat workflows.
+- Dashboard metrics and access logs are placeholder UI data until real workflows are wired.
 - `IAuthClient` exists as an abstraction placeholder but has no active API methods yet.
 
 ## Local User Data
@@ -77,3 +91,10 @@ Current usage:
 - `logs/log-.txt`: Serilog rolling logs.
 
 Do not store user preferences, tokens, or secrets in source-controlled `appsettings.json`.
+
+## Documentation Scope
+
+- `AGENTS.md` is the quick instruction file for AI agents.
+- `docs/ai-context/ARCHITECTURE.md` explains desktop layering and MVVM direction.
+- `docs/ai-context/UI_GUIDELINES.md` is the source of truth for WPF theme/component rules.
+- `docs/ai-context/CURRENT_STATUS.md` tracks implemented and pending desktop work.

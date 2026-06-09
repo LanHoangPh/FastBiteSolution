@@ -1,18 +1,17 @@
 # CURRENT_STATUS.md - FastBite Desktop
 
-**Last Updated:** 2026-06-08
+**Last Updated:** 2026-06-09
 
 ## Current Status
 
-The desktop app builds and starts on .NET 8 WPF.
+The desktop app is a .NET 8 WPF shell with host composition, theme switching, MVVM shell state, and a reusable component system.
 
-The current UI is a fully-themed, premium dashboard shell displaying a custom layout, theme-switching capabilities, and reusable components. It uses host composition, logging, and Refit preparation.
-
----
+The current UI is still a shell/prototype for future product workflows. It does not yet implement real login, workspace selection, chat, or backend-backed dashboard data.
 
 ## Completed
 
 ### Runtime and Project Setup
+
 - Desktop projects target .NET 8.
 - WPF UI project targets `net8.0-windows`.
 - Infrastructure project targets `net8.0-windows` because it uses Windows DPAPI.
@@ -20,70 +19,98 @@ The current UI is a fully-themed, premium dashboard shell displaying a custom la
 - App configuration uses `AppContext.BaseDirectory` for reliable runtime loading.
 
 ### Host and Services
+
 - `App.xaml.cs` creates a .NET host.
 - Application and Infrastructure services are registered.
 - UI services registered:
   - `NavigationService`
   - `ThemeService`
+- UI ViewModels and `MainWindow` are registered in UI host composition.
 - Serilog writes rolling logs under `%AppData%\FastBite\logs`.
+- Startup and shutdown paths log failures and show user-friendly error messages.
 
-### Theme System & Premium UI Design
-- Supported theme modes: `System`, `Light`, `Dark` (stored in `%AppData%\FastBite\settings.json`).
-- `System` resolves from Windows `AppsUseLightTheme` registry.
-- Colors mapped from Next.js/Tailwind v4 theme variables to Hex codes.
-- Added comprehensive brush sets (Sidebar, Charts, Inputs, Ring, Destructive, Popover) in `LightColors.xaml` and `DarkColors.xaml`.
-- Custom design tokens created in `AppTheme.Spacing.xaml` and `AppTheme.Typography.xaml`.
-- Implemented `DropShadowEffect` design tokens with `x:Shared="False"` attribute in `AppTheme.Effects.xaml` to prevent visual parent exceptions.
-- Main shell utilizes a grid-based **Dashboard layout** containing a Sidebar, analytics cards, a configuration form, and a custom-styled `DataGrid` (System Access Logs).
-- Control styles are fully switchable at runtime using `DynamicResource`.
+### MVVM Shell
+
+- `MainWindowViewModel` owns shell state.
+- Theme actions use ViewModel commands.
+- Settings popup state is bound through the ViewModel.
+- Dashboard metrics and access logs are bound from ViewModel collections.
+- Sidebar item state is represented through `SidebarItemViewModel`.
+- `MainWindow.xaml.cs` is thin and limited to WPF wiring plus Syncfusion theme re-application.
+
+### Theme System
+
+- Supported theme modes: `System`, `Light`, `Dark`.
+- Theme preference is stored in `%AppData%\FastBite\settings.json`.
+- `System` resolves from Windows `AppsUseLightTheme` registry state.
+- Light and Dark theme dictionaries live under `Resources/Themes/`.
+- Core semantic brushes, sidebar brushes, chart brushes, status brushes, and presence brushes exist in both Light and Dark dictionaries.
+- Component dimensions such as icon sizes and icon button sizes live in `AppTheme.Spacing.xaml`.
+- Drop shadow effects live in `AppTheme.Effects.xaml` and use `x:Shared="False"`.
+- Runtime UI uses `DynamicResource` for theme-aware values.
 
 ### Reusable UI Components
-- **ToggleSwitch:** Styled CheckBox (`ToggleSwitchStyle`) providing smooth iOS/Web-like slide transition animation. Integrated directly in the header bar as a fast theme-switcher.
-- **ModernButton:** Custom control (`ModernButton` inheriting from `Button`) supporting:
-  - Variants: `Primary`, `Secondary`, `Outline`, `Ghost`, `Destructive` (shadcn style).
-  - Icons: customizable left or right icon placements.
-  - CornerRadius: custom border radius binding.
+
+Current component set:
+
+- `ModernButton`: variant button with icon placement, size/loading support, and custom corner radius.
+- `IconButton`: compact icon-only button with variant and size support.
+- `StatusBadge`: semantic status/presence indicator.
+- `Avatar`: initials/image avatar with optional presence status.
+- `SearchBox`: search input with placeholder and clear behavior.
+- `EmptyState`: reusable empty content surface.
+- `SectionHeader`: reusable title/subtitle/action header.
+- `ToggleSwitchStyle`: styled CheckBox switch template.
+
+Component styles/templates are currently kept as implicit styles in `Resources/AppTheme.Controls.xaml`.
 
 ### Storage and API Preparation
+
 - `TokenStorage` uses `ProtectedData` with `DataProtectionScope.CurrentUser`.
 - `JwtAuthHeaderHandler` attaches bearer token if one exists.
 - Refit is configured for `IAuthClient`.
 - `IAuthClient` is still a placeholder.
 
----
-
 ## Verified Commands
+
+Previously verified:
 
 ```powershell
 dotnet build FastBiteDesktop.slnx
 dotnet run --project FastBiteGroup.Desktop.UI\FastBiteGroup.Desktop.UI.csproj --no-build
 ```
 
-Last observed build result:
+Last known clean build:
+
 ```text
 Build succeeded.
 0 Warning(s)
 0 Error(s)
 ```
 
----
+Known build caveat:
+
+- If `FastBiteGroup.Desktop.UI` is running, build may fail with DLL copy errors because the running app locks output assemblies. Close the app process and build again.
 
 ## Pending Work
 
-- Add real MVVM structure for views and view models (binding handlers to Commands instead of code-behind).
-- Implement login flow with typed request/response models.
-- Add auth token refresh/logout behavior.
-- Add workspace selection shell.
+- Implement real login flow with typed request/response models.
+- Implement workspace selection shell.
+- Implement chat shell and message surfaces.
+- Replace placeholder dashboard/access-log data with real feature data or remove it from production views.
 - Add desktop test projects.
-- Decide exact Syncfusion theme package/skin strategy as more Syncfusion controls are introduced.
+- Add visual QA checklist execution for Light/Dark/System mode.
 - Add live OS theme change listener for `System` mode if needed.
-
----
+- Decide Syncfusion theme package/skin strategy as more Syncfusion controls are introduced.
+- Optional future cleanup: move custom-control default styles to `Themes/Generic.xaml` if components are extracted into a standalone control library.
 
 ## Known Notes
 
 - The desktop app intentionally does not depend on backend source projects.
-- Backend/root docs are not part of the normal desktop context.
-- Default WPF `MenuItem` popup styling caused dark-mode color mismatch; use custom popup UI or explicit templates for themed menus.
-- Use `DynamicResource` for all spacing and effect tokens referenced in `AppTheme.Controls.xaml` to prevent parse time errors.
-- Visual Effects must be configured with `x:Shared="False"` inside styles to allow multiple element bindings.
+- Backend/root docs are not part of normal desktop context.
+- Default WPF popup/menu styling can break dark mode; use custom popup UI or explicit templates.
+- Use `DynamicResource` for all theme-aware brushes, spacing, radius, dimensions, and effects.
+- Raw hex colors belong only in `LightColors.xaml` and `DarkColors.xaml`.
+- When adding a semantic brush, add it to both Light and Dark dictionaries.
+- `Resources/AppTheme.Controls.xaml` is the current home for implicit custom-control styles/templates.
+- Visual effects must use `x:Shared="False"` when stored as resources.
