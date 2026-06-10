@@ -1,0 +1,254 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ==================== LOGIN CARD STYLE ==================== -->
+    <Style x:Key="LoginCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource LoginCardBgBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LoginCardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="CornerRadius" Value="28" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="40" 
+                                  Color="{DynamicResource LoginShadowColor}" 
+                                  Opacity="0.12" 
+                                  ShadowDepth="8" 
+                                  Direction="270" 
+                                  RenderingBias="Quality" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== INPUT FIELDS STYLE ==================== -->
+    <Style x:Key="LoginInputStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource LoginInputBgBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextPrimaryBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource LoginFontSans}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="40,11,12,11"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="12"/>
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginSocialBtnBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="#FFFFFFFF"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginInputActiveBorderBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LoginPasswordBoxStyle" TargetType="PasswordBox">
+        <Setter Property="Background" Value="{DynamicResource LoginInputBgBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextPrimaryBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource LoginFontSans}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="40,11,40,11"/> <!-- Right padding for the Eye Toggle icon -->
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Grid>
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="12"/>
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginSocialBtnBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="#FFFFFFFF"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginInputActiveBorderBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== BUTTON STYLES ==================== -->
+    
+    <!-- Primary Login Button Style -->
+    <Style x:Key="LoginPrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource LoginPrimaryBtnBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource LoginPrimaryBtnTextBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Height" Value="44"/>
+        <Setter Property="FontFamily" Value="{DynamicResource LoginFontSans}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
+                            CornerRadius="12">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource LoginPrimaryBtnHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Social Login Button Style -->
+    <Style x:Key="LoginSocialButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource LoginSocialBtnBgBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource LoginSocialBtnBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Width" Value="84"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="10">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="4" 
+                                              Color="#000000" 
+                                              Opacity="0.03" 
+                                              ShadowDepth="1" 
+                                              Direction="270"/>
+                        </Border.Effect>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource LoginSocialBtnHoverBgBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource LoginTextMutedBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Transparent eye toggle style -->
+    <Style x:Key="LoginEyeToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Custom Glassmorphic DatePicker Style -->
+    <Style x:Key="LoginDatePickerStyle" TargetType="DatePicker">
+        <Setter Property="Background" Value="{DynamicResource LoginInputBgBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextPrimaryBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource LoginFontSans}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="40,2,36,2"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="44"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DatePicker">
+                    <Grid>
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="12"/>
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <DatePickerTextBox x:Name="PART_TextBox" 
+                                               HorizontalAlignment="Stretch" 
+                                               VerticalAlignment="Center" 
+                                               Focusable="{TemplateBinding Focusable}" 
+                                               Background="Transparent"
+                                               BorderThickness="0"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               FontFamily="{TemplateBinding FontFamily}"
+                                               FontSize="{TemplateBinding FontSize}"/>
+                        </Grid>
+                        <Button x:Name="PART_Button" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Center" 
+                                Margin="0,0,12,0" 
+                                Width="20" Height="20"
+                                Focusable="False" 
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid Background="Transparent">
+                                        <Path Data="{StaticResource CalendarIcon}" 
+                                              Fill="{DynamicResource LoginTextSecondaryBrush}" 
+                                              Width="16" Height="16" 
+                                              Stretch="Uniform"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Popup x:Name="PART_Popup" 
+                               AllowsTransparency="True" 
+                               Placement="Bottom" 
+                               PlacementTarget="{Binding ElementName=border}" 
+                               StaysOpen="False"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginSocialBtnBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="#FFFFFFFF"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource LoginInputActiveBorderBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

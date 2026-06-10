@@ -72,6 +72,7 @@ If build fails because DLLs are locked by `FastBiteGroup.Desktop.UI`, close the 
 - Do not hardcode API secrets, tokens, connection strings, or license keys.
 - Register services in the owning layer's `DependencyInjection.cs` or UI host composition.
 - Prefer Syncfusion controls where they provide real value, but keep app-level design tokens independent from Syncfusion skins.
+- Do not hardcode user-facing strings/labels in XAML views. Always declare localized strings in `Resources/Languages/Strings.vi.xaml` (Vietnamese) and `Resources/Languages/Strings.en.xaml` (English), and bind them in XAML using `{DynamicResource Key}`. Swapping language is done at runtime via `ILanguageService`.
 
 ---
 
@@ -106,6 +107,7 @@ If build fails because DLLs are locked by `FastBiteGroup.Desktop.UI`, close the 
 - Do not remove `.NET 8` compatibility without explicit approval.
 - Do not store user tokens/settings in source-controlled files.
 - Do not use `Foreground="White"` or `Background="#..."` in views/component styles; use theme tokens.
+- Do not hardcode user-facing strings or labels in XAML views; always reference localized resource keys via `DynamicResource`.
 
 ---
 
@@ -116,3 +118,4 @@ If build fails because DLLs are locked by `FastBiteGroup.Desktop.UI`, close the 
 - If changing UI, verify the app starts when feasible.
 - Check Light and Dark mode for any UI/component change.
 - Explain trade-offs briefly when choosing between WPF-native and Syncfusion approaches.
+- When adding new user-facing labels or texts, define keys for both Vietnamese and English dictionaries to maintain complete localization support.

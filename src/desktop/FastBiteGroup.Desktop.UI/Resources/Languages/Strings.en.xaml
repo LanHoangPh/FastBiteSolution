@@ -68,4 +68,38 @@
     <sys:String x:Key="FooterDesc">Enhance team connectivity, unlimited file storage, and total end-to-end security.</sys:String>
     <sys:String x:Key="FooterBtnText">Learn More</sys:String>
 
+    <!-- ==================== LOGIN ==================== -->
+    <sys:String x:Key="LoginWindowTitle">Sign in - FastBite</sys:String>
+    <sys:String x:Key="LoginBrandName">FastBite</sys:String>
+    <sys:String x:Key="LoginTitle">Sign in with email</sys:String>
+    <sys:String x:Key="LoginSubtitle">Bring messages, data, and teams together in a secure workspace.</sys:String>
+    <sys:String x:Key="LoginEmailPlaceholder">Email</sys:String>
+    <sys:String x:Key="LoginPasswordPlaceholder">Password</sys:String>
+    <sys:String x:Key="LoginForgotPassword">Forgot password?</sys:String>
+    <sys:String x:Key="LoginPrimaryButton">Get Started</sys:String>
+    <sys:String x:Key="LoginDividerText">Or sign in with</sys:String>
+    <sys:String x:Key="LoginGoogleTooltip">Continue with Google</sys:String>
+    <sys:String x:Key="LoginFacebookTooltip">Continue with Facebook</sys:String>
+    <sys:String x:Key="LoginMicrosoftTooltip">Continue with Microsoft</sys:String>
+    <sys:String x:Key="LoginAppleTooltip">Continue with Apple</sys:String>
+    <sys:String x:Key="LoginVietnameseLanguage">Vietnamese</sys:String>
+    <sys:String x:Key="LoginEnglishLanguage">English</sys:String>
+    <sys:String x:Key="LoginNoAccount">Don't have an account? Sign up</sys:String>
+
+    <!-- ==================== REGISTER ==================== -->
+    <sys:String x:Key="RegisterWindowTitle">Sign up - FastBite</sys:String>
+    <sys:String x:Key="RegisterTitle">Create your account</sys:String>
+    <sys:String x:Key="RegisterSubtitle">Join FastBite today to start collaborating with your team.</sys:String>
+    <sys:String x:Key="RegisterFirstNamePlaceholder">First name</sys:String>
+    <sys:String x:Key="RegisterLastNamePlaceholder">Last name</sys:String>
+    <sys:String x:Key="RegisterConfirmPasswordPlaceholder">Confirm password</sys:String>
+    <sys:String x:Key="RegisterDayOfBirthPlaceholder">Date of birth (dd/MM/yyyy)</sys:String>
+    <sys:String x:Key="RegisterButton">Sign Up</sys:String>
+    <sys:String x:Key="RegisterDividerText">Or sign up with</sys:String>
+    <sys:String x:Key="RegisterBackToLogin">Already have an account? Sign in</sys:String>
+
+    <!-- ==================== COMMON CAPTION TOOLTIPS ==================== -->
+    <sys:String x:Key="MinimizeTooltip">Minimize</sys:String>
+    <sys:String x:Key="MaximizeTooltip">Maximize</sys:String>
+    <sys:String x:Key="CloseTooltip">Close</sys:String>
 </ResourceDictionary>

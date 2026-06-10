@@ -5,12 +5,11 @@ using System.Windows;
 using FastBiteGroup.Desktop.Application;
 using FastBiteGroup.Desktop.Infrastructure;
 using FastBiteGroup.Desktop.UI.Services;
+using FastBiteGroup.Desktop.UI.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-
-using FastBiteGroup.Desktop.UI.ViewModels;
 
 namespace FastBiteGroup.Desktop.UI;
 
@@ -72,6 +71,10 @@ public partial class App : System.Windows.Application
 
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
+
+                services.AddTransient<LoginViewModel>();
+                services.AddTransient<LoginWindow>();
+                services.AddTransient<RegisterViewModel>();
             })
             .Build();
     }
@@ -87,8 +90,8 @@ public partial class App : System.Windows.Application
             AppHost.Services.GetRequiredService<IThemeService>().Initialize();
             AppHost.Services.GetRequiredService<ILanguageService>().Initialize();
 
-            var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
+            loginWindow.Show();
         }
         catch (Exception ex)
         {

@@ -23,6 +23,18 @@
     <Color x:Key="RingColor">#FF51F0A8</Color>
     <Color x:Key="GridSelectionColor">#FFE0F2FE</Color>
     <Color x:Key="GridSelectionForegroundColor">#FF0369A1</Color>
+
+    <!-- Login Surface Colors -->
+    <Color x:Key="LoginSkyTopColor">#FFEAF7FF</Color>
+    <Color x:Key="LoginSkyBottomColor">#FFF8FCFF</Color>
+    <Color x:Key="LoginCloudColor">#E6FFFFFF</Color>
+    <Color x:Key="LoginArcColor">#80B9E6FF</Color>
+    <Color x:Key="LoginGlassCardColor">#D9FFFFFF</Color>
+    <Color x:Key="LoginGlassBorderColor">#B3FFFFFF</Color>
+    <Color x:Key="LoginInputBackgroundColor">#F2F4F7FB</Color>
+    <Color x:Key="LoginInputBorderColor">#FFE8EEF5</Color>
+    <Color x:Key="LoginPrimaryButtonColor">#FF111827</Color>
+    <Color x:Key="LoginPrimaryButtonForegroundColor">#FFFFFFFF</Color>
     
     <!-- Chart Colors -->
     <Color x:Key="Chart1Color">#FF51F0A8</Color>
@@ -75,6 +87,16 @@
     <SolidColorBrush x:Key="RingBrush" Color="{StaticResource RingColor}" />
     <SolidColorBrush x:Key="GridSelectionBrush" Color="{StaticResource GridSelectionColor}" />
     <SolidColorBrush x:Key="GridSelectionForegroundBrush" Color="{StaticResource GridSelectionForegroundColor}" />
+
+    <!-- Login Surface Brushes -->
+    <SolidColorBrush x:Key="LoginCloudBrush" Color="{StaticResource LoginCloudColor}" />
+    <SolidColorBrush x:Key="LoginArcBrush" Color="{StaticResource LoginArcColor}" />
+    <SolidColorBrush x:Key="LoginGlassCardBrush" Color="{StaticResource LoginGlassCardColor}" />
+    <SolidColorBrush x:Key="LoginGlassBorderBrush" Color="{StaticResource LoginGlassBorderColor}" />
+    <SolidColorBrush x:Key="LoginInputBackgroundBrush" Color="{StaticResource LoginInputBackgroundColor}" />
+    <SolidColorBrush x:Key="LoginInputBorderBrush" Color="{StaticResource LoginInputBorderColor}" />
+    <SolidColorBrush x:Key="LoginPrimaryButtonBrush" Color="{StaticResource LoginPrimaryButtonColor}" />
+    <SolidColorBrush x:Key="LoginPrimaryButtonForegroundBrush" Color="{StaticResource LoginPrimaryButtonForegroundColor}" />
 
     <!-- Chart Brushes -->
     <SolidColorBrush x:Key="Chart1Brush" Color="{StaticResource Chart1Color}" />

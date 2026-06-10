@@ -68,4 +68,38 @@
     <sys:String x:Key="FooterDesc">Gia tăng khả năng kết nối đội ngũ, lưu trữ tập tin không giới hạn và bảo mật đầu cuối tuyệt đối.</sys:String>
     <sys:String x:Key="FooterBtnText">Tìm hiểu thêm</sys:String>
 
+    <!-- ==================== LOGIN ==================== -->
+    <sys:String x:Key="LoginWindowTitle">&#272;&#259;ng nh&#7853;p - FastBite</sys:String>
+    <sys:String x:Key="LoginBrandName">FastBite</sys:String>
+    <sys:String x:Key="LoginTitle">&#272;&#259;ng nh&#7853;p b&#7857;ng email</sys:String>
+    <sys:String x:Key="LoginSubtitle">K&#7871;t n&#7889;i tin nh&#7855;n, d&#7919; li&#7879;u v&#224; &#273;&#7897;i nh&#243;m trong m&#7897;t kh&#244;ng gian l&#224;m vi&#7879;c b&#7843;o m&#7853;t.</sys:String>
+    <sys:String x:Key="LoginEmailPlaceholder">Email</sys:String>
+    <sys:String x:Key="LoginPasswordPlaceholder">M&#7853;t kh&#7849;u</sys:String>
+    <sys:String x:Key="LoginForgotPassword">Qu&#234;n m&#7853;t kh&#7849;u?</sys:String>
+    <sys:String x:Key="LoginPrimaryButton">B&#7855;t &#273;&#7847;u</sys:String>
+    <sys:String x:Key="LoginDividerText">Ho&#7863;c &#273;&#259;ng nh&#7853;p v&#7899;i</sys:String>
+    <sys:String x:Key="LoginGoogleTooltip">Ti&#7871;p t&#7909;c v&#7899;i Google</sys:String>
+    <sys:String x:Key="LoginFacebookTooltip">Ti&#7871;p t&#7909;c v&#7899;i Facebook</sys:String>
+    <sys:String x:Key="LoginMicrosoftTooltip">Tiếp tục với Microsoft</sys:String>
+    <sys:String x:Key="LoginAppleTooltip">Ti&#7871;p t&#7909;c v&#7899;i Apple</sys:String>
+    <sys:String x:Key="LoginVietnameseLanguage">Ti&#7871;ng Vi&#7879;t</sys:String>
+    <sys:String x:Key="LoginEnglishLanguage">Ti&#7871;ng Anh</sys:String>
+    <sys:String x:Key="LoginNoAccount">Chưa có tài khoản? Đăng ký</sys:String>
+
+    <!-- ==================== REGISTER ==================== -->
+    <sys:String x:Key="RegisterWindowTitle">Đăng ký - FastBite</sys:String>
+    <sys:String x:Key="RegisterTitle">Tạo tài khoản mới</sys:String>
+    <sys:String x:Key="RegisterSubtitle">Tham gia FastBite ngay để bắt đầu làm việc cùng đội nhóm.</sys:String>
+    <sys:String x:Key="RegisterFirstNamePlaceholder">Tên</sys:String>
+    <sys:String x:Key="RegisterLastNamePlaceholder">Họ</sys:String>
+    <sys:String x:Key="RegisterConfirmPasswordPlaceholder">Xác nhận mật khẩu</sys:String>
+    <sys:String x:Key="RegisterDayOfBirthPlaceholder">Ngày sinh (ngày/tháng/năm)</sys:String>
+    <sys:String x:Key="RegisterButton">Đăng ký</sys:String>
+    <sys:String x:Key="RegisterDividerText">Hoặc đăng ký với</sys:String>
+    <sys:String x:Key="RegisterBackToLogin">Đã có tài khoản? Đăng nhập</sys:String>
+
+    <!-- ==================== COMMON CAPTION TOOLTIPS ==================== -->
+    <sys:String x:Key="MinimizeTooltip">Thu nhỏ</sys:String>
+    <sys:String x:Key="MaximizeTooltip">Phóng to</sys:String>
+    <sys:String x:Key="CloseTooltip">Đóng</sys:String>
 </ResourceDictionary>

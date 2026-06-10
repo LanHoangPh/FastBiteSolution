@@ -8,6 +8,9 @@
                 <ResourceDictionary Source="/Resources/Languages/Strings.vi.xaml" />
                 <ResourceDictionary Source="/Resources/Themes/LightColors.xaml" />
                 <ResourceDictionary Source="/Resources/MainTheme.xaml" />
+                <ResourceDictionary Source="/Resources/Login/LoginColors.xaml" />
+                <ResourceDictionary Source="/Resources/Login/LoginTypography.xaml" />
+                <ResourceDictionary Source="/Resources/Login/LoginStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
