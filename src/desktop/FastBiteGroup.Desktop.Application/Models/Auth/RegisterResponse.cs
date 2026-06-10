@@ -1,0 +1,3 @@
+namespace FastBiteGroup.Desktop.Application.Models.Auth;
+
+public sealed record RegisterResponse(string Message);
