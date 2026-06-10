@@ -24,10 +24,21 @@ public partial class App : System.Windows.Application
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-        var configuration = new ConfigurationBuilder()
+        var configBuilder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+    #if DEBUG
+        configBuilder.AddUserSecrets<App>();
+    #endif
+
+        var configuration = configBuilder.Build();
+
+        var syncfusionLicense = configuration["SyncfusionLicense"];
+        if (!string.IsNullOrWhiteSpace(syncfusionLicense))
+        {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
+        }
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
@@ -57,6 +68,7 @@ public partial class App : System.Windows.Application
                     FastBiteGroup.Desktop.Application.Abstractions.INavigationService,
                     FastBiteGroup.Desktop.UI.Services.NavigationService>();
                 services.AddSingleton<IThemeService, ThemeService>();
+                services.AddSingleton<ILanguageService, LanguageService>();
 
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
@@ -73,6 +85,7 @@ public partial class App : System.Windows.Application
             await AppHost!.StartAsync();
 
             AppHost.Services.GetRequiredService<IThemeService>().Initialize();
+            AppHost.Services.GetRequiredService<ILanguageService>().Initialize();
 
             var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();

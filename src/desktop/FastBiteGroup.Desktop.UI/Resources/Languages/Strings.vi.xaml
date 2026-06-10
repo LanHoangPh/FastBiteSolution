@@ -1,0 +1,71 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ==================== HEADER BAR ==================== -->
+    <sys:String x:Key="AppTitleText">FastBite Desktop</sys:String>
+    <sys:String x:Key="DarkModeLabel">Chế độ tối</sys:String>
+    <sys:String x:Key="LanguageLabel">Ngôn ngữ:</sys:String>
+
+    <!-- ==================== NAVIGATION RAIL ==================== -->
+    <sys:String x:Key="NavMessagesTooltip">Tin nhắn</sys:String>
+    <sys:String x:Key="NavContactsTooltip">Danh bạ</sys:String>
+    <sys:String x:Key="NavTasksTooltip">Công việc</sys:String>
+    <sys:String x:Key="NavCloudTooltip">Tài liệu đám mây</sys:String>
+    <sys:String x:Key="NavFilesTooltip">Tệp tin</sys:String>
+    <sys:String x:Key="NavSettingsTooltip">Cài đặt</sys:String>
+
+    <!-- ==================== CHAT LIST PANEL ==================== -->
+    <sys:String x:Key="SearchPlaceholder">Tìm kiếm</sys:String>
+    <sys:String x:Key="TabPriority">Ưu tiên</sys:String>
+    <sys:String x:Key="TabOther">Khác</sys:String>
+    <sys:String x:Key="FilterLabel">Phân loại</sys:String>
+    <sys:String x:Key="AddFriendTooltip">Thêm bạn</sys:String>
+    <sys:String x:Key="CreateGroupTooltip">Tạo nhóm</sys:String>
+
+    <!-- ==================== WELCOME DASHBOARD ==================== -->
+    <sys:String x:Key="SlidePrevTooltip">Slide trước</sys:String>
+    <sys:String x:Key="SlideNextTooltip">Slide tiếp theo</sys:String>
+
+    <!-- Slide 1 -->
+    <sys:String x:Key="Slide1Title">Chào mừng đến với FastBite!</sys:String>
+    <sys:String x:Key="Slide1Subtitle">Khám phá những tiện ích hỗ trợ làm việc và trò chuyện cùng đồng nghiệp được tối ưu hoá cho máy tính của bạn.</sys:String>
+    <sys:String x:Key="Slide1Bullet1Title">Tin nhắn nhanh</sys:String>
+    <sys:String x:Key="Slide1Bullet1Desc">Phản hồi siêu tốc trong hội thoại</sys:String>
+    <sys:String x:Key="Slide1Bullet2Title">Nhận diện Teams</sys:String>
+    <sys:String x:Key="Slide1Bullet2Desc">Khẳng định uy tín nội bộ doanh nghiệp</sys:String>
+    <sys:String x:Key="Slide1Bullet3Title">Mở rộng danh bạ</sys:String>
+    <sys:String x:Key="Slide1Bullet3Desc">Dễ dàng kết nối đồng nghiệp mới</sys:String>
+    <sys:String x:Key="Slide1Bullet4Title">Tối ưu nhóm làm việc</sys:String>
+    <sys:String x:Key="Slide1Bullet4Desc">Quản lý dự án nhóm chuyên sâu</sys:String>
+
+    <!-- Slide 2 -->
+    <sys:String x:Key="Slide2Title">Kết nối Cộng đồng Nội bộ</sys:String>
+    <sys:String x:Key="Slide2Subtitle">Không gian chia sẻ kiến thức, tin tức và hoạt động doanh nghiệp giúp đội ngũ gắn kết bền chặt.</sys:String>
+    <sys:String x:Key="Slide2Bullet1Title">Mạng xã hội nội bộ</sys:String>
+    <sys:String x:Key="Slide2Bullet1Desc">Chia sẻ câu chuyện &amp; sự kiện công ty</sys:String>
+    <sys:String x:Key="Slide2Bullet2Title">Kênh truyền thông</sys:String>
+    <sys:String x:Key="Slide2Bullet2Desc">Thông báo tức thời từ lãnh đạo</sys:String>
+    <sys:String x:Key="Slide2Bullet3Title">Khảo sát &amp; Trưng cầu</sys:String>
+    <sys:String x:Key="Slide2Bullet3Desc">Lấy ý kiến biểu quyết thời gian thực</sys:String>
+    <sys:String x:Key="Slide2Bullet4Title">Bảo mật cấp doanh nghiệp</sys:String>
+    <sys:String x:Key="Slide2Bullet4Desc">Mã hóa đầu cuối bảo vệ dữ liệu bí mật</sys:String>
+
+    <!-- Slide 3 -->
+    <sys:String x:Key="Slide3Title">Hạ tầng Bền bỉ &amp; Tốc độ</sys:String>
+    <sys:String x:Key="Slide3Subtitle">Kết hợp SQL và MongoDB giúp tối ưu hóa hiệu năng phản hồi tin nhắn tức thì dưới 10 mili giây.</sys:String>
+    <sys:String x:Key="Slide3Bullet1Title">Cơ sở dữ liệu MongoDB</sys:String>
+    <sys:String x:Key="Slide3Bullet1Desc">Đáp ứng hàng triệu tin nhắn mỗi ngày</sys:String>
+    <sys:String x:Key="Slide3Bullet2Title">Redis Caching</sys:String>
+    <sys:String x:Key="Slide3Bullet2Desc">Lưu trữ tạm thời, phản hồi &lt; 10ms</sys:String>
+    <sys:String x:Key="Slide3Bullet3Title">Kiến trúc Outbox</sys:String>
+    <sys:String x:Key="Slide3Bullet3Desc">Đồng bộ hóa dữ liệu tuyệt đối an toàn</sys:String>
+    <sys:String x:Key="Slide3Bullet4Title">Hỗ trợ Multi-Tenant</sys:String>
+    <sys:String x:Key="Slide3Bullet4Desc">Phân tách không gian làm việc an toàn</sys:String>
+
+    <!-- Footer -->
+    <sys:String x:Key="FooterTitle">Giải pháp truyền thông hiệu quả với FastBite Business Pro</sys:String>
+    <sys:String x:Key="FooterDesc">Gia tăng khả năng kết nối đội ngũ, lưu trữ tập tin không giới hạn và bảo mật đầu cuối tuyệt đối.</sys:String>
+    <sys:String x:Key="FooterBtnText">Tìm hiểu thêm</sys:String>
+
+</ResourceDictionary>

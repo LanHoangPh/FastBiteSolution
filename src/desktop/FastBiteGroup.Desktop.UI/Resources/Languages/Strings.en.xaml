@@ -1,0 +1,71 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ==================== HEADER BAR ==================== -->
+    <sys:String x:Key="AppTitleText">FastBite Desktop</sys:String>
+    <sys:String x:Key="DarkModeLabel">Dark Mode</sys:String>
+    <sys:String x:Key="LanguageLabel">Language:</sys:String>
+
+    <!-- ==================== NAVIGATION RAIL ==================== -->
+    <sys:String x:Key="NavMessagesTooltip">Messages</sys:String>
+    <sys:String x:Key="NavContactsTooltip">Contacts</sys:String>
+    <sys:String x:Key="NavTasksTooltip">Tasks</sys:String>
+    <sys:String x:Key="NavCloudTooltip">Cloud Drive</sys:String>
+    <sys:String x:Key="NavFilesTooltip">Files</sys:String>
+    <sys:String x:Key="NavSettingsTooltip">Settings</sys:String>
+
+    <!-- ==================== CHAT LIST PANEL ==================== -->
+    <sys:String x:Key="SearchPlaceholder">Search</sys:String>
+    <sys:String x:Key="TabPriority">Priority</sys:String>
+    <sys:String x:Key="TabOther">Other</sys:String>
+    <sys:String x:Key="FilterLabel">Filters</sys:String>
+    <sys:String x:Key="AddFriendTooltip">Add Friend</sys:String>
+    <sys:String x:Key="CreateGroupTooltip">Create Group</sys:String>
+
+    <!-- ==================== WELCOME DASHBOARD ==================== -->
+    <sys:String x:Key="SlidePrevTooltip">Previous slide</sys:String>
+    <sys:String x:Key="SlideNextTooltip">Next slide</sys:String>
+
+    <!-- Slide 1 -->
+    <sys:String x:Key="Slide1Title">Welcome to FastBite!</sys:String>
+    <sys:String x:Key="Slide1Subtitle">Discover tools to work and chat with colleagues optimized for your PC.</sys:String>
+    <sys:String x:Key="Slide1Bullet1Title">Quick Messages</sys:String>
+    <sys:String x:Key="Slide1Bullet1Desc">Super fast replies in conversations</sys:String>
+    <sys:String x:Key="Slide1Bullet2Title">Teams Identity</sys:String>
+    <sys:String x:Key="Slide1Bullet2Desc">Establish trust within the enterprise</sys:String>
+    <sys:String x:Key="Slide1Bullet3Title">Expand Contacts</sys:String>
+    <sys:String x:Key="Slide1Bullet3Desc">Easily connect with new colleagues</sys:String>
+    <sys:String x:Key="Slide1Bullet4Title">Optimize Workgroups</sys:String>
+    <sys:String x:Key="Slide1Bullet4Desc">Advanced project management for teams</sys:String>
+
+    <!-- Slide 2 -->
+    <sys:String x:Key="Slide2Title">Connect Internal Communities</sys:String>
+    <sys:String x:Key="Slide2Subtitle">A space to share knowledge, news, and enterprise activities to keep teams connected.</sys:String>
+    <sys:String x:Key="Slide2Bullet1Title">Internal Social Network</sys:String>
+    <sys:String x:Key="Slide2Bullet1Desc">Share company stories &amp; events</sys:String>
+    <sys:String x:Key="Slide2Bullet2Title">Communication Channels</sys:String>
+    <sys:String x:Key="Slide2Bullet2Desc">Instant announcements from leadership</sys:String>
+    <sys:String x:Key="Slide2Bullet3Title">Surveys &amp; Polls</sys:String>
+    <sys:String x:Key="Slide2Bullet3Desc">Gather votes in real-time</sys:String>
+    <sys:String x:Key="Slide2Bullet4Title">Enterprise Security</sys:String>
+    <sys:String x:Key="Slide2Bullet4Desc">End-to-end encryption for sensitive data</sys:String>
+
+    <!-- Slide 3 -->
+    <sys:String x:Key="Slide3Title">Resilient &amp; High-Speed Infrastructure</sys:String>
+    <sys:String x:Key="Slide3Subtitle">Combining SQL and MongoDB to optimize instant message responses under 10ms.</sys:String>
+    <sys:String x:Key="Slide3Bullet1Title">MongoDB Database</sys:String>
+    <sys:String x:Key="Slide3Bullet1Desc">Handling millions of messages daily</sys:String>
+    <sys:String x:Key="Slide3Bullet2Title">Redis Caching</sys:String>
+    <sys:String x:Key="Slide3Bullet2Desc">Temporary storage, responses under 10ms</sys:String>
+    <sys:String x:Key="Slide3Bullet3Title">Outbox Architecture</sys:String>
+    <sys:String x:Key="Slide3Bullet3Desc">Reliable and safe data synchronization</sys:String>
+    <sys:String x:Key="Slide3Bullet4Title">Multi-Tenant Support</sys:String>
+    <sys:String x:Key="Slide3Bullet4Desc">Secure workspace segregation</sys:String>
+
+    <!-- Footer -->
+    <sys:String x:Key="FooterTitle">Effective communication with FastBite Business Pro</sys:String>
+    <sys:String x:Key="FooterDesc">Enhance team connectivity, unlimited file storage, and total end-to-end security.</sys:String>
+    <sys:String x:Key="FooterBtnText">Learn More</sys:String>
+
+</ResourceDictionary>

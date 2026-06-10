@@ -25,4 +25,44 @@ public partial class MainWindow : Window
             _themeService.ApplySyncfusionTheme(this);
         };
     }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        if (MaximizeIcon != null)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                MaximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 3 L 7 3 L 7 9 L 1 9 Z M 3 3 L 3 1 L 9 1 L 9 7 L 7 7");
+                MaximizeBtn.ToolTip = "Restore Down";
+            }
+            else
+            {
+                MaximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 1 L 9 1 L 9 9 L 1 9 Z");
+                MaximizeBtn.ToolTip = "Maximize";
+            }
+        }
+    }
+
+    private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
+    {
+        SystemCommands.MinimizeWindow(this);
+    }
+
+    private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
+    {
+        if (WindowState == WindowState.Maximized)
+        {
+            SystemCommands.RestoreWindow(this);
+        }
+        else
+        {
+            SystemCommands.MaximizeWindow(this);
+        }
+    }
+
+    private void CloseBtn_Click(object sender, RoutedEventArgs e)
+    {
+        SystemCommands.CloseWindow(this);
+    }
 }

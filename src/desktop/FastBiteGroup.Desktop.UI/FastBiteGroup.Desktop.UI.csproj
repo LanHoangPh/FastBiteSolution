@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\FastBiteGroup.Desktop.Application\FastBiteGroup.Desktop.Application.csproj" />
@@ -9,6 +9,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
@@ -18,14 +19,16 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Syncfusion.Licensing" Version="33.2.10" />
     <PackageReference Include="Syncfusion.SfChat.WPF" Version="33.2.10" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="33.2.10" />
   </ItemGroup>
-
+ 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UserSecretsId>FastBiteGroup-Desktop-UI-3D6B5A1C-9E4B-4DFA-8E32-BC6C7B7D4F8C</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

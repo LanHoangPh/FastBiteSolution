@@ -21,6 +21,8 @@
     <Color x:Key="BorderColor">#FFF4F6F8</Color>
     <Color x:Key="InputColor">#FFEBEBEB</Color>
     <Color x:Key="RingColor">#FF51F0A8</Color>
+    <Color x:Key="GridSelectionColor">#FFE0F2FE</Color>
+    <Color x:Key="GridSelectionForegroundColor">#FF0369A1</Color>
     
     <!-- Chart Colors -->
     <Color x:Key="Chart1Color">#FF51F0A8</Color>
@@ -71,6 +73,8 @@
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="InputBrush" Color="{StaticResource InputColor}" />
     <SolidColorBrush x:Key="RingBrush" Color="{StaticResource RingColor}" />
+    <SolidColorBrush x:Key="GridSelectionBrush" Color="{StaticResource GridSelectionColor}" />
+    <SolidColorBrush x:Key="GridSelectionForegroundBrush" Color="{StaticResource GridSelectionForegroundColor}" />
 
     <!-- Chart Brushes -->
     <SolidColorBrush x:Key="Chart1Brush" Color="{StaticResource Chart1Color}" />

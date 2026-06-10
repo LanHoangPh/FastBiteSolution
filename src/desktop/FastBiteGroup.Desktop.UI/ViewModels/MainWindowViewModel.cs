@@ -8,9 +8,23 @@ namespace FastBiteGroup.Desktop.UI.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IThemeService _themeService;
+    private readonly ILanguageService _languageService;
 
     [ObservableProperty]
     private string _appTitle = "FastBite Desktop";
+
+    public string CurrentLanguageCode
+    {
+        get => _languageService.CurrentLanguage;
+        set
+        {
+            if (_languageService.CurrentLanguage != value)
+            {
+                _languageService.SetLanguage(value);
+                OnPropertyChanged(nameof(CurrentLanguageCode));
+            }
+        }
+    }
 
     [ObservableProperty]
     private string _themeStatusText = string.Empty;
@@ -42,6 +56,7 @@ public partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<AccessLogEntryViewModel> AccessLogs { get; } = new();
     
     public ObservableCollection<SidebarItemViewModel> SidebarItems { get; } = new();
+    public ObservableCollection<ConversationItemViewModel> Conversations { get; } = new();
 
     [ObservableProperty]
     private SidebarItemViewModel? _selectedSidebarItem;
@@ -52,10 +67,24 @@ public partial class MainWindowViewModel : ObservableObject
         if (newValue != null) newValue.IsSelected = true;
     }
 
-    public MainWindowViewModel(IThemeService themeService)
+    public MainWindowViewModel(IThemeService themeService, ILanguageService languageService)
     {
         _themeService = themeService;
+        _languageService = languageService;
         UpdateThemeStatus();
+
+        // Conversations mock data matching the Zalo screenshot
+        Conversations.Add(new ConversationItemViewModel("LM", "Đánh boss LM", "đáp án là gì", "4 giờ", 0, false));
+        Conversations.Add(new ConversationItemViewModel("NH", "Ngân hàng Nhà Nước 🏦", "Hoàng Sơn: @Ngọc Khánh khoá a...", "4 giờ", 30, true));
+        Conversations.Add(new ConversationItemViewModel("MK", "Ma Kiếm ⚔️", "BXH THẦN BINH KHAI MỞ...", "5 giờ", 0, true));
+        Conversations.Add(new ConversationItemViewModel("ME", "Mẹ ❤️", "📹 Cuộc gọi video đến", "22 giờ", 0, false));
+        Conversations.Add(new ConversationItemViewModel("NT", "Nguyen Thanh", "E sẽ nhận mail vào ngày mai nhé", "Hôm qua", 0, true));
+        Conversations.Add(new ConversationItemViewModel("DY", "Đào Hải Yến", "Chia ra như vậy sẽ đỡ hơn chút", "Hôm qua", 0, false));
+        Conversations.Add(new ConversationItemViewModel("PL", "Phương Lan", "C cảm ơn nhé", "Hôm qua", 0, true));
+        Conversations.Add(new ConversationItemViewModel("MD", "My Documents", "Bạn: 📄 [Hình ảnh]", "2 ngày", 0, false));
+        Conversations.Add(new ConversationItemViewModel("CH", "Chị 😃", "📞 Cuộc gọi thoại đến", "3 ngày", 0, true));
+        Conversations.Add(new ConversationItemViewModel("LI", "Liobank by VPBank 💳", "KỂ CHUYỆN CÙNG LIO RINH...", "6 ngày", 1, false));
+        Conversations.Add(new ConversationItemViewModel("QH", "Quân Hiệp Truyện 🛡️", "BẢNG VÀNG LỰC CHIẾN...", "6 ngày", 0, true));
 
         // Sample data
         DashboardMetrics.Add(new DashboardMetricViewModel("Active Sessions", "1,204", "+15% from last week"));
@@ -65,6 +94,13 @@ public partial class MainWindowViewModel : ObservableObject
         AccessLogs.Add(new AccessLogEntryViewModel("17:35:23", "Alex Mercer", "192.168.1.50", "Success"));
         AccessLogs.Add(new AccessLogEntryViewModel("17:38:10", "Jane Doe", "10.0.0.12", "Success"));
         AccessLogs.Add(new AccessLogEntryViewModel("17:40:02", "John Smith", "172.16.2.8", "Failed"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:42:15", "Alice Cooper", "192.168.1.102", "Success"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:45:50", "Bob Marley", "192.168.1.15", "Failed"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:48:11", "Charlie Brown", "10.0.0.5", "Success"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:51:30", "David Miller", "172.16.5.21", "Success"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:55:00", "Emma Watson", "192.168.2.11", "Success"));
+        AccessLogs.Add(new AccessLogEntryViewModel("17:58:45", "Frank Castle", "10.0.0.100", "Success"));
+        AccessLogs.Add(new AccessLogEntryViewModel("18:02:10", "Grace Hopper", "192.168.1.1", "Success"));
 
         SidebarItems.Add(new SidebarItemViewModel("Dashboard", "M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"));
         SidebarItems.Add(new SidebarItemViewModel("Conversations", "M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2Z"));
