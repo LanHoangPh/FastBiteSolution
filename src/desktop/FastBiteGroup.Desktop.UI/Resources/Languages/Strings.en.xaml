@@ -103,4 +103,16 @@
     <sys:String x:Key="MaximizeTooltip">Maximize</sys:String>
     <sys:String x:Key="RestoreTooltip">Restore Down</sys:String>
     <sys:String x:Key="CloseTooltip">Close</sys:String>
+
+    <!-- ==================== VALIDATION ERRORS ==================== -->
+    <sys:String x:Key="ValidationErrorEmailEmpty">Email is required.</sys:String>
+    <sys:String x:Key="ValidationErrorEmailInvalid">Invalid Email format.</sys:String>
+    <sys:String x:Key="ValidationErrorPasswordEmpty">Password is required.</sys:String>
+    <sys:String x:Key="ValidationErrorPasswordLength">Password must be at least 6 characters.</sys:String>
+    <sys:String x:Key="ValidationErrorConfirmPasswordEmpty">Please confirm your password.</sys:String>
+    <sys:String x:Key="ValidationErrorConfirmPasswordMismatch">Passwords do not match.</sys:String>
+    <sys:String x:Key="ValidationErrorLastNameEmpty">Last name is required.</sys:String>
+    <sys:String x:Key="ValidationErrorFirstNameEmpty">First name is required.</sys:String>
+    <sys:String x:Key="ValidationErrorDayOfBirthEmpty">Please enter your Date of Birth.</sys:String>
+    <sys:String x:Key="ValidationErrorDayOfBirthInvalid">Invalid Date of Birth or you must be at least 12 years old.</sys:String>
 </ResourceDictionary>

@@ -14,8 +14,6 @@ namespace FastBiteGroup.Desktop.UI;
 
 public partial class LoginWindow : Window
 {
-    private UIElement? _lastFocusedPasswordInput;
-
     public LoginWindow(LoginViewModel loginViewModel, RegisterViewModel registerViewModel)
     {
         InitializeComponent();
@@ -31,31 +29,6 @@ public partial class LoginWindow : Window
         // Wire up individual data contexts to their respective grids
         LoginGrid.DataContext = loginViewModel;
         RegisterGrid.DataContext = registerViewModel;
-
-        // Track focus changes on password inputs
-        PassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = PassInput;
-        RevealedPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RevealedPassInput;
-        RegPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RegPassInput;
-        RegRevealedPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RegRevealedPassInput;
-        ConfirmPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = ConfirmPassInput;
-        RevealedConfirmPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RevealedConfirmPassInput;
-
-        // Sync focus when password visibility is toggled
-        loginViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(LoginViewModel.IsPasswordVisible))
-            {
-                SyncLoginPasswordFocus(loginViewModel.IsPasswordVisible);
-            }
-        };
-
-        registerViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(RegisterViewModel.IsPasswordVisible))
-            {
-                SyncRegisterPasswordFocus(registerViewModel.IsPasswordVisible);
-            }
-        };
 
         // Subscribing to transition event from LoginViewModel (successful auth)
         loginViewModel.LoginSuccessful += () =>
@@ -75,58 +48,7 @@ public partial class LoginWindow : Window
         registerViewModel.NavigateToLogin += SwitchToLogin;
     }
 
-    private void SyncLoginPasswordFocus(bool isVisible)
-    {
-        if (isVisible)
-        {
-            if (_lastFocusedPasswordInput == PassInput)
-            {
-                RevealedPassInput.Focus();
-                RevealedPassInput.CaretIndex = RevealedPassInput.Text.Length;
-                _lastFocusedPasswordInput = RevealedPassInput;
-            }
-        }
-        else
-        {
-            if (_lastFocusedPasswordInput == RevealedPassInput)
-            {
-                PassInput.Focus();
-                _lastFocusedPasswordInput = PassInput;
-            }
-        }
-    }
 
-    private void SyncRegisterPasswordFocus(bool isVisible)
-    {
-        if (isVisible)
-        {
-            if (_lastFocusedPasswordInput == RegPassInput)
-            {
-                RegRevealedPassInput.Focus();
-                RegRevealedPassInput.CaretIndex = RegRevealedPassInput.Text.Length;
-                _lastFocusedPasswordInput = RegRevealedPassInput;
-            }
-            else if (_lastFocusedPasswordInput == ConfirmPassInput)
-            {
-                RevealedConfirmPassInput.Focus();
-                RevealedConfirmPassInput.CaretIndex = RevealedConfirmPassInput.Text.Length;
-                _lastFocusedPasswordInput = RevealedConfirmPassInput;
-            }
-        }
-        else
-        {
-            if (_lastFocusedPasswordInput == RegRevealedPassInput)
-            {
-                RegPassInput.Focus();
-                _lastFocusedPasswordInput = RegPassInput;
-            }
-            else if (_lastFocusedPasswordInput == RevealedConfirmPassInput)
-            {
-                ConfirmPassInput.Focus();
-                _lastFocusedPasswordInput = ConfirmPassInput;
-            }
-        }
-    }
 
     private void SwitchToRegister()
     {

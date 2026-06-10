@@ -6,6 +6,7 @@ using FastBiteGroup.Desktop.Application;
 using FastBiteGroup.Desktop.Infrastructure;
 using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.ViewModels;
+using FastBiteGroup.Desktop.UI.Validators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -71,6 +72,9 @@ public partial class App : System.Windows.Application
 
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
+
+                services.AddSingleton<LoginViewModelValidator>();
+                services.AddSingleton<RegisterViewModelValidator>();
 
                 services.AddTransient<LoginViewModel>();
                 services.AddTransient<LoginWindow>();

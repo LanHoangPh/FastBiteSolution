@@ -3,10 +3,11 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
+using FastBiteGroup.Desktop.UI.Validators;
 
 namespace FastBiteGroup.Desktop.UI.ViewModels;
 
-public partial class RegisterViewModel : ObservableObject
+public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewModel>
 {
     [ObservableProperty]
     private string _firstName = string.Empty;
@@ -35,47 +36,21 @@ public partial class RegisterViewModel : ObservableObject
     // Navigation event to return to Login Window
     public event Action? NavigateToLogin;
 
-    public RegisterViewModel()
+    public RegisterViewModel(RegisterViewModelValidator validator) : base(validator)
     {
     }
 
     [RelayCommand]
     private void Register()
     {
-        if (string.IsNullOrWhiteSpace(LastName))
+        if (!ValidateAll())
         {
-            MessageBox.Show("Vui lòng nhập Họ.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(FirstName))
-        {
-            MessageBox.Show("Vui lòng nhập Tên.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(Email))
-        {
-            MessageBox.Show("Vui lòng nhập Email.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(Password))
-        {
-            MessageBox.Show("Vui lòng nhập Mật khẩu.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (Password != ConfirmPassword)
-        {
-            MessageBox.Show("Mật khẩu xác nhận không khớp.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         var dob = DayOfBirth;
         if (dob == null)
         {
-            MessageBox.Show("Vui lòng chọn Ngày sinh.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

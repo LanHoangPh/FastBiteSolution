@@ -1284,6 +1284,239 @@
         </Setter>
     </Style>
 
+    <!-- ==================== FORM TEXT BOX STYLE ==================== -->
+    <Style TargetType="{x:Type components:FormTextBox}">
+        <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="36,8,12,8" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <StackPanel ClipToBounds="False">
+                        <!-- Custom border showing error state -->
+                        <Border BorderThickness="1.5" BorderBrush="{DynamicResource ErrorBrush}" CornerRadius="8">
+                            <AdornedElementPlaceholder x:Name="TextBoxPlaceholder" />
+                        </Border>
+                        <!-- Error text directly below in Adorner layer (no layout shift) -->
+                        <TextBlock Text="{Binding ElementName=TextBoxPlaceholder, Path=AdornedElement.(Validation.Errors)/ErrorContent}"
+                                   Foreground="{DynamicResource ErrorBrush}"
+                                   FontSize="11"
+                                   FontWeight="Medium"
+                                   Margin="4,4,0,0"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:FormTextBox}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
+                            <!-- Left Icon -->
+                            <Path x:Name="IconPath"
+                                  Data="{TemplateBinding Icon}"
+                                  Fill="{DynamicResource MutedForegroundBrush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Left"
+                                  Margin="12,0,0,0" />
+                            
+                            <!-- Placeholder -->
+                            <TextBlock x:Name="PlaceholderText"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource MutedForegroundBrush}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       Margin="{TemplateBinding Padding}"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed" />
+                            
+                            <!-- Input -->
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="0"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Focus Trigger -->
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource RingBrush}" />
+                        </Trigger>
+                        <!-- Empty Text Triggers to show Placeholder -->
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Icon Null Trigger -->
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Padding" Value="12,8,12,8" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ==================== FORM PASSWORD BOX STYLE ==================== -->
+    <Style TargetType="{x:Type components:FormPasswordBox}">
+        <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="36,8,36,8" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontSans}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <StackPanel ClipToBounds="False">
+                        <!-- Custom border showing error state -->
+                        <Border BorderThickness="1.5" BorderBrush="{DynamicResource ErrorBrush}" CornerRadius="8">
+                            <AdornedElementPlaceholder x:Name="PasswordPlaceholder" />
+                        </Border>
+                        <!-- Error text directly below in Adorner layer (no layout shift) -->
+                        <TextBlock Text="{Binding ElementName=PasswordPlaceholder, Path=AdornedElement.(Validation.Errors)/ErrorContent}"
+                                   Foreground="{DynamicResource ErrorBrush}"
+                                   FontSize="11"
+                                   FontWeight="Medium"
+                                   Margin="4,4,0,0"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type components:FormPasswordBox}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
+                            <!-- Left Icon -->
+                            <Path x:Name="IconPath"
+                                  Data="{TemplateBinding Icon}"
+                                  Fill="{DynamicResource MutedForegroundBrush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Left"
+                                  Margin="12,0,0,0" />
+
+                            <!-- Hidden Password (PasswordBox) -->
+                            <PasswordBox x:Name="PART_PasswordBox"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         FontFamily="{TemplateBinding FontFamily}"
+                                         FontSize="{TemplateBinding FontSize}"
+                                         Padding="{TemplateBinding Padding}"
+                                         VerticalContentAlignment="Center"
+                                         CaretBrush="{DynamicResource ForegroundBrush}"/>
+
+                            <!-- Revealed Password (TextBox) -->
+                            <TextBox x:Name="PART_TextBox"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     FontFamily="{TemplateBinding FontFamily}"
+                                     FontSize="{TemplateBinding FontSize}"
+                                     Padding="{TemplateBinding Padding}"
+                                     VerticalContentAlignment="Center"
+                                     CaretBrush="{DynamicResource ForegroundBrush}"/>
+
+                            <!-- Placeholder -->
+                            <TextBlock x:Name="PlaceholderText"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource MutedForegroundBrush}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       Margin="{TemplateBinding Padding}"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+
+                            <!-- Eye Toggle Button -->
+                            <ToggleButton x:Name="PART_EyeToggle"
+                                          HorizontalAlignment="Right"
+                                          Margin="0,0,10,0"
+                                          VerticalAlignment="Center"
+                                          Width="24" Height="24"
+                                          Focusable="False"
+                                          Cursor="Hand">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent">
+                                            <Path x:Name="EyeIconPath" 
+                                                  Data="{StaticResource EyeIcon}" 
+                                                  Fill="{DynamicResource MutedForegroundBrush}" 
+                                                  Width="14" Height="14" 
+                                                  Stretch="Uniform"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="EyeIconPath" Property="Data" Value="{StaticResource EyeOffIcon}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Focus Trigger -->
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource RingBrush}" />
+                        </Trigger>
+                        <!-- Visibility triggers for PasswordBox vs TextBox -->
+                        <Trigger Property="IsPasswordVisible" Value="True">
+                            <Setter TargetName="PART_PasswordBox" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="PART_TextBox" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsPasswordVisible" Value="False">
+                            <Setter TargetName="PART_PasswordBox" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="PART_TextBox" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <!-- Empty Text Triggers to show Placeholder -->
+                        <Trigger Property="Password" Value="">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Password" Value="{x:Null}">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Hide placeholder when either input is focused -->
+                        <Trigger SourceName="PART_PasswordBox" Property="IsFocused" Value="True">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger SourceName="PART_TextBox" Property="IsFocused" Value="True">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- Icon Null Trigger -->
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Padding" Value="12,8,36,8" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ==================== SYNCFUSION DATA GRID STYLES ==================== -->
     <Style TargetType="{x:Type syncfusion:SfDataGrid}">
         <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />

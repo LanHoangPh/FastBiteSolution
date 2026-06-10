@@ -103,4 +103,16 @@
     <sys:String x:Key="MaximizeTooltip">Phóng to</sys:String>
     <sys:String x:Key="RestoreTooltip">Khôi phục xuống</sys:String>
     <sys:String x:Key="CloseTooltip">Đóng</sys:String>
+
+    <!-- ==================== VALIDATION ERRORS ==================== -->
+    <sys:String x:Key="ValidationErrorEmailEmpty">Email không được để trống.</sys:String>
+    <sys:String x:Key="ValidationErrorEmailInvalid">Định dạng Email không hợp lệ.</sys:String>
+    <sys:String x:Key="ValidationErrorPasswordEmpty">Mật khẩu không được để trống.</sys:String>
+    <sys:String x:Key="ValidationErrorPasswordLength">Mật khẩu phải chứa ít nhất 6 ký tự.</sys:String>
+    <sys:String x:Key="ValidationErrorConfirmPasswordEmpty">Vui lòng xác nhận mật khẩu.</sys:String>
+    <sys:String x:Key="ValidationErrorConfirmPasswordMismatch">Mật khẩu xác nhận không khớp.</sys:String>
+    <sys:String x:Key="ValidationErrorLastNameEmpty">Họ không được để trống.</sys:String>
+    <sys:String x:Key="ValidationErrorFirstNameEmpty">Tên không được để trống.</sys:String>
+    <sys:String x:Key="ValidationErrorDayOfBirthEmpty">Vui lòng nhập Ngày sinh.</sys:String>
+    <sys:String x:Key="ValidationErrorDayOfBirthInvalid">Ngày sinh không hợp lệ hoặc bạn phải từ 12 tuổi trở lên.</sys:String>
 </ResourceDictionary>

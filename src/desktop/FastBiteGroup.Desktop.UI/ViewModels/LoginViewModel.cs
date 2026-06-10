@@ -3,10 +3,11 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
+using FastBiteGroup.Desktop.UI.Validators;
 
 namespace FastBiteGroup.Desktop.UI.ViewModels;
 
-public partial class LoginViewModel : ObservableObject
+public partial class LoginViewModel : ValidationViewModelBase<LoginViewModel>
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEmailEmpty))]
@@ -32,7 +33,7 @@ public partial class LoginViewModel : ObservableObject
     // Event triggered to transition to RegisterWindow
     public event Action? NavigateToRegister;
 
-    public LoginViewModel()
+    public LoginViewModel(LoginViewModelValidator validator) : base(validator)
     {
     }
 
@@ -46,15 +47,8 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private void Login()
     {
-        if (string.IsNullOrWhiteSpace(Email))
+        if (!ValidateAll())
         {
-            MessageBox.Show("Vui lòng nhập Email.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(Password))
-        {
-            MessageBox.Show("Vui lòng nhập Mật khẩu.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

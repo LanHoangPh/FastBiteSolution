@@ -6,10 +6,11 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:behaviors="clr-namespace:FastBiteGroup.Desktop.UI.Behaviors"
         xmlns:converters="clr-namespace:FastBiteGroup.Desktop.UI.Converters"
+        xmlns:components="clr-namespace:FastBiteGroup.Desktop.UI.Views.Components"
         mc:Ignorable="d"
         Title="{DynamicResource LoginWindowTitle}" 
-        Height="640" Width="960"
-        MinWidth="800" MinHeight="550"
+        Height="750" Width="960"
+        MinWidth="800" MinHeight="750"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="CanResize"
@@ -120,11 +121,15 @@
             <Button x:Name="MinimizeBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" ToolTip="{DynamicResource MinimizeTooltip}">
                 <Path Data="M 0 5 L 10 5" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
-            <Button x:Name="MaximizeBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" ToolTip="{DynamicResource MaximizeTooltip}">
-                <Path x:Name="MaximizeIcon" Data="M 1 1 L 9 1 L 9 9 L 1 9 Z" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5" Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button x:Name="MaximizeBtn" Width="36" Height="36"
+                    Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" ToolTip="{DynamicResource MaximizeTooltip}">
+                <Path x:Name="MaximizeIcon"
+                      Data="M 1 1 L 9 1 L 9 9 L 1 9 Z" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5"
+                      Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
             <Button x:Name="CloseBtn" Width="36" Height="36" Style="{StaticResource CaptionCloseButtonStyle}" Click="CloseBtn_Click" ToolTip="{DynamicResource CloseTooltip}">
-                <Path Data="M 1 1 L 9 9 M 9 1 L 1 9" Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Path Data="M 1 1 L 9 9 M 9 1 L 1 9"
+                      Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
         </StackPanel>
 
@@ -155,7 +160,8 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="12" Color="#000000" Opacity="0.05" ShadowDepth="2" Direction="270"/>
                             </Border.Effect>
-                            <Path Data="{StaticResource LoginArrowIcon}" Fill="{DynamicResource LoginPrimaryBtnBrush}" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Path Data="{StaticResource LoginArrowIcon}"
+                                  Fill="{DynamicResource LoginPrimaryBtnBrush}" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
 
                         <!-- Title -->
@@ -165,93 +171,21 @@
                         <TextBlock Text="{DynamicResource LoginSubtitle}" Style="{StaticResource LoginSubtitleStyle}" FontSize="13" Margin="0,0,0,28"/>
 
                         <!-- Email Input -->
-                        <Grid Height="44" Margin="0,0,0,12">
-                            <TextBox x:Name="EmailInput" Style="{StaticResource LoginInputStyle}" 
-                                      Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-                            <!-- Placeholder -->
-                            <TextBlock Text="{DynamicResource LoginEmailPlaceholder}" IsHitTestVisible="False" Margin="40,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Email}" Value=""/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=EmailInput}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <Path Data="{StaticResource EmailIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center"/>
-                        </Grid>
+                        <components:FormTextBox x:Name="EmailInput" 
+                                                Style="{StaticResource LoginFormTextBoxStyle}"
+                                                Icon="{StaticResource EmailIcon}"
+                                                PlaceholderText="{DynamicResource LoginEmailPlaceholder}"
+                                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                Margin="0,0,0,24"/>
 
                         <!-- Password Input -->
-                        <Grid Height="44" Margin="0,0,0,8">
-                            <!-- Hidden Password (PasswordBox) -->
-                            <PasswordBox x:Name="PassInput" 
-                                         Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
-                            
-                            <!-- Revealed Password (TextBox) -->
-                            <TextBox x:Name="RevealedPassInput" 
-                                      Style="{StaticResource LoginInputStyle}" 
-                                      Padding="40,11,40,11"
-                                      Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVis}}"/>
-
-                            <!-- Placeholder -->
-                            <TextBlock Text="{DynamicResource LoginPasswordPlaceholder}" IsHitTestVisible="False" Margin="40,0,40,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Password}" Value=""/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=PassInput}" Value="False"/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=RevealedPassInput}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- Left Icon -->
-                            <Path Data="{StaticResource LockIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center"/>
-
-                            <!-- Right Eye Toggle -->
-                            <ToggleButton IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
-                                          HorizontalAlignment="Right" 
-                                          Margin="0,0,10,0" 
-                                          VerticalAlignment="Center">
-                                <ToggleButton.Style>
-                                    <Style TargetType="ToggleButton" BasedOn="{StaticResource LoginEyeToggleStyle}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeOffIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                            <Trigger Property="IsChecked" Value="False">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                        </Grid>
+                        <components:FormPasswordBox x:Name="PassInput" 
+                                                    Style="{StaticResource LoginFormPasswordBoxStyle}"
+                                                    Icon="{StaticResource LockIcon}"
+                                                    PlaceholderText="{DynamicResource LoginPasswordPlaceholder}"
+                                                    Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    IsPasswordVisible="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                    Margin="0,0,0,24"/>
 
                         <!-- Forgot Password Link -->
                         <TextBlock HorizontalAlignment="Right" Margin="0,0,0,22">
@@ -284,7 +218,8 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Border Grid.Column="0" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource LoginDividerText}" FontSize="12" Foreground="{DynamicResource LoginTextSecondaryBrush}" Margin="12,0" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource LoginDividerText}"
+                                       FontSize="12" Foreground="{DynamicResource LoginTextSecondaryBrush}" Margin="12,0" VerticalAlignment="Center"/>
                             <Border Grid.Column="2" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
                         </Grid>
 
@@ -303,7 +238,8 @@
 
                         <!-- Register Link -->
                         <TextBlock HorizontalAlignment="Center" Margin="0,12,0,0">
-                            <Hyperlink Command="{Binding NavigateToRegisterViewCommand}" TextDecorations="None" Foreground="{DynamicResource LoginLinkBrush}" FontSize="12.5" FontWeight="Medium">
+                            <Hyperlink Command="{Binding NavigateToRegisterViewCommand}"
+                                       TextDecorations="None" Foreground="{DynamicResource LoginLinkBrush}" FontSize="12.5" FontWeight="Medium">
                                 <Hyperlink.Style>
                                     <Style TargetType="Hyperlink">
                                         <Style.Triggers>
@@ -331,7 +267,8 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="12" Color="#000000" Opacity="0.05" ShadowDepth="2" Direction="270"/>
                             </Border.Effect>
-                            <Path Data="{StaticResource UserIcon}" Fill="{DynamicResource LoginPrimaryBtnBrush}" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Path Data="{StaticResource UserIcon}"
+                                  Fill="{DynamicResource LoginPrimaryBtnBrush}" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
 
                         <!-- Title -->
@@ -341,7 +278,7 @@
                         <TextBlock Text="{DynamicResource RegisterSubtitle}" Style="{StaticResource LoginSubtitleStyle}" FontSize="12.5" Margin="0,0,0,20"/>
 
                         <!-- Names Field (Họ & Tên song song) -->
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,24">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="12" />
@@ -349,218 +286,57 @@
                             </Grid.ColumnDefinitions>
                             
                             <!-- LastName (Họ) -->
-                            <Grid Grid.Column="0" Height="44">
-                                <TextBox x:Name="LastNameInput" Style="{StaticResource LoginInputStyle}" 
-                                         Padding="36,11,12,11"
-                                         Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"/>
-                                <!-- Placeholder -->
-                                <TextBlock Text="{DynamicResource RegisterLastNamePlaceholder}" IsHitTestVisible="False" Margin="36,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding LastName}" Value=""/>
-                                                        <Condition Binding="{Binding IsFocused, ElementName=LastNameInput}" Value="False"/>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </MultiDataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <Path Data="{StaticResource UserIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Left" Margin="12,0,0,0" VerticalAlignment="Center"/>
-                            </Grid>
+                            <components:FormTextBox Grid.Column="0" Height="44"
+                                                    x:Name="LastNameInput"
+                                                    Style="{StaticResource LoginFormTextBoxStyle}"
+                                                    Icon="{StaticResource UserIcon}"
+                                                    PlaceholderText="{DynamicResource RegisterLastNamePlaceholder}"
+                                                    Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
 
                             <!-- FirstName (Tên) -->
-                            <Grid Grid.Column="2" Height="44">
-                                <TextBox x:Name="FirstNameInput" Style="{StaticResource LoginInputStyle}" 
-                                         Padding="36,11,12,11"
-                                         Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"/>
-                                <!-- Placeholder -->
-                                <TextBlock Text="{DynamicResource RegisterFirstNamePlaceholder}" IsHitTestVisible="False" Margin="36,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding FirstName}" Value=""/>
-                                                        <Condition Binding="{Binding IsFocused, ElementName=FirstNameInput}" Value="False"/>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </MultiDataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <Path Data="{StaticResource UserIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Left" Margin="12,0,0,0" VerticalAlignment="Center"/>
-                            </Grid>
+                            <components:FormTextBox Grid.Column="2" Height="44"
+                                                    x:Name="FirstNameInput"
+                                                    Style="{StaticResource LoginFormTextBoxStyle}"
+                                                    Icon="{StaticResource UserIcon}"
+                                                    PlaceholderText="{DynamicResource RegisterFirstNamePlaceholder}"
+                                                    Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
                         </Grid>
 
                         <!-- Email Input -->
-                        <Grid Height="44" Margin="0,0,0,10">
-                            <TextBox x:Name="RegEmailInput" Style="{StaticResource LoginInputStyle}" 
-                                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-                            <!-- Placeholder -->
-                            <TextBlock Text="{DynamicResource LoginEmailPlaceholder}" IsHitTestVisible="False" Margin="40,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Email}" Value=""/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=RegEmailInput}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <Path Data="{StaticResource EmailIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center"/>
-                        </Grid>
+                        <components:FormTextBox x:Name="RegEmailInput"
+                                                Style="{StaticResource LoginFormTextBoxStyle}"
+                                                Icon="{StaticResource EmailIcon}"
+                                                PlaceholderText="{DynamicResource LoginEmailPlaceholder}"
+                                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                Margin="0,0,0,24"/>
 
                         <!-- Password Input -->
-                        <Grid Height="44" Margin="0,0,0,10">
-                            <!-- Hidden Password (PasswordBox) -->
-                            <PasswordBox x:Name="RegPassInput" 
-                                         Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
-                            
-                            <!-- Revealed Password (TextBox) -->
-                            <TextBox x:Name="RegRevealedPassInput" 
-                                      Style="{StaticResource LoginInputStyle}" 
-                                      Padding="40,11,40,11"
-                                      Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVis}}"/>
-
-                            <!-- Placeholder -->
-                            <TextBlock Text="{DynamicResource LoginPasswordPlaceholder}" IsHitTestVisible="False" Margin="40,0,40,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Password}" Value=""/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=RegPassInput}" Value="False"/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=RegRevealedPassInput}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- Left Icon -->
-                            <Path Data="{StaticResource LockIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center"/>
-
-                            <!-- Right Eye Toggle -->
-                            <ToggleButton IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
-                                          HorizontalAlignment="Right" 
-                                          Margin="0,0,10,0" 
-                                          VerticalAlignment="Center">
-                                <ToggleButton.Style>
-                                    <Style TargetType="ToggleButton" BasedOn="{StaticResource LoginEyeToggleStyle}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeOffIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                            <Trigger Property="IsChecked" Value="False">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                        </Grid>
+                        <components:FormPasswordBox x:Name="RegPassInput" 
+                                                    Style="{StaticResource LoginFormPasswordBoxStyle}"
+                                                    Icon="{StaticResource LockIcon}"
+                                                    PlaceholderText="{DynamicResource LoginPasswordPlaceholder}"
+                                                    Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    IsPasswordVisible="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                    Margin="0,0,0,24"/>
 
                         <!-- Confirm Password Input -->
-                        <Grid Height="44" Margin="0,0,0,10">
-                            <!-- Hidden Password (PasswordBox) -->
-                            <PasswordBox x:Name="ConfirmPassInput" 
-                                         Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
-                            
-                            <!-- Revealed Password (TextBox) -->
-                            <TextBox x:Name="RevealedConfirmPassInput" 
-                                      Style="{StaticResource LoginInputStyle}" 
-                                      Padding="40,11,40,11"
-                                      Text="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVis}}"/>
-
-                            <!-- Placeholder -->
-                            <TextBlock Text="{DynamicResource RegisterConfirmPasswordPlaceholder}" IsHitTestVisible="False" Margin="40,0,40,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding ConfirmPassword}" Value=""/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=ConfirmPassInput}" Value="False"/>
-                                                    <Condition Binding="{Binding IsFocused, ElementName=RevealedConfirmPassInput}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- Left Icon -->
-                            <Path Data="{StaticResource LockIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center"/>
-
-                            <!-- Right Eye Toggle -->
-                            <ToggleButton IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
-                                          HorizontalAlignment="Right" 
-                                          Margin="0,0,10,0" 
-                                          VerticalAlignment="Center">
-                                <ToggleButton.Style>
-                                    <Style TargetType="ToggleButton" BasedOn="{StaticResource LoginEyeToggleStyle}">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeOffIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                            <Trigger Property="IsChecked" Value="False">
-                                                <Setter Property="Content">
-                                                    <Setter.Value>
-                                                        <Path Data="{StaticResource EyeIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                        </Grid>
+                        <components:FormPasswordBox x:Name="ConfirmPassInput" 
+                                                    Style="{StaticResource LoginFormPasswordBoxStyle}"
+                                                    Icon="{StaticResource LockIcon}"
+                                                    PlaceholderText="{DynamicResource RegisterConfirmPasswordPlaceholder}"
+                                                    Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    IsPasswordVisible="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                    Margin="0,0,0,24"/>
 
                         <!-- Date of Birth Input -->
-                        <Grid Height="44" Margin="0,0,0,18">
+                        <Grid Height="44" Margin="0,0,0,28">
                             <DatePicker x:Name="DoBInput" 
                                         Style="{StaticResource LoginDatePickerStyle}"
-                                        SelectedDate="{Binding DayOfBirth, Mode=TwoWay}"
+                                        SelectedDate="{Binding DayOfBirth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                         DateValidationError="DoBInput_DateValidationError"/>
                             <!-- Placeholder when DatePicker text is empty -->
-                            <TextBlock Text="{DynamicResource RegisterDayOfBirthPlaceholder}" IsHitTestVisible="False" Margin="40,0,40,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
+                            <TextBlock Text="{DynamicResource RegisterDayOfBirthPlaceholder}"
+                                       IsHitTestVisible="False" Margin="40,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -572,8 +348,6 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            <!-- Left Icon -->
-                            <Path Data="{StaticResource CalendarIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
                         </Grid>
 
                         <!-- Primary Button -->
@@ -589,9 +363,12 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource RegisterDividerText}" FontSize="12" Foreground="{DynamicResource LoginTextSecondaryBrush}" Margin="12,0" VerticalAlignment="Center"/>
-                            <Border Grid.Column="2" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
+                            <Border Grid.Column="0" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}"
+                                    BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource RegisterDividerText}"
+                                       FontSize="12" Foreground="{DynamicResource LoginTextSecondaryBrush}" Margin="12,0" VerticalAlignment="Center"/>
+                            <Border Grid.Column="2" BorderBrush="{DynamicResource LoginSocialBtnBorderBrush}"
+                                    BorderThickness="0,0,0,1" VerticalAlignment="Center"/>
                         </Grid>
 
                         <!-- Social Login Buttons -->
