@@ -120,6 +120,9 @@
             <Button x:Name="MinimizeBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" ToolTip="{DynamicResource MinimizeTooltip}">
                 <Path Data="M 0 5 L 10 5" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
+            <Button x:Name="MaximizeBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" ToolTip="{DynamicResource MaximizeTooltip}">
+                <Path x:Name="MaximizeIcon" Data="M 1 1 L 9 1 L 9 9 L 1 9 Z" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5" Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
             <Button x:Name="CloseBtn" Width="36" Height="36" Style="{StaticResource CaptionCloseButtonStyle}" Click="CloseBtn_Click" ToolTip="{DynamicResource CloseTooltip}">
                 <Path Data="M 1 1 L 9 9 M 9 1 L 1 9" Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
@@ -190,7 +193,7 @@
                             <!-- Hidden Password (PasswordBox) -->
                             <PasswordBox x:Name="PassInput" 
                                          Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay}"
+                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
                             
                             <!-- Revealed Password (TextBox) -->
@@ -425,7 +428,7 @@
                             <!-- Hidden Password (PasswordBox) -->
                             <PasswordBox x:Name="RegPassInput" 
                                          Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay}"
+                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
                             
                             <!-- Revealed Password (TextBox) -->
@@ -490,7 +493,7 @@
                             <!-- Hidden Password (PasswordBox) -->
                             <PasswordBox x:Name="ConfirmPassInput" 
                                          Style="{StaticResource LoginPasswordBoxStyle}"
-                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay}"
+                                         behaviors:PasswordBoxBinding.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVis}}"/>
                             
                             <!-- Revealed Password (TextBox) -->
@@ -554,7 +557,8 @@
                         <Grid Height="44" Margin="0,0,0,18">
                             <DatePicker x:Name="DoBInput" 
                                         Style="{StaticResource LoginDatePickerStyle}"
-                                        SelectedDate="{Binding DayOfBirth, Mode=TwoWay}"/>
+                                        SelectedDate="{Binding DayOfBirth, Mode=TwoWay}"
+                                        DateValidationError="DoBInput_DateValidationError"/>
                             <!-- Placeholder when DatePicker text is empty -->
                             <TextBlock Text="{DynamicResource RegisterDayOfBirthPlaceholder}" IsHitTestVisible="False" Margin="40,0,40,0" VerticalAlignment="Center" Foreground="{DynamicResource LoginTextMutedBrush}">
                                 <TextBlock.Style>
@@ -569,7 +573,7 @@
                                 </TextBlock.Style>
                             </TextBlock>
                             <!-- Left Icon -->
-                            <Path Data="{StaticResource CalendarIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center" IsHitVisible="False"/>
+                            <Path Data="{StaticResource CalendarIcon}" Fill="{DynamicResource LoginTextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
                         </Grid>
 
                         <!-- Primary Button -->

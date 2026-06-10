@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.ViewModels;
 
@@ -29,17 +30,19 @@ public partial class MainWindow : Window
     protected override void OnStateChanged(EventArgs e)
     {
         base.OnStateChanged(e);
-        if (MaximizeIcon != null)
+        var maximizeIcon = this.FindName("MaximizeIcon") as System.Windows.Shapes.Path;
+        var maximizeBtn = this.FindName("MaximizeBtn") as Button;
+        if (maximizeIcon != null && maximizeBtn != null)
         {
             if (WindowState == WindowState.Maximized)
             {
-                MaximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 3 L 7 3 L 7 9 L 1 9 Z M 3 3 L 3 1 L 9 1 L 9 7 L 7 7");
-                MaximizeBtn.ToolTip = "Restore Down";
+                maximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 3 L 7 3 L 7 9 L 1 9 Z M 3 3 L 3 1 L 9 1 L 9 7 L 7 7");
+                maximizeBtn.ToolTip = TryFindResource("RestoreTooltip") as string ?? "Restore Down";
             }
             else
             {
-                MaximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 1 L 9 1 L 9 9 L 1 9 Z");
-                MaximizeBtn.ToolTip = "Maximize";
+                maximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 1 L 9 1 L 9 9 L 1 9 Z");
+                maximizeBtn.ToolTip = TryFindResource("MaximizeTooltip") as string ?? "Maximize";
             }
         }
     }

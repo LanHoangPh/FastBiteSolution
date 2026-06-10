@@ -101,5 +101,6 @@
     <!-- ==================== COMMON CAPTION TOOLTIPS ==================== -->
     <sys:String x:Key="MinimizeTooltip">Minimize</sys:String>
     <sys:String x:Key="MaximizeTooltip">Maximize</sys:String>
+    <sys:String x:Key="RestoreTooltip">Restore Down</sys:String>
     <sys:String x:Key="CloseTooltip">Close</sys:String>
 </ResourceDictionary>

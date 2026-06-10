@@ -1,7 +1,12 @@
 using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,13 +14,48 @@ namespace FastBiteGroup.Desktop.UI;
 
 public partial class LoginWindow : Window
 {
+    private UIElement? _lastFocusedPasswordInput;
+
     public LoginWindow(LoginViewModel loginViewModel, RegisterViewModel registerViewModel)
     {
         InitializeComponent();
+
+        // Set dynamic culture and language for the window to format dates as dd/MM/yyyy
+        var langService = App.AppHost?.Services.GetService<ILanguageService>();
+        if (langService != null)
+        {
+            this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(
+                langService.CurrentLanguage == "en" ? "en-GB" : "vi-VN");
+        }
         
         // Wire up individual data contexts to their respective grids
         LoginGrid.DataContext = loginViewModel;
         RegisterGrid.DataContext = registerViewModel;
+
+        // Track focus changes on password inputs
+        PassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = PassInput;
+        RevealedPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RevealedPassInput;
+        RegPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RegPassInput;
+        RegRevealedPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RegRevealedPassInput;
+        ConfirmPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = ConfirmPassInput;
+        RevealedConfirmPassInput.GotFocus += (s, e) => _lastFocusedPasswordInput = RevealedConfirmPassInput;
+
+        // Sync focus when password visibility is toggled
+        loginViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(LoginViewModel.IsPasswordVisible))
+            {
+                SyncLoginPasswordFocus(loginViewModel.IsPasswordVisible);
+            }
+        };
+
+        registerViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(RegisterViewModel.IsPasswordVisible))
+            {
+                SyncRegisterPasswordFocus(registerViewModel.IsPasswordVisible);
+            }
+        };
 
         // Subscribing to transition event from LoginViewModel (successful auth)
         loginViewModel.LoginSuccessful += () =>
@@ -33,6 +73,59 @@ public partial class LoginWindow : Window
 
         // Subscribing to login view transition from RegisterViewModel
         registerViewModel.NavigateToLogin += SwitchToLogin;
+    }
+
+    private void SyncLoginPasswordFocus(bool isVisible)
+    {
+        if (isVisible)
+        {
+            if (_lastFocusedPasswordInput == PassInput)
+            {
+                RevealedPassInput.Focus();
+                RevealedPassInput.CaretIndex = RevealedPassInput.Text.Length;
+                _lastFocusedPasswordInput = RevealedPassInput;
+            }
+        }
+        else
+        {
+            if (_lastFocusedPasswordInput == RevealedPassInput)
+            {
+                PassInput.Focus();
+                _lastFocusedPasswordInput = PassInput;
+            }
+        }
+    }
+
+    private void SyncRegisterPasswordFocus(bool isVisible)
+    {
+        if (isVisible)
+        {
+            if (_lastFocusedPasswordInput == RegPassInput)
+            {
+                RegRevealedPassInput.Focus();
+                RegRevealedPassInput.CaretIndex = RegRevealedPassInput.Text.Length;
+                _lastFocusedPasswordInput = RegRevealedPassInput;
+            }
+            else if (_lastFocusedPasswordInput == ConfirmPassInput)
+            {
+                RevealedConfirmPassInput.Focus();
+                RevealedConfirmPassInput.CaretIndex = RevealedConfirmPassInput.Text.Length;
+                _lastFocusedPasswordInput = RevealedConfirmPassInput;
+            }
+        }
+        else
+        {
+            if (_lastFocusedPasswordInput == RegRevealedPassInput)
+            {
+                RegPassInput.Focus();
+                _lastFocusedPasswordInput = RegPassInput;
+            }
+            else if (_lastFocusedPasswordInput == RevealedConfirmPassInput)
+            {
+                ConfirmPassInput.Focus();
+                _lastFocusedPasswordInput = ConfirmPassInput;
+            }
+        }
     }
 
     private void SwitchToRegister()
@@ -106,8 +199,74 @@ public partial class LoginWindow : Window
         SystemCommands.MinimizeWindow(this);
     }
 
+    private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
+    {
+        if (WindowState == WindowState.Maximized)
+        {
+            SystemCommands.RestoreWindow(this);
+        }
+        else
+        {
+            SystemCommands.MaximizeWindow(this);
+        }
+    }
+
     private void CloseBtn_Click(object sender, RoutedEventArgs e)
     {
         SystemCommands.CloseWindow(this);
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        var maximizeIcon = this.FindName("MaximizeIcon") as System.Windows.Shapes.Path;
+        var maximizeBtn = this.FindName("MaximizeBtn") as Button;
+        if (maximizeIcon != null && maximizeBtn != null)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                maximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 3 L 7 3 L 7 9 L 1 9 Z M 3 3 L 3 1 L 9 1 L 9 7 L 7 7");
+                maximizeBtn.ToolTip = TryFindResource("RestoreTooltip") as string ?? "Restore Down";
+            }
+            else
+            {
+                maximizeIcon.Data = System.Windows.Media.Geometry.Parse("M 1 1 L 9 1 L 9 9 L 1 9 Z");
+                maximizeBtn.ToolTip = TryFindResource("MaximizeTooltip") as string ?? "Maximize";
+            }
+        }
+    }
+
+    private void DoBInput_DateValidationError(object sender, DatePickerDateValidationErrorEventArgs e)
+    {
+        if (sender is DatePicker datePicker)
+        {
+            var text = e.Text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return;
+            }
+
+            // Keep only digits from the typed text
+            var cleanText = new string(text.Where(char.IsDigit).ToArray());
+
+            if (cleanText.Length == 8) // e.g., 10062026 -> 10/06/2026
+            {
+                if (DateTime.TryParseExact(cleanText, "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    datePicker.SelectedDate = parsedDate;
+                    e.ThrowException = false; // Prevents validation error popup/border
+                    return;
+                }
+            }
+            else if (cleanText.Length == 6) // e.g., 100685 -> 10/06/1985
+            {
+                if (DateTime.TryParseExact(cleanText, "ddMMyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    datePicker.SelectedDate = parsedDate;
+                    e.ThrowException = false; // Prevents validation error popup/border
+                    return;
+                }
+            }
+        }
     }
 }

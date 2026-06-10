@@ -51,6 +51,14 @@ public sealed class LanguageService : ILanguageService
 
         ReplaceLanguageDictionary(uri);
 
+        // Update default thread culture for string, number, and date formatting
+        var cultureName = langCode == "en" ? "en-GB" : "vi-VN";
+        var culture = new System.Globalization.CultureInfo(cultureName);
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+        System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+        System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+
         if (persist)
         {
             SaveLanguageCode(langCode);
