@@ -1453,6 +1453,7 @@
 
                             <!-- Eye Toggle Button -->
                             <ToggleButton x:Name="PART_EyeToggle"
+                                          IsChecked="{Binding IsPasswordVisible, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                           HorizontalAlignment="Right"
                                           Margin="0,0,10,0"
                                           VerticalAlignment="Center"

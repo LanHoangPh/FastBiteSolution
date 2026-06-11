@@ -1,7 +1,6 @@
-using System;
+using FastBiteGroup.Desktop.UI.Views.Components;
 using System.Globalization;
 using System.Windows.Data;
-using FastBiteGroup.Desktop.UI.Views.Components;
 
 namespace FastBiteGroup.Desktop.UI.Converters;
 

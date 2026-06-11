@@ -98,7 +98,22 @@
     <sys:String x:Key="RegisterDividerText">Or sign up with</sys:String>
     <sys:String x:Key="RegisterBackToLogin">Already have an account? Sign in</sys:String>
 
+    <!-- ==================== FORGOT PASSWORD ==================== -->
+    <sys:String x:Key="ForgotPasswordWindowTitle">Forgot Password - FastBite</sys:String>
+    <sys:String x:Key="ForgotPasswordTitle">Reset password</sys:String>
+    <sys:String x:Key="ForgotPasswordSubtitle">Enter your email and we'll send you a 6-digit OTP to reset your password.</sys:String>
+    <sys:String x:Key="SendOtpButton">Send OTP Code</sys:String>
+    <sys:String x:Key="ResetPasswordTitle">Enter OTP Code</sys:String>
+    <sys:String x:Key="ResetPasswordSubtitle">Enter the 6-digit code sent to your email and your new password.</sys:String>
+    <sys:String x:Key="OtpPlaceholder">OTP Code (6 digits)</sys:String>
+    <sys:String x:Key="NewPasswordPlaceholder">New password</sys:String>
+    <sys:String x:Key="ConfirmPasswordPlaceholder">Confirm new password</sys:String>
+    <sys:String x:Key="ResetPasswordButton">Reset Password</sys:String>
+    <sys:String x:Key="ValidationErrorOtpEmpty">OTP code is required.</sys:String>
+    <sys:String x:Key="ValidationErrorOtpLength">OTP code must be exactly 6 digits.</sys:String>
+
     <!-- ==================== COMMON CAPTION TOOLTIPS ==================== -->
+    <sys:String x:Key="ThemeToggleTooltip">Switch Theme</sys:String>
     <sys:String x:Key="MinimizeTooltip">Minimize</sys:String>
     <sys:String x:Key="MaximizeTooltip">Maximize</sys:String>
     <sys:String x:Key="RestoreTooltip">Restore Down</sys:String>

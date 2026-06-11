@@ -25,16 +25,27 @@
     <Color x:Key="GridSelectionForegroundColor">#FFFFFFFF</Color>
 
     <!-- Login Surface Colors -->
-    <Color x:Key="LoginSkyTopColor">#FF0B1726</Color>
-    <Color x:Key="LoginSkyBottomColor">#FF111827</Color>
-    <Color x:Key="LoginCloudColor">#1FFFFFFF</Color>
-    <Color x:Key="LoginArcColor">#404BA3D9</Color>
-    <Color x:Key="LoginGlassCardColor">#CC111827</Color>
-    <Color x:Key="LoginGlassBorderColor">#334BA3D9</Color>
-    <Color x:Key="LoginInputBackgroundColor">#CC1F2937</Color>
-    <Color x:Key="LoginInputBorderColor">#FF374151</Color>
-    <Color x:Key="LoginPrimaryButtonColor">#FF51F0A8</Color>
-    <Color x:Key="LoginPrimaryButtonForegroundColor">#FF000000</Color>
+    <Color x:Key="LoginSkyTopColor">#FF0F172A</Color>
+    <Color x:Key="LoginSkyBottomColor">#FF030712</Color>
+    <Color x:Key="LoginDecorative1Color">#1538BDF2</Color>
+    <Color x:Key="LoginDecorative2Color">#10818CF8</Color>
+    <Color x:Key="LoginGlassCardColor">#801E293B</Color>
+    <Color x:Key="LoginGlassBorderColor">#1AFFFFFF</Color>
+    <Color x:Key="LoginShadowColor">#40000000</Color>
+    <Color x:Key="LoginTextPrimaryColor">#FFF1F5F9</Color>
+    <Color x:Key="LoginTextSecondaryColor">#FF94A3B8</Color>
+    <Color x:Key="LoginTextMutedColor">#FF64748B</Color>
+    <Color x:Key="LoginLinkColor">#FF60A5FA</Color>
+    <Color x:Key="LoginLinkHoverColor">#FF93C5FD</Color>
+    <Color x:Key="LoginInputBackgroundColor">#331E293B</Color>
+    <Color x:Key="LoginInputBorderColor">#FF475569</Color>
+    <Color x:Key="LoginInputErrorBorderColor">#FFEF4444</Color>
+    <Color x:Key="LoginPrimaryButtonColor">#FFF1F5F9</Color>
+    <Color x:Key="LoginPrimaryButtonHoverColor">#FFE2E8F0</Color>
+    <Color x:Key="LoginPrimaryButtonForegroundColor">#FF0F172A</Color>
+    <Color x:Key="LoginSocialButtonBgColor">#1AFFFFFF</Color>
+    <Color x:Key="LoginSocialButtonHoverBgColor">#26FFFFFF</Color>
+    <Color x:Key="LoginSocialButtonBorderColor">#1AFFFFFF</Color>
     
     <!-- Chart Colors -->
     <Color x:Key="Chart1Color">#FF51F0A8</Color>
@@ -88,15 +99,29 @@
     <SolidColorBrush x:Key="GridSelectionBrush" Color="{StaticResource GridSelectionColor}" />
     <SolidColorBrush x:Key="GridSelectionForegroundBrush" Color="{StaticResource GridSelectionForegroundColor}" />
 
-    <!-- Login Surface Brushes -->
-    <SolidColorBrush x:Key="LoginCloudBrush" Color="{StaticResource LoginCloudColor}" />
-    <SolidColorBrush x:Key="LoginArcBrush" Color="{StaticResource LoginArcColor}" />
-    <SolidColorBrush x:Key="LoginGlassCardBrush" Color="{StaticResource LoginGlassCardColor}" />
-    <SolidColorBrush x:Key="LoginGlassBorderBrush" Color="{StaticResource LoginGlassBorderColor}" />
-    <SolidColorBrush x:Key="LoginInputBackgroundBrush" Color="{StaticResource LoginInputBackgroundColor}" />
-    <SolidColorBrush x:Key="LoginInputBorderBrush" Color="{StaticResource LoginInputBorderColor}" />
-    <SolidColorBrush x:Key="LoginPrimaryButtonBrush" Color="{StaticResource LoginPrimaryButtonColor}" />
-    <SolidColorBrush x:Key="LoginPrimaryButtonForegroundBrush" Color="{StaticResource LoginPrimaryButtonForegroundColor}" />
+    <!-- Login Surface Brushes (Dark Mode) -->
+    <LinearGradientBrush x:Key="LoginBgBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="{StaticResource LoginSkyTopColor}" Offset="0.0" />
+        <GradientStop Color="{StaticResource LoginSkyBottomColor}" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="DecorativeArcBrush1" Color="{StaticResource LoginDecorative1Color}" />
+    <SolidColorBrush x:Key="DecorativeArcBrush2" Color="{StaticResource LoginDecorative2Color}" />
+    <SolidColorBrush x:Key="LoginCardBgBrush" Color="{StaticResource LoginGlassCardColor}" />
+    <SolidColorBrush x:Key="LoginCardBorderBrush" Color="{StaticResource LoginGlassBorderColor}" />
+    <SolidColorBrush x:Key="LoginTextPrimaryBrush" Color="{StaticResource LoginTextPrimaryColor}" />
+    <SolidColorBrush x:Key="LoginTextSecondaryBrush" Color="{StaticResource LoginTextSecondaryColor}" />
+    <SolidColorBrush x:Key="LoginTextMutedBrush" Color="{StaticResource LoginTextMutedColor}" />
+    <SolidColorBrush x:Key="LoginLinkBrush" Color="{StaticResource LoginLinkColor}" />
+    <SolidColorBrush x:Key="LoginLinkHoverBrush" Color="{StaticResource LoginLinkHoverColor}" />
+    <SolidColorBrush x:Key="LoginInputBgBrush" Color="{StaticResource LoginInputBackgroundColor}" />
+    <SolidColorBrush x:Key="LoginInputActiveBorderBrush" Color="{StaticResource LoginInputBorderColor}" />
+    <SolidColorBrush x:Key="LoginInputErrorBorderBrush" Color="{StaticResource LoginInputErrorBorderColor}" />
+    <SolidColorBrush x:Key="LoginPrimaryBtnBrush" Color="{StaticResource LoginPrimaryButtonColor}" />
+    <SolidColorBrush x:Key="LoginPrimaryBtnHoverBrush" Color="{StaticResource LoginPrimaryButtonHoverColor}" />
+    <SolidColorBrush x:Key="LoginPrimaryBtnTextBrush" Color="{StaticResource LoginPrimaryButtonForegroundColor}" />
+    <SolidColorBrush x:Key="LoginSocialBtnBgBrush" Color="{StaticResource LoginSocialButtonBgColor}" />
+    <SolidColorBrush x:Key="LoginSocialBtnHoverBgBrush" Color="{StaticResource LoginSocialButtonHoverBgColor}" />
+    <SolidColorBrush x:Key="LoginSocialBtnBorderBrush" Color="{StaticResource LoginSocialButtonBorderColor}" />
 
     <!-- Chart Brushes -->
     <SolidColorBrush x:Key="Chart1Brush" Color="{StaticResource Chart1Color}" />

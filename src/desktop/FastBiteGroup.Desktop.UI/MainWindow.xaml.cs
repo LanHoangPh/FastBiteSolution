@@ -1,7 +1,9 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FastBiteGroup.Desktop.UI;
 
@@ -24,6 +26,17 @@ public partial class MainWindow : Window
         viewModel.ThemeChanged += () =>
         {
             _themeService.ApplySyncfusionTheme(this);
+        };
+
+        // Listen to logout event
+        viewModel.LogoutSuccessful += () =>
+        {
+            var loginWindow = App.AppHost?.Services.GetRequiredService<LoginWindow>();
+            if (loginWindow != null)
+            {
+                loginWindow.Show();
+                this.Close();
+            }
         };
     }
 

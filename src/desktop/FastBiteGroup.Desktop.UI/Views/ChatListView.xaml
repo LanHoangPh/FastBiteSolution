@@ -41,14 +41,14 @@
 
                 <components:IconButton Grid.Column="1" Variant="Ghost" Size="Small" Margin="8,0,0,0" ToolTip="{DynamicResource AddFriendTooltip}">
                     <components:IconButton.Icon>
-                        <Path Data="{StaticResource AddFriendIcon}" 
+                        <Path Data="{StaticResource PersonAddIcon}" 
                               Fill="{DynamicResource MutedForegroundBrush}" Width="16" Height="16"/>
                     </components:IconButton.Icon>
                 </components:IconButton>
 
                 <components:IconButton Grid.Column="2" Variant="Ghost" Size="Small" Margin="4,0,0,0" ToolTip="{DynamicResource CreateGroupTooltip}">
                     <components:IconButton.Icon>
-                        <Path Data="{StaticResource CreateGroupIcon}" 
+                        <Path Data="{StaticResource PeopleAddIcon}" 
                               Fill="{DynamicResource MutedForegroundBrush}" Width="16" Height="16"/>
                     </components:IconButton.Icon>
                 </components:IconButton>

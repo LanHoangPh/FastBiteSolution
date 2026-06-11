@@ -98,7 +98,22 @@
     <sys:String x:Key="RegisterDividerText">Hoặc đăng ký với</sys:String>
     <sys:String x:Key="RegisterBackToLogin">Đã có tài khoản? Đăng nhập</sys:String>
 
+    <!-- ==================== FORGOT PASSWORD ==================== -->
+    <sys:String x:Key="ForgotPasswordWindowTitle">Quên mật khẩu - FastBite</sys:String>
+    <sys:String x:Key="ForgotPasswordTitle">Khôi phục mật khẩu</sys:String>
+    <sys:String x:Key="ForgotPasswordSubtitle">Nhập email của bạn và chúng tôi sẽ gửi mã OTP gồm 6 chữ số để đặt lại mật khẩu.</sys:String>
+    <sys:String x:Key="SendOtpButton">Gửi mã OTP</sys:String>
+    <sys:String x:Key="ResetPasswordTitle">Nhập mã OTP</sys:String>
+    <sys:String x:Key="ResetPasswordSubtitle">Nhập mã xác thực 6 số đã được gửi tới email và mật khẩu mới của bạn.</sys:String>
+    <sys:String x:Key="OtpPlaceholder">Mã OTP (6 chữ số)</sys:String>
+    <sys:String x:Key="NewPasswordPlaceholder">Mật khẩu mới</sys:String>
+    <sys:String x:Key="ConfirmPasswordPlaceholder">Xác nhận mật khẩu mới</sys:String>
+    <sys:String x:Key="ResetPasswordButton">Đặt lại mật khẩu</sys:String>
+    <sys:String x:Key="ValidationErrorOtpEmpty">Mã OTP không được để trống.</sys:String>
+    <sys:String x:Key="ValidationErrorOtpLength">Mã OTP phải có đúng 6 chữ số.</sys:String>
+
     <!-- ==================== COMMON CAPTION TOOLTIPS ==================== -->
+    <sys:String x:Key="ThemeToggleTooltip">Chuyển đổi giao diện</sys:String>
     <sys:String x:Key="MinimizeTooltip">Thu nhỏ</sys:String>
     <sys:String x:Key="MaximizeTooltip">Phóng to</sys:String>
     <sys:String x:Key="RestoreTooltip">Khôi phục xuống</sys:String>

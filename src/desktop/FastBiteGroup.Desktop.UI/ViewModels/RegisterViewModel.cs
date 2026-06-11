@@ -1,14 +1,19 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Serilog;
+using FastBiteGroup.Desktop.Application.Abstractions;
+using FastBiteGroup.Desktop.Application.Models.Auth;
 using FastBiteGroup.Desktop.UI.Validators;
+using Serilog;
 
 namespace FastBiteGroup.Desktop.UI.ViewModels;
 
 public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewModel>
 {
+    private readonly IAuthService _authService;
+
     [ObservableProperty]
     private string _firstName = string.Empty;
 
@@ -36,12 +41,13 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
     // Navigation event to return to Login Window
     public event Action? NavigateToLogin;
 
-    public RegisterViewModel(RegisterViewModelValidator validator) : base(validator)
+    public RegisterViewModel(IAuthService authService, RegisterViewModelValidator validator) : base(validator)
     {
+        _authService = authService;
     }
 
     [RelayCommand]
-    private void Register()
+    private async Task RegisterAsync()
     {
         if (!ValidateAll())
         {
@@ -61,14 +67,22 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
 
         try
         {
-            // Create the record model as requested
+            // Create the record model using the imported one from Application.Models.Auth
             var request = new RegisterRequest(Email, Password, FirstName, LastName, dob.Value);
+            var result = await _authService.RegisterAsync(request);
 
-            MessageBox.Show($"Đăng ký tài khoản thành công!\nChào mừng {request.LastName} {request.FirstName} tham gia FastBite.", 
-                "Đăng ký thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-            
-            // Go back to login screen upon successful registration
-            NavigateToLogin?.Invoke();
+            if (result.IsSuccess)
+            {
+                MessageBox.Show(result.Value.Message, 
+                    "Đăng ký thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // Go back to login screen upon successful registration
+                NavigateToLogin?.Invoke();
+            }
+            else
+            {
+                MessageBox.Show(result.Error.Message, "Lỗi đăng ký", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         catch (Exception ex)
         {
@@ -109,11 +123,3 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
         MessageBox.Show("Đăng ký bằng tài khoản Apple...", "Apple Auth", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 }
-
-// Define the record as requested by the user
-public sealed record RegisterRequest(
-    string Email,
-    string Password,
-    string FirstName,
-    string LastName,
-    DateTime DayOfBirth);

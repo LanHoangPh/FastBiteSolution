@@ -75,10 +75,12 @@ public partial class App : System.Windows.Application
 
                 services.AddSingleton<LoginViewModelValidator>();
                 services.AddSingleton<RegisterViewModelValidator>();
+                services.AddSingleton<ForgotPasswordViewModelValidator>();
 
                 services.AddTransient<LoginViewModel>();
                 services.AddTransient<LoginWindow>();
                 services.AddTransient<RegisterViewModel>();
+                services.AddTransient<ForgotPasswordViewModel>();
             })
             .Build();
     }
@@ -94,8 +96,21 @@ public partial class App : System.Windows.Application
             AppHost.Services.GetRequiredService<IThemeService>().Initialize();
             AppHost.Services.GetRequiredService<ILanguageService>().Initialize();
 
-            var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
-            loginWindow.Show();
+            var authService = AppHost.Services.GetRequiredService<FastBiteGroup.Desktop.Application.Abstractions.IAuthService>();
+            bool autoLoginSuccess = await authService.TryAutoLoginAsync();
+
+            if (autoLoginSuccess)
+            {
+                Log.Information("Auto-login successful. Showing MainWindow.");
+                var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
+                mainWindow.Show();
+            }
+            else
+            {
+                Log.Information("Auto-login failed. Showing LoginWindow.");
+                var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
+                loginWindow.Show();
+            }
         }
         catch (Exception ex)
         {

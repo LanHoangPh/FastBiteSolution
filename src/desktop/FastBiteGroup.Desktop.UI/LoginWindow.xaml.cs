@@ -14,9 +14,17 @@ namespace FastBiteGroup.Desktop.UI;
 
 public partial class LoginWindow : Window
 {
-    public LoginWindow(LoginViewModel loginViewModel, RegisterViewModel registerViewModel)
+    private readonly IThemeService? _themeService;
+
+    public LoginWindow(
+        LoginViewModel loginViewModel, 
+        RegisterViewModel registerViewModel,
+        ForgotPasswordViewModel forgotPasswordViewModel)
     {
         InitializeComponent();
+
+        _themeService = App.AppHost?.Services.GetService<IThemeService>();
+        UpdateThemeButtonVisuals();
 
         // Set dynamic culture and language for the window to format dates as dd/MM/yyyy
         var langService = App.AppHost?.Services.GetService<ILanguageService>();
@@ -29,6 +37,7 @@ public partial class LoginWindow : Window
         // Wire up individual data contexts to their respective grids
         LoginGrid.DataContext = loginViewModel;
         RegisterGrid.DataContext = registerViewModel;
+        ForgotPasswordGrid.DataContext = forgotPasswordViewModel;
 
         // Subscribing to transition event from LoginViewModel (successful auth)
         loginViewModel.LoginSuccessful += () =>
@@ -46,6 +55,10 @@ public partial class LoginWindow : Window
 
         // Subscribing to login view transition from RegisterViewModel
         registerViewModel.NavigateToLogin += SwitchToLogin;
+
+        // Subscribing to forgot password view transitions
+        loginViewModel.NavigateToForgotPassword += SwitchToForgotPassword;
+        forgotPasswordViewModel.NavigateToLogin += SwitchFromForgotPassword;
     }
 
 
@@ -114,6 +127,97 @@ public partial class LoginWindow : Window
 
         RegisterGrid.BeginAnimation(UIElement.OpacityProperty, fadeOutRegister);
         RegisterTranslate.BeginAnimation(TranslateTransform.XProperty, slideOutRegister);
+    }
+
+    private void SwitchToForgotPassword()
+    {
+        // 1. Change window title dynamically
+        if (TryFindResource("ForgotPasswordWindowTitle") is string forgotTitle)
+        {
+            this.Title = forgotTitle;
+        }
+
+        // 2. Animate out LoginGrid (opacity 1 -> 0, slide left: 0 -> -50)
+        var fadeOutLogin = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(0.18));
+        var slideOutLogin = new DoubleAnimation(0, -50, TimeSpan.FromSeconds(0.18));
+
+        fadeOutLogin.Completed += (s, e) =>
+        {
+            LoginGrid.Visibility = Visibility.Collapsed;
+            ForgotPasswordGrid.Visibility = Visibility.Visible;
+            ForgotPasswordTranslate.X = 50;
+
+            // 3. Animate in ForgotPasswordGrid (opacity 0 -> 1, slide in: 50 -> 0)
+            var fadeInForgot = new DoubleAnimation(0, 1, TimeSpan.FromSeconds(0.22));
+            var slideInForgot = new DoubleAnimation(50, 0, TimeSpan.FromSeconds(0.22))
+            {
+                DecelerationRatio = 0.6
+            };
+
+            ForgotPasswordGrid.BeginAnimation(UIElement.OpacityProperty, fadeInForgot);
+            ForgotPasswordTranslate.BeginAnimation(TranslateTransform.XProperty, slideInForgot);
+        };
+
+        LoginGrid.BeginAnimation(UIElement.OpacityProperty, fadeOutLogin);
+        LoginTranslate.BeginAnimation(TranslateTransform.XProperty, slideOutLogin);
+    }
+
+    private void SwitchFromForgotPassword()
+    {
+        // 1. Change window title dynamically
+        if (TryFindResource("LoginWindowTitle") is string logTitle)
+        {
+            this.Title = logTitle;
+        }
+
+        // 2. Animate out ForgotPasswordGrid (opacity 1 -> 0, slide right: 0 -> 50)
+        var fadeOutForgot = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(0.18));
+        var slideOutForgot = new DoubleAnimation(0, 50, TimeSpan.FromSeconds(0.18));
+
+        fadeOutForgot.Completed += (s, e) =>
+        {
+            ForgotPasswordGrid.Visibility = Visibility.Collapsed;
+            LoginGrid.Visibility = Visibility.Visible;
+            LoginTranslate.X = -50;
+
+            // 3. Animate in LoginGrid (opacity 0 -> 1, slide in: -50 -> 0)
+            var fadeInLogin = new DoubleAnimation(0, 1, TimeSpan.FromSeconds(0.22));
+            var slideInLogin = new DoubleAnimation(-50, 0, TimeSpan.FromSeconds(0.22))
+            {
+                DecelerationRatio = 0.6
+            };
+
+            LoginGrid.BeginAnimation(UIElement.OpacityProperty, fadeInLogin);
+            LoginTranslate.BeginAnimation(TranslateTransform.XProperty, slideInLogin);
+        };
+
+        ForgotPasswordGrid.BeginAnimation(UIElement.OpacityProperty, fadeOutForgot);
+        ForgotPasswordTranslate.BeginAnimation(TranslateTransform.XProperty, slideOutForgot);
+    }
+
+    private void ThemeToggleBtn_Click(object sender, RoutedEventArgs e)
+    {
+        if (_themeService == null) return;
+
+        var newMode = _themeService.CurrentResolvedTheme == ResolvedTheme.Dark
+            ? AppThemeMode.Light
+            : AppThemeMode.Dark;
+
+        _themeService.SetTheme(newMode);
+        UpdateThemeButtonVisuals();
+    }
+
+    private void UpdateThemeButtonVisuals()
+    {
+        if (_themeService == null) return;
+
+        var isDark = _themeService.CurrentResolvedTheme == ResolvedTheme.Dark;
+        var geometryKey = isDark ? "WeatherSunnyIcon" : "WeatherMoonIcon";
+
+        if (TryFindResource(geometryKey) is Geometry geometry)
+        {
+            ThemeToggleIcon.Data = geometry;
+        }
     }
 
     private void MinimizeBtn_Click(object sender, RoutedEventArgs e)

@@ -16,4 +16,8 @@ public interface IAuthService
     Task<bool> TryAutoLoginAsync(CancellationToken cancellationToken = default);
 
     Task LogoutAsync(CancellationToken cancellationToken = default);
+
+    Task<Result> ForgotPasswordAsync(string email, CancellationToken cancellationToken = default);
+
+    Task<Result> ResetPasswordAsync(string email, string otp, string newPassword, CancellationToken cancellationToken = default);
 }

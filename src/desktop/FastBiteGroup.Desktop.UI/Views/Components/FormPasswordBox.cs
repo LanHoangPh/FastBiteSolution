@@ -189,6 +189,10 @@ public class FormPasswordBox : Control
             if (_passwordBox != null)
             {
                 Password = _passwordBox.Password;
+                if (_textBox != null && _textBox.Text != _passwordBox.Password)
+                {
+                    _textBox.Text = _passwordBox.Password;
+                }
             }
         }
         finally
@@ -206,6 +210,10 @@ public class FormPasswordBox : Control
             if (_textBox != null)
             {
                 Password = _textBox.Text;
+                if (_passwordBox != null && _passwordBox.Password != _textBox.Text)
+                {
+                    _passwordBox.Password = _textBox.Text;
+                }
             }
         }
         finally

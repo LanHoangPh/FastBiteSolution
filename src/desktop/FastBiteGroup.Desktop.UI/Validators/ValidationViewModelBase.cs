@@ -39,7 +39,7 @@ public abstract class ValidationViewModelBase<T> : ObservableObject, INotifyData
         }
     }
 
-    public void ValidateProperty(string propertyName)
+    public bool ValidateProperty(string propertyName)
     {
         var context = ValidationContext<T>.CreateWithOptions((T)this, x => x.IncludeProperties(propertyName));
         var result = _validator.Validate(context);
@@ -60,6 +60,19 @@ public abstract class ValidationViewModelBase<T> : ObservableObject, INotifyData
 
         // Raise notification events for WPF binding engine
         ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        OnPropertyChanged(nameof(HasErrors));
+
+        return !propertyErrors.Any();
+    }
+
+    public void ClearErrors()
+    {
+        var properties = _errors.Keys.ToList();
+        _errors.Clear();
+        foreach (var propertyName in properties)
+        {
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        }
         OnPropertyChanged(nameof(HasErrors));
     }
 

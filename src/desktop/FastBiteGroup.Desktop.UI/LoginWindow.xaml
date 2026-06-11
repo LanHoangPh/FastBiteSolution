@@ -91,21 +91,21 @@
         </Style>
     </Window.Style>
 
-    <Grid Background="{StaticResource LoginBgBrush}">
+    <Grid Background="{DynamicResource LoginBgBrush}">
         
         <!-- ==================== BACKGROUND LAYER: DECORATIVE SHAPES ==================== -->
         <Grid IsHitTestVisible="False">
             <!-- Left-Bottom Decorative Shape -->
-            <Ellipse Width="480" Height="480" Fill="{StaticResource DecorativeArcBrush1}" 
-                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-160,0,0,-120">
+            <Ellipse Width="480" Height="480" Fill="{DynamicResource DecorativeArcBrush1}" 
+                      HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-160,0,0,-120">
                 <Ellipse.Effect>
                     <BlurEffect Radius="90"/>
                 </Ellipse.Effect>
             </Ellipse>
             
             <!-- Right-Top Decorative Shape -->
-            <Ellipse Width="380" Height="380" Fill="{StaticResource DecorativeArcBrush2}" 
-                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-120,-100,0">
+            <Ellipse Width="380" Height="380" Fill="{DynamicResource DecorativeArcBrush2}" 
+                      HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-120,-100,0">
                 <Ellipse.Effect>
                     <BlurEffect Radius="70"/>
                 </Ellipse.Effect>
@@ -118,13 +118,16 @@
 
         <!-- Caption Controls -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+            <Button x:Name="ThemeToggleBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="ThemeToggleBtn_Click" ToolTip="{DynamicResource ThemeToggleTooltip}">
+                <Path x:Name="ThemeToggleIcon" Data="{StaticResource WeatherMoonIcon}" Fill="{DynamicResource LoginTextPrimaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
             <Button x:Name="MinimizeBtn" Width="36" Height="36" Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" ToolTip="{DynamicResource MinimizeTooltip}">
-                <Path Data="M 0 5 L 10 5" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Path Data="M 0 5 L 10 5" Stroke="{DynamicResource LoginTextPrimaryBrush}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
             <Button x:Name="MaximizeBtn" Width="36" Height="36"
                     Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" ToolTip="{DynamicResource MaximizeTooltip}">
                 <Path x:Name="MaximizeIcon"
-                      Data="M 1 1 L 9 1 L 9 9 L 1 9 Z" Stroke="{StaticResource LoginTextPrimaryBrush}" StrokeThickness="1.5"
+                      Data="M 1 1 L 9 1 L 9 9 L 1 9 Z" Stroke="{DynamicResource LoginTextPrimaryBrush}" StrokeThickness="1.5"
                       Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
             <Button x:Name="CloseBtn" Width="36" Height="36" Style="{StaticResource CaptionCloseButtonStyle}" Click="CloseBtn_Click" ToolTip="{DynamicResource CloseTooltip}">
@@ -132,15 +135,6 @@
                       Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
         </StackPanel>
-
-        <!-- ==================== LOGO / BRAND LAYER ==================== -->
-        <!--<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,24,0,0" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="False">
-            <Border Background="{DynamicResource LoginPrimaryBtnBrush}" CornerRadius="8" Width="28" Height="28">
-                <TextBlock Text="F" FontWeight="Bold" Foreground="{DynamicResource LoginPrimaryBtnTextBrush}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <TextBlock Text="{DynamicResource LoginBrandName}" Style="{StaticResource LoginTitleStyle}" FontSize="18" Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
-        </StackPanel>-->
-
         <!-- ==================== CENTER LAYER: AUTH CARD ==================== -->
         <Border Width="420" 
                 Style="{StaticResource LoginCardStyle}" 
@@ -382,6 +376,119 @@
                             <Button Style="{StaticResource LoginSocialButtonStyle}" Command="{Binding AppleRegisterCommand}" Margin="6,0,0,0" ToolTip="{DynamicResource LoginAppleTooltip}">
                                 <Path Data="{StaticResource AppleIconGeometry}" Fill="#FF000000" Width="18" Height="18" Stretch="Uniform"/>
                             </Button>
+                        </StackPanel>
+
+                        <!-- Back to Login Link -->
+                        <TextBlock HorizontalAlignment="Center" Margin="0,8,0,0">
+                            <Hyperlink Command="{Binding BackToLoginCommand}" TextDecorations="None" Foreground="{DynamicResource LoginLinkBrush}" FontSize="12.5" FontWeight="Medium">
+                                <Hyperlink.Style>
+                                    <Style TargetType="Hyperlink">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource LoginLinkHoverBrush}"/>
+                                                <Setter Property="TextDecorations" Value="Underline"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Hyperlink.Style>
+                                <Run Text="{DynamicResource RegisterBackToLogin}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ==================== 3. FORGOT PASSWORD VIEWPORT ==================== -->
+                <Grid x:Name="ForgotPasswordGrid" VerticalAlignment="Center" Visibility="Collapsed" Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="ForgotPasswordTranslate" X="50" Y="0"/>
+                    </Grid.RenderTransform>
+                    <StackPanel>
+                        <!-- Top Icon -->
+                        <Border Width="48" Height="48" Background="{DynamicResource LoginSocialBtnBgBrush}" CornerRadius="12" HorizontalAlignment="Center" Margin="0,0,0,16">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" Color="#000000" Opacity="0.05" ShadowDepth="2" Direction="270"/>
+                            </Border.Effect>
+                            <Path Data="{StaticResource LockIcon}"
+                                  Fill="{DynamicResource LoginPrimaryBtnBrush}" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Title & Subtitle for OTP Request/Reset -->
+                        <TextBlock FontSize="22" FontWeight="SemiBold" Margin="0,0,0,4">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource LoginTitleStyle}">
+                                    <Setter Property="Text" Value="{DynamicResource ForgotPasswordTitle}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsOtpSent}" Value="True">
+                                            <Setter Property="Text" Value="{DynamicResource ResetPasswordTitle}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock FontSize="12.5" Margin="0,0,0,20">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource LoginSubtitleStyle}">
+                                    <Setter Property="Text" Value="{DynamicResource ForgotPasswordSubtitle}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsOtpSent}" Value="True">
+                                            <Setter Property="Text" Value="{DynamicResource ResetPasswordSubtitle}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <!-- PHASE 1: OTP REQUEST -->
+                        <StackPanel Visibility="{Binding IsOtpSent, Converter={StaticResource InverseBoolToVis}}">
+                            <!-- Email Input -->
+                            <components:FormTextBox x:Name="ForgotEmailInput"
+                                                    Style="{StaticResource LoginFormTextBoxStyle}"
+                                                    Icon="{StaticResource EmailIcon}"
+                                                    PlaceholderText="{DynamicResource LoginEmailPlaceholder}"
+                                                    Text="{Binding Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    Margin="0,0,0,24"/>
+
+                            <!-- Send OTP Button -->
+                            <Button Content="{DynamicResource SendOtpButton}" 
+                                    Style="{StaticResource LoginPrimaryButtonStyle}" 
+                                    Command="{Binding SendOtpCommand}" 
+                                    Margin="0,0,0,18"/>
+                        </StackPanel>
+
+                        <!-- PHASE 2: RESET PASSWORD -->
+                        <StackPanel Visibility="{Binding IsOtpSent, Converter={StaticResource BoolToVis}}">
+                            <!-- OTP Input -->
+                            <components:FormTextBox x:Name="ForgotOtpInput"
+                                                    Style="{StaticResource LoginFormTextBoxStyle}"
+                                                    Icon="{StaticResource DbIcon}"
+                                                    PlaceholderText="{DynamicResource OtpPlaceholder}"
+                                                    Text="{Binding Otp, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    Margin="0,0,0,24"/>
+
+                            <!-- New Password Input -->
+                            <components:FormPasswordBox x:Name="ForgotNewPassInput" 
+                                                        Style="{StaticResource LoginFormPasswordBoxStyle}"
+                                                        Icon="{StaticResource LockIcon}"
+                                                        PlaceholderText="{DynamicResource NewPasswordPlaceholder}"
+                                                        Password="{Binding NewPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                        IsPasswordVisible="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                        Margin="0,0,0,24"/>
+
+                            <!-- Confirm Password Input -->
+                            <components:FormPasswordBox x:Name="ForgotConfirmPassInput" 
+                                                        Style="{StaticResource LoginFormPasswordBoxStyle}"
+                                                        Icon="{StaticResource LockIcon}"
+                                                        PlaceholderText="{DynamicResource ConfirmPasswordPlaceholder}"
+                                                        Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                        IsPasswordVisible="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                        Margin="0,0,0,24"/>
+
+                            <!-- Reset Password Button -->
+                            <Button Content="{DynamicResource ResetPasswordButton}" 
+                                    Style="{StaticResource LoginPrimaryButtonStyle}" 
+                                    Command="{Binding ResetPasswordCommand}" 
+                                    Margin="0,0,0,18"/>
                         </StackPanel>
 
                         <!-- Back to Login Link -->

@@ -15,25 +15,25 @@
         <Setter Property="FontFamily" Value="{StaticResource LoginFontSans}" />
         <Setter Property="FontSize" Value="{StaticResource LoginFontSizeTitle}" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource LoginTextPrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextPrimaryBrush}" />
         <Setter Property="TextAlignment" Value="Center" />
     </Style>
-
+ 
     <Style x:Key="LoginSubtitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource LoginFontSans}" />
         <Setter Property="FontSize" Value="{StaticResource LoginFontSizeSubtitle}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Foreground" Value="{StaticResource LoginTextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextSecondaryBrush}" />
         <Setter Property="TextAlignment" Value="Center" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="LineHeight" Value="20" />
     </Style>
-
+ 
     <Style x:Key="LoginLabelStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource LoginFontSans}" />
         <Setter Property="FontSize" Value="{StaticResource LoginFontSizeSmall}" />
         <Setter Property="FontWeight" Value="Medium" />
-        <Setter Property="Foreground" Value="{StaticResource LoginTextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource LoginTextSecondaryBrush}" />
     </Style>
 
 </ResourceDictionary>

@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FastBiteGroup.Desktop.Application.Abstractions;
+using FastBiteGroup.Desktop.Application.Models.Auth;
 using FastBiteGroup.Desktop.UI.Services;
 
 namespace FastBiteGroup.Desktop.UI.ViewModels;
@@ -67,10 +69,59 @@ public partial class MainWindowViewModel : ObservableObject
         if (newValue != null) newValue.IsSelected = true;
     }
 
-    public MainWindowViewModel(IThemeService themeService, ILanguageService languageService)
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IAuthService _authService;
+
+    public UserDto? CurrentUser => _currentUserService.User;
+
+    public string UserInitials
+    {
+        get
+        {
+            if (CurrentUser == null) return "UA";
+            
+            var firstName = CurrentUser.FirstName?.Trim() ?? string.Empty;
+            var lastName = CurrentUser.LastName?.Trim() ?? string.Empty;
+            
+            if (firstName.Length > 0 && lastName.Length > 0)
+            {
+                return $"{lastName[0]}{firstName[0]}".ToUpper();
+            }
+            if (firstName.Length > 0)
+            {
+                return firstName[..Math.Min(2, firstName.Length)].ToUpper();
+            }
+            if (lastName.Length > 0)
+            {
+                return lastName[..Math.Min(2, lastName.Length)].ToUpper();
+            }
+            if (!string.IsNullOrEmpty(CurrentUser.Email))
+            {
+                return CurrentUser.Email[..Math.Min(2, CurrentUser.Email.Length)].ToUpper();
+            }
+            return "UA";
+        }
+    }
+
+    public event System.Action? LogoutSuccessful;
+
+    [RelayCommand]
+    private async Task LogoutAsync()
+    {
+        await _authService.LogoutAsync();
+        LogoutSuccessful?.Invoke();
+    }
+
+    public MainWindowViewModel(
+        IThemeService themeService, 
+        ILanguageService languageService,
+        ICurrentUserService currentUserService,
+        IAuthService authService)
     {
         _themeService = themeService;
         _languageService = languageService;
+        _currentUserService = currentUserService;
+        _authService = authService;
         UpdateThemeStatus();
 
         // Conversations mock data matching the Zalo screenshot
