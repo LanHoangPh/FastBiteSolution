@@ -39,7 +39,13 @@ Read:
 - Visual states belong in XAML templates/triggers.
 - Component templates live in `Resources/AppTheme.Controls.xaml`.
 
-## 4. Visual QA
+## 4. Localization Rules
+
+- Do not hardcode user-facing strings in XAML views.
+- Add labels/text to both `Resources/Languages/Strings.vi.xaml` and `Resources/Languages/Strings.en.xaml`.
+- Bind localized strings with `{DynamicResource Key}` so language switching can happen at runtime.
+
+## 5. Visual QA
 
 Before handoff:
 

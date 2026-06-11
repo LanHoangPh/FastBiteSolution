@@ -128,8 +128,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFFACC15" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource QuickChatIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource WarningBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource QuickChatIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide1Bullet1Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -142,8 +142,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF4ADE80" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource TeamsIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource SuccessBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource TeamsIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide1Bullet2Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -156,8 +156,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFF87171" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource ContactIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource ErrorBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource ContactIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide1Bullet3Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -170,8 +170,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF60A5FA" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource PeopleIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource Chart4Brush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource PeopleIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide1Bullet4Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -251,9 +251,9 @@
                                             <Ellipse Canvas.Left="91" Canvas.Top="45" Width="8" Height="8" Fill="{DynamicResource ForegroundBrush}"/>
 
                                             <!-- Bottom Heart/Community Node -->
-                                            <Ellipse Canvas.Left="48" Canvas.Top="68" Width="24" Height="24" Fill="#FFF87171"/>
+                                            <Ellipse Canvas.Left="48" Canvas.Top="68" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" Fill="{DynamicResource ErrorBrush}"/>
                                             <!-- Path representing a mini heart inside -->
-                                            <Path Data="M 60,74 L 56,78 L 54,76 C 52,74 52,72 54,72 C 56,72 58,74 60,76 C 62,74 64,72 66,72 C 68,72 68,74 66,76 Z" Fill="White"/>
+                                            <Path Data="M 60,74 L 56,78 L 54,76 C 52,74 52,72 54,72 C 56,72 58,74 60,76 C 62,74 64,72 66,72 C 68,72 68,74 66,76 Z" Fill="{DynamicResource ErrorForegroundBrush}"/>
                                         </Canvas>
                                     </Grid>
 
@@ -264,8 +264,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF4ADE80" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource HeartIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource SuccessBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource HeartIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide2Bullet1Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -278,8 +278,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF60A5FA" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource AnnouncementIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource Chart4Brush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource AnnouncementIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide2Bullet2Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -292,8 +292,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFFACC15" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource SurveyIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource WarningBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource SurveyIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide2Bullet3Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -306,8 +306,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFC084FC" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource LockIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource Chart5Brush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource LockIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide2Bullet4Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -370,21 +370,21 @@
                                             
                                             <!-- Server Drawer 1 -->
                                             <Rectangle Canvas.Left="40" Canvas.Top="20" Width="40" Height="12" RadiusX="1" RadiusY="1" Fill="{DynamicResource SidebarBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1"/>
-                                            <Ellipse Canvas.Left="45" Canvas.Top="24" Width="4" Height="4" Fill="#FF4ADE80"/>
+                                            <Ellipse Canvas.Left="45" Canvas.Top="24" Width="4" Height="4" Fill="{DynamicResource SuccessBrush}"/>
                                             <Line X1="55" Y1="26" X2="75" Y2="26" Stroke="{DynamicResource MutedForegroundBrush}" StrokeThickness="1.5"/>
 
                                             <!-- Server Drawer 2 -->
                                             <Rectangle Canvas.Left="40" Canvas.Top="40" Width="40" Height="12" RadiusX="1" RadiusY="1" Fill="{DynamicResource SidebarBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1"/>
-                                            <Ellipse Canvas.Left="45" Canvas.Top="44" Width="4" Height="4" Fill="#FF4ADE80"/>
+                                            <Ellipse Canvas.Left="45" Canvas.Top="44" Width="4" Height="4" Fill="{DynamicResource SuccessBrush}"/>
                                             <Line X1="55" Y1="46" X2="75" Y2="46" Stroke="{DynamicResource MutedForegroundBrush}" StrokeThickness="1.5"/>
 
                                             <!-- Server Drawer 3 -->
                                             <Rectangle Canvas.Left="40" Canvas.Top="60" Width="40" Height="12" RadiusX="1" RadiusY="1" Fill="{DynamicResource SidebarBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1"/>
-                                            <Ellipse Canvas.Left="45" Canvas.Top="64" Width="4" Height="4" Fill="#FF60A5FA"/>
+                                            <Ellipse Canvas.Left="45" Canvas.Top="64" Width="4" Height="4" Fill="{DynamicResource Chart4Brush}"/>
                                             <Line X1="55" Y1="66" X2="75" Y2="66" Stroke="{DynamicResource MutedForegroundBrush}" StrokeThickness="1.5"/>
 
                                             <!-- Speed gauge / lightning on left side -->
-                                            <Path Data="M 20,30 L 28,45 L 22,48 L 30,68 L 18,52 L 24,49 Z" Fill="#FFFACC15"/>
+                                            <Path Data="M 20,30 L 28,45 L 22,48 L 30,68 L 18,52 L 24,49 Z" Fill="{DynamicResource WarningBrush}"/>
                                         </Canvas>
                                     </Grid>
 
@@ -395,8 +395,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFC084FC" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource DbIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource Chart5Brush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource DbIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide3Bullet1Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -409,8 +409,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FFF87171" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource CacheIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource ErrorBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource CacheIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide3Bullet2Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -423,8 +423,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF4ADE80" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource LinesIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource SuccessBrush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource LinesIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide3Bullet3Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>
@@ -437,8 +437,8 @@
                                                 <ColumnDefinition Width="32" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Background="#FF60A5FA" CornerRadius="16" Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Path Data="{StaticResource CloudIcon}" Fill="Black" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Background="{DynamicResource Chart4Brush}" CornerRadius="{DynamicResource RadiusSm}" Width="{DynamicResource IconButtonSizeSm}" Height="{DynamicResource IconButtonSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Path Data="{StaticResource CloudIcon}" Fill="{DynamicResource PrimaryForegroundBrush}" Width="{DynamicResource IconSizeSm}" Height="{DynamicResource IconSizeSm}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock Text="{DynamicResource Slide3Bullet4Title}" Style="{StaticResource BodyTextBlockStyle}" FontWeight="Bold" FontSize="13"/>

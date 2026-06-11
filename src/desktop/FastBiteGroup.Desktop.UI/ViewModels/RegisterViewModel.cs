@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FastBiteGroup.Desktop.Application.Abstractions;
 using FastBiteGroup.Desktop.Application.Models.Auth;
+using FastBiteGroup.Desktop.Application.UseCases.Auth;
+using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.Validators;
 using Serilog;
 
@@ -12,7 +12,8 @@ namespace FastBiteGroup.Desktop.UI.ViewModels;
 
 public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewModel>
 {
-    private readonly IAuthService _authService;
+    private readonly RegisterUseCase _registerUseCase;
+    private readonly IDialogService _dialogService;
 
     [ObservableProperty]
     private string _firstName = string.Empty;
@@ -30,7 +31,7 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
     private string _confirmPassword = string.Empty;
 
     [ObservableProperty]
-    private DateTime? _dayOfBirth = DateTime.Today.AddYears(-18); // Default to 18 years ago
+    private DateTime? _dayOfBirth = DateTime.Today.AddYears(-18);
 
     [ObservableProperty]
     private bool _isPasswordVisible;
@@ -38,12 +39,16 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
     [ObservableProperty]
     private bool _isLoading;
 
-    // Navigation event to return to Login Window
     public event Action? NavigateToLogin;
 
-    public RegisterViewModel(IAuthService authService, RegisterViewModelValidator validator) : base(validator)
+    public RegisterViewModel(
+        RegisterUseCase registerUseCase,
+        IDialogService dialogService,
+        RegisterViewModelValidator validator)
+        : base(validator)
     {
-        _authService = authService;
+        _registerUseCase = registerUseCase;
+        _dialogService = dialogService;
     }
 
     [RelayCommand]
@@ -60,34 +65,37 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
             return;
         }
 
-        Log.Information("User attempted registration with Email: {Email}, Name: {LastName} {FirstName}, DoB: {DoB}", 
-            Email, LastName, FirstName, dob.Value.ToString("yyyy-MM-dd"));
-        
+        Log.Information(
+            "User attempted registration with Email: {Email}, Name: {LastName} {FirstName}, DoB: {DoB}",
+            Email,
+            LastName,
+            FirstName,
+            dob.Value.ToString("yyyy-MM-dd"));
+
         IsLoading = true;
 
         try
         {
-            // Create the record model using the imported one from Application.Models.Auth
             var request = new RegisterRequest(Email, Password, FirstName, LastName, dob.Value);
-            var result = await _authService.RegisterAsync(request);
+            var result = await _registerUseCase.ExecuteAsync(request);
 
             if (result.IsSuccess)
             {
-                MessageBox.Show(result.Value.Message, 
-                    "Đăng ký thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                
-                // Go back to login screen upon successful registration
+                _dialogService.ShowInformation(
+                    result.Value.Message,
+                    "DialogTitleRegisterSuccess");
+
                 NavigateToLogin?.Invoke();
             }
             else
             {
-                MessageBox.Show(result.Error.Message, "Lỗi đăng ký", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError(result.Error.Message, "DialogTitleRegisterFailed");
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error occurred during registration");
-            MessageBox.Show("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowErrorResource("DialogMessageUnexpectedRegisterError", "DialogTitleError");
         }
         finally
         {
@@ -106,20 +114,20 @@ public partial class RegisterViewModel : ValidationViewModelBase<RegisterViewMod
     private void GoogleRegister()
     {
         Log.Information("Google social register clicked.");
-        MessageBox.Show("Đăng ký bằng tài khoản Google...", "Google Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageGoogleRegister", "DialogTitleGoogleAuth");
     }
 
     [RelayCommand]
     private void MicrosoftRegister()
     {
         Log.Information("Microsoft social register clicked.");
-        MessageBox.Show("Đăng ký bằng tài khoản Microsoft...", "Microsoft Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageMicrosoftRegister", "DialogTitleMicrosoftAuth");
     }
 
     [RelayCommand]
     private void AppleRegister()
     {
         Log.Information("Apple social register clicked.");
-        MessageBox.Show("Đăng ký bằng tài khoản Apple...", "Apple Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageAppleRegister", "DialogTitleAppleAuth");
     }
 }

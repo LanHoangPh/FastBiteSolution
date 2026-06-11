@@ -226,7 +226,7 @@
                                 <Image Source="{StaticResource MicrosoftIconImage}" Width="18" Height="18"/>
                             </Button>
                             <Button Style="{StaticResource LoginSocialButtonStyle}" Command="{Binding AppleLoginCommand}" Margin="6,0,0,0" ToolTip="{DynamicResource LoginAppleTooltip}">
-                                <Path Data="{StaticResource AppleIconGeometry}" Fill="#FF000000" Width="18" Height="18" Stretch="Uniform"/>
+                                <Path Data="{StaticResource AppleIconGeometry}" Fill="{DynamicResource LoginTextPrimaryBrush}" Width="18" Height="18" Stretch="Uniform"/>
                             </Button>
                         </StackPanel>
 
@@ -374,7 +374,7 @@
                                 <Image Source="{StaticResource MicrosoftIconImage}" Width="18" Height="18"/>
                             </Button>
                             <Button Style="{StaticResource LoginSocialButtonStyle}" Command="{Binding AppleRegisterCommand}" Margin="6,0,0,0" ToolTip="{DynamicResource LoginAppleTooltip}">
-                                <Path Data="{StaticResource AppleIconGeometry}" Fill="#FF000000" Width="18" Height="18" Stretch="Uniform"/>
+                                <Path Data="{StaticResource AppleIconGeometry}" Fill="{DynamicResource LoginTextPrimaryBrush}" Width="18" Height="18" Stretch="Uniform"/>
                             </Button>
                         </StackPanel>
 

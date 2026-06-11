@@ -1,5 +1,6 @@
 using FastBiteGroup.Desktop.UI.Views.Components;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace FastBiteGroup.Desktop.UI.Converters;
@@ -17,6 +18,6 @@ public class BooleanToBadgeStatusConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return DependencyProperty.UnsetValue;
     }
 }

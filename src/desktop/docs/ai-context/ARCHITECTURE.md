@@ -20,7 +20,7 @@ The UI project is the runtime composition root because WPF startup, resource dic
 | Domain | `FastBiteGroup.Desktop.Domain` | Shared result models and desktop domain exceptions |
 | Application | `FastBiteGroup.Desktop.Application` | Use case contracts, app abstractions, feature orchestration |
 | Infrastructure | `FastBiteGroup.Desktop.Infrastructure` | Refit API clients, auth header handler, token persistence |
-| UI | `FastBiteGroup.Desktop.UI` | WPF views, ViewModels, resources, reusable components, theme service, navigation service, host composition |
+| UI | `FastBiteGroup.Desktop.UI` | WPF views, ViewModels, resources, reusable components, theme/language/dialog services, navigation service, host composition |
 
 ## Dependency Rules
 
@@ -41,6 +41,7 @@ The UI project is the runtime composition root because WPF startup, resource dic
 - Code-behind should stay thin and only handle WPF wiring such as `InitializeComponent`, `DataContext`, window-specific service calls, and interop that needs the view instance.
 - Placeholder UI data may live in UI ViewModels until real Application use cases exist.
 - When a feature becomes real, move feature orchestration into Application use cases and keep the ViewModel as a UI adapter.
+- ViewModels should expose intent/state and call UI services for desktop-only concerns such as dialogs; they should not call `MessageBox.Show` directly.
 
 ## Service Registration
 
@@ -52,13 +53,19 @@ The UI project is the runtime composition root because WPF startup, resource dic
 
 Use Refit interfaces in Application abstractions when the UI needs backend access. Infrastructure configures concrete Refit clients.
 
-Current placeholder:
+Current auth/client surface:
 
 ```text
 FastBiteGroup.Desktop.Application/Abstractions/IAuthClient.cs
+FastBiteGroup.Desktop.Application/Abstractions/IUserClient.cs
+FastBiteGroup.Desktop.Application/UseCases/Auth/LoginUseCase.cs
+FastBiteGroup.Desktop.Application/UseCases/Auth/RegisterUseCase.cs
 ```
 
-Future auth flow should use typed request/response records instead of `object`.
+- Auth request/response models are typed records under `Application/Models/Auth`.
+- Login persistence is coordinated by `LoginUseCase`; `AuthService` updates runtime auth state and handles API calls.
+- Infrastructure uses `AuthHeaderHandler` with `ITokenProvider` for bearer headers. Token storage is used for persistence/restore, not per-request file reads.
+- Access token expiry should come from backend response or JWT expiry parsing; do not treat restored tokens as indefinitely valid.
 
 ## Theme Architecture
 

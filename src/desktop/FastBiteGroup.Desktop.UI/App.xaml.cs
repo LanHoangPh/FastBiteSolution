@@ -69,9 +69,10 @@ public partial class App : System.Windows.Application
                     FastBiteGroup.Desktop.UI.Services.NavigationService>();
                 services.AddSingleton<IThemeService, ThemeService>();
                 services.AddSingleton<ILanguageService, LanguageService>();
+                services.AddSingleton<IDialogService, DialogService>();
 
-                services.AddSingleton<MainWindowViewModel>();
-                services.AddSingleton<MainWindow>();
+                services.AddTransient<MainWindowViewModel>();
+                services.AddTransient<MainWindow>();
 
                 services.AddSingleton<LoginViewModelValidator>();
                 services.AddSingleton<RegisterViewModelValidator>();

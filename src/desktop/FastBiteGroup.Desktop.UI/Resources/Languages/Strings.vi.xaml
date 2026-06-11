@@ -130,4 +130,28 @@
     <sys:String x:Key="ValidationErrorFirstNameEmpty">Tên không được để trống.</sys:String>
     <sys:String x:Key="ValidationErrorDayOfBirthEmpty">Vui lòng nhập Ngày sinh.</sys:String>
     <sys:String x:Key="ValidationErrorDayOfBirthInvalid">Ngày sinh không hợp lệ hoặc bạn phải từ 12 tuổi trở lên.</sys:String>
+
+    
+    <!-- ==================== DIALOGS ==================== -->
+    <sys:String x:Key="DialogTitleLoginFailed">&#272;&#259;ng nh&#7853;p th&#7845;t b&#7841;i</sys:String>
+    <sys:String x:Key="DialogTitleRegisterSuccess">&#272;&#259;ng k&#253; th&#224;nh c&#244;ng</sys:String>
+    <sys:String x:Key="DialogTitleRegisterFailed">L&#7895;i &#273;&#259;ng k&#253;</sys:String>
+    <sys:String x:Key="DialogTitleError">L&#7895;i</sys:String>
+    <sys:String x:Key="DialogTitleGoogleAuth">Google Auth</sys:String>
+    <sys:String x:Key="DialogTitleMicrosoftAuth">Microsoft Auth</sys:String>
+    <sys:String x:Key="DialogTitleAppleAuth">Apple Auth</sys:String>
+    <sys:String x:Key="DialogTitleOtpSent">G&#7917;i OTP th&#224;nh c&#244;ng</sys:String>
+    <sys:String x:Key="DialogTitleResetPasswordSuccess">&#272;&#7863;t l&#7841;i th&#224;nh c&#244;ng</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedLoginError">&#272;&#227; x&#7843;y ra l&#7895;i trong qu&#225; tr&#236;nh &#273;&#259;ng nh&#7853;p. Vui l&#242;ng th&#7917; l&#7841;i.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedRegisterError">&#272;&#227; x&#7843;y ra l&#7895;i trong qu&#225; tr&#236;nh &#273;&#259;ng k&#253;. Vui l&#242;ng th&#7917; l&#7841;i.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedSendOtpError">&#272;&#227; x&#7843;y ra l&#7895;i khi g&#7917;i y&#234;u c&#7847;u. Vui l&#242;ng th&#7917; l&#7841;i.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedResetPasswordError">&#272;&#227; x&#7843;y ra l&#7895;i khi &#273;&#7863;t l&#7841;i m&#7853;t kh&#7849;u. Vui l&#242;ng th&#7917; l&#7841;i.</sys:String>
+    <sys:String x:Key="DialogMessageGoogleLogin">&#272;&#259;ng nh&#7853;p b&#7857;ng t&#224;i kho&#7843;n Google...</sys:String>
+    <sys:String x:Key="DialogMessageMicrosoftLogin">&#272;&#259;ng nh&#7853;p b&#7857;ng t&#224;i kho&#7843;n Microsoft...</sys:String>
+    <sys:String x:Key="DialogMessageAppleLogin">&#272;&#259;ng nh&#7853;p b&#7857;ng t&#224;i kho&#7843;n Apple...</sys:String>
+    <sys:String x:Key="DialogMessageGoogleRegister">&#272;&#259;ng k&#253; b&#7857;ng t&#224;i kho&#7843;n Google...</sys:String>
+    <sys:String x:Key="DialogMessageMicrosoftRegister">&#272;&#259;ng k&#253; b&#7857;ng t&#224;i kho&#7843;n Microsoft...</sys:String>
+    <sys:String x:Key="DialogMessageAppleRegister">&#272;&#259;ng k&#253; b&#7857;ng t&#224;i kho&#7843;n Apple...</sys:String>
+    <sys:String x:Key="DialogMessageOtpSent">M&#7897;t m&#227; x&#225;c th&#7921;c OTP g&#7891;m 6 ch&#7919; s&#7889; &#273;&#227; &#273;&#432;&#7907;c g&#7917;i &#273;&#7871;n email c&#7911;a b&#7841;n. Vui l&#242;ng ki&#7875;m tra h&#7897;p th&#432;.</sys:String>
+    <sys:String x:Key="DialogMessageResetPasswordSuccess">M&#7853;t kh&#7849;u c&#7911;a b&#7841;n &#273;&#227; &#273;&#432;&#7907;c &#273;&#7863;t l&#7841;i th&#224;nh c&#244;ng. Vui l&#242;ng &#273;&#259;ng nh&#7853;p b&#7857;ng m&#7853;t kh&#7849;u m&#7899;i.</sys:String>
 </ResourceDictionary>

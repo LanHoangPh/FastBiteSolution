@@ -1,12 +1,12 @@
 # CURRENT_STATUS.md - FastBite Desktop
 
-**Last Updated:** 2026-06-09
+**Last Updated:** 2026-06-11
 
 ## Current Status
 
-The desktop app is a .NET 8 WPF shell with host composition, theme switching, MVVM shell state, and a reusable component system.
+The desktop app is a .NET 8 WPF shell with host composition, theme/language switching, MVVM shell state, auth API wiring, and a reusable component system.
 
-The current UI is still a shell/prototype for future product workflows. It does not yet implement real login, workspace selection, chat, or backend-backed dashboard data.
+The current UI is still a shell/prototype for future product workflows. Login/register/forgot-password are wired to typed auth API abstractions, but workspace selection, chat, and backend-backed dashboard data are not implemented yet.
 
 ## Completed
 
@@ -25,7 +25,10 @@ The current UI is still a shell/prototype for future product workflows. It does 
 - UI services registered:
   - `NavigationService`
   - `ThemeService`
+  - `LanguageService`
+  - `DialogService`
 - UI ViewModels and `MainWindow` are registered in UI host composition.
+- `MainWindow` and `MainWindowViewModel` are transient so logout/login creates a fresh session window.
 - Serilog writes rolling logs under `%AppData%\FastBite\logs`.
 - Startup and shutdown paths log failures and show user-friendly error messages.
 
@@ -37,6 +40,7 @@ The current UI is still a shell/prototype for future product workflows. It does 
 - Dashboard metrics and access logs are bound from ViewModel collections.
 - Sidebar item state is represented through `SidebarItemViewModel`.
 - `MainWindow.xaml.cs` is thin and limited to WPF wiring plus Syncfusion theme re-application.
+- Auth ViewModels use Application use cases/auth abstractions and `IDialogService`; they do not call `MessageBox.Show` directly.
 
 ### Theme System
 
@@ -67,9 +71,20 @@ Component styles/templates are currently kept as implicit styles in `Resources/A
 ### Storage and API Preparation
 
 - `TokenStorage` uses `ProtectedData` with `DataProtectionScope.CurrentUser`.
-- `JwtAuthHeaderHandler` attaches bearer token if one exists.
-- Refit is configured for `IAuthClient`.
-- `IAuthClient` is still a placeholder.
+- `DpapiSecureTokenStore` stores refresh tokens under `%AppData%\FastBite\refresh_token.dat`.
+- `TokenProvider` holds runtime access token state.
+- `AuthHeaderHandler` attaches bearer tokens from `ITokenProvider`.
+- Refit is configured for `IAuthClient` and `IUserClient`.
+- `IAuthClient` has typed login/register/refresh/logout/forgot-password/reset-password methods.
+- `LoginUseCase` coordinates login token persistence; `RegisterUseCase` wraps registration.
+- Auto-login restores persisted tokens and parses JWT expiry when possible instead of treating restored access tokens as indefinitely valid.
+
+### Recent Cleanup
+
+- Removed duplicate DPAPI-reading request handler (`JwtAuthHeaderHandler`).
+- Replaced auth ViewModel `MessageBox.Show` calls with `IDialogService`.
+- Replaced repeated hardcoded dashboard badge/icon colors with theme-aware brush tokens.
+- `BooleanToBadgeStatusConverter.ConvertBack` now returns `DependencyProperty.UnsetValue` instead of throwing.
 
 ## Verified Commands
 
@@ -88,17 +103,30 @@ Build succeeded.
 0 Error(s)
 ```
 
+Most recent verification:
+
+```powershell
+dotnet build FastBiteDesktop.slnx
+```
+
+```text
+Build succeeded.
+0 Warning(s)
+0 Error(s)
+```
+
 Known build caveat:
 
 - If `FastBiteGroup.Desktop.UI` is running, build may fail with DLL copy errors because the running app locks output assemblies. Close the app process and build again.
 
 ## Pending Work
 
-- Implement real login flow with typed request/response models.
+- Add a visible remember-me option if product requirements need non-persistent sessions.
 - Implement workspace selection shell.
 - Implement chat shell and message surfaces.
 - Replace placeholder dashboard/access-log data with real feature data or remove it from production views.
 - Add desktop test projects.
+- Add manual or automated auth flow verification against the backend: login, logout, auto-login, refresh, expired token, and invalid credentials.
 - Add visual QA checklist execution for Light/Dark/System mode.
 - Add live OS theme change listener for `System` mode if needed.
 - Decide Syncfusion theme package/skin strategy as more Syncfusion controls are introduced.

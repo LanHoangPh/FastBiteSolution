@@ -1,6 +1,6 @@
 using FastBiteGroup.Desktop.Application.Abstractions;
-using FastBiteGroup.Desktop.Infrastructure.ApiClients;
 using FastBiteGroup.Desktop.Infrastructure.Authentication;
+using FastBiteGroup.Desktop.Infrastructure.Http;
 using FastBiteGroup.Desktop.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +21,7 @@ public static class DependencyInjection
         services.AddSingleton<IAuthService, AuthService>();
 
         // 2. Api Handlers
-        services.AddTransient<JwtAuthHeaderHandler>();
+        services.AddTransient<AuthHeaderHandler>();
 
         // 3. Refit API Clients with Polly Retry Policy
         void ConfigureClient(IServiceProvider sp, HttpClient c)
@@ -36,12 +36,12 @@ public static class DependencyInjection
 
         services.AddRefitClient<IAuthClient>()
             .ConfigureHttpClient(ConfigureClient)
-            .AddHttpMessageHandler<JwtAuthHeaderHandler>()
+            .AddHttpMessageHandler<AuthHeaderHandler>()
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
         services.AddRefitClient<IUserClient>()
             .ConfigureHttpClient(ConfigureClient)
-            .AddHttpMessageHandler<JwtAuthHeaderHandler>()
+            .AddHttpMessageHandler<AuthHeaderHandler>()
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
         return services;

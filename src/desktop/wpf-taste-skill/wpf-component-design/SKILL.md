@@ -40,7 +40,7 @@ You are a **WPF Controls Engineer**. You design APIs for other developers to use
 
 ## Anti-patterns
 * Using standard C# auto-properties instead of DependencyProperties on a UserControl, breaking `Binding`.
-* Naming a UserControl `x:Name="root"` and binding inside it like `Text="{Binding ElementName=root, Path=MyProp}"` instead of setting `DataContext` correctly or using `RelativeSource`.
+* Setting `DataContext = this` inside a reusable `UserControl`, which breaks the consumer's inherited DataContext. For internal dependency-property bindings, use `RelativeSource` or an explicit element binding carefully without overriding the consumer DataContext.
 * Building a `CustomControl` when a simple `<Style TargetType="Button">` with a `ControlTemplate` would suffice.
 
 ## Example Prompts

@@ -159,14 +159,6 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedSidebarItem = SidebarItems[0];
     }
 
-    // Attach window reference so we can apply syncfusion theme when changing theme
-    public void AttachWindow(System.Windows.Window window)
-    {
-        // We only attach window but don't hold strong ref if not necessary,
-        // wait, we can just let code-behind listen to property changes or command
-        // or hold it for Syncfusion
-    }
-
     [RelayCommand]
     private void SetSystemTheme() => SetTheme(AppThemeMode.System);
 

@@ -3,6 +3,7 @@ using FastBiteGroup.Desktop.Application.Models.Auth;
 using FastBiteGroup.Desktop.Domain.Models.Shared;
 using FastBiteGroup.Desktop.Infrastructure.ApiClients;
 using Refit;
+using System.Text.Json;
 
 namespace FastBiteGroup.Desktop.Infrastructure.Authentication;
 
@@ -42,7 +43,7 @@ public sealed class AuthService : IAuthService
             var errorMessage = ApiErrorParser.GetErrorMessage(ex.Content);
             return Result.Failure<RegisterResponse>(new Error(ex.StatusCode.ToString(), errorMessage));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Result.Failure<RegisterResponse>(new Error("ConnectionError", "Could not connect to server. Please try again."));
         }
@@ -56,11 +57,6 @@ public sealed class AuthService : IAuthService
         {
             var response = await _authClient.LoginAsync(request, cancellationToken);
 
-            // Save tokens securely using DPAPI
-            await _tokenStorage.SaveTokenAsync(response.AccessToken);
-            await _secureTokenStore.SaveRefreshTokenAsync(response.RefreshToken, cancellationToken);
-
-            // Update in-memory runtime caches
             _tokenProvider.SetAccessToken(response.AccessToken, response.AccessTokenExpiresAt);
             if (_currentUserInfoService is CurrentUserService service)
             {
@@ -74,7 +70,7 @@ public sealed class AuthService : IAuthService
             var errorMessage = ApiErrorParser.GetErrorMessage(ex.Content);
             return Result.Failure<AuthResponse>(new Error(ex.StatusCode.ToString(), errorMessage));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Result.Failure<AuthResponse>(new Error("ConnectionError", "Could not connect to server. Please try again."));
         }
@@ -93,7 +89,8 @@ public sealed class AuthService : IAuthService
         // Set the token provider in-memory reference so the LoadCurrentUserAsync call is authenticated
         if (!string.IsNullOrEmpty(accessToken))
         {
-            _tokenProvider.SetAccessToken(accessToken, DateTimeOffset.MaxValue);
+            var expiresAt = TryGetJwtExpiry(accessToken) ?? DateTimeOffset.UtcNow;
+            _tokenProvider.SetAccessToken(accessToken, expiresAt);
             await _currentUserInfoService.LoadCurrentUserAsync(cancellationToken);
 
             if (_currentUserInfoService.IsAuthenticated)
@@ -170,7 +167,7 @@ public sealed class AuthService : IAuthService
             var errorMessage = ApiErrorParser.GetErrorMessage(ex.Content);
             return Result.Failure(new Error(ex.StatusCode.ToString(), errorMessage));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Result.Failure(new Error("ConnectionError", "Could not connect to server. Please try again."));
         }
@@ -188,9 +185,43 @@ public sealed class AuthService : IAuthService
             var errorMessage = ApiErrorParser.GetErrorMessage(ex.Content);
             return Result.Failure(new Error(ex.StatusCode.ToString(), errorMessage));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Result.Failure(new Error("ConnectionError", "Could not connect to server. Please try again."));
         }
+    }
+
+    private static DateTimeOffset? TryGetJwtExpiry(string token)
+    {
+        var segments = token.Split('.');
+        if (segments.Length < 2)
+        {
+            return null;
+        }
+
+        try
+        {
+            var payloadBytes = DecodeBase64Url(segments[1]);
+            using var document = JsonDocument.Parse(payloadBytes);
+
+            if (document.RootElement.TryGetProperty("exp", out var expElement)
+                && expElement.TryGetInt64(out var expSeconds))
+            {
+                return DateTimeOffset.FromUnixTimeSeconds(expSeconds);
+            }
+        }
+        catch
+        {
+            return null;
+        }
+
+        return null;
+    }
+
+    private static byte[] DecodeBase64Url(string value)
+    {
+        var padded = value.Replace('-', '+').Replace('_', '/');
+        padded = padded.PadRight(padded.Length + (4 - padded.Length % 4) % 4, '=');
+        return Convert.FromBase64String(padded);
     }
 }

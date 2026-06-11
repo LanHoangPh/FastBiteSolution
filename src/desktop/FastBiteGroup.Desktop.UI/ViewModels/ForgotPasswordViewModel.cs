@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FastBiteGroup.Desktop.Application.Abstractions;
+using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.Validators;
 using Serilog;
 
@@ -13,6 +13,7 @@ namespace FastBiteGroup.Desktop.UI.ViewModels;
 public partial class ForgotPasswordViewModel : ValidationViewModelBase<ForgotPasswordViewModel>
 {
     private readonly IAuthService _authService;
+    private readonly IDialogService _dialogService;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEmailEmpty))]
@@ -38,21 +39,21 @@ public partial class ForgotPasswordViewModel : ValidationViewModelBase<ForgotPas
     [ObservableProperty]
     private bool _isPasswordVisible;
 
-    // Navigation event to return to Login Window
     public event Action? NavigateToLogin;
 
     public ForgotPasswordViewModel(
         IAuthService authService,
-        ForgotPasswordViewModelValidator validator) 
+        IDialogService dialogService,
+        ForgotPasswordViewModelValidator validator)
         : base(validator)
     {
         _authService = authService;
+        _dialogService = dialogService;
     }
 
     [RelayCommand]
     private async Task SendOtpAsync(CancellationToken cancellationToken)
     {
-        // We only want to validate the Email property for sending OTP
         if (!ValidateProperty(nameof(Email)))
         {
             return;
@@ -67,21 +68,17 @@ public partial class ForgotPasswordViewModel : ValidationViewModelBase<ForgotPas
             if (result.IsSuccess)
             {
                 IsOtpSent = true;
-                MessageBox.Show(
-                    "Một mã xác thực OTP gồm 6 chữ số đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.",
-                    "Gửi OTP thành công",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                _dialogService.ShowInformationResource("DialogMessageOtpSent", "DialogTitleOtpSent");
             }
             else
             {
-                MessageBox.Show(result.Error.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError(result.Error.Message, "DialogTitleError");
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error sending password reset OTP");
-            MessageBox.Show("Đã xảy ra lỗi khi gửi yêu cầu. Vui lòng thử lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowErrorResource("DialogMessageUnexpectedSendOtpError", "DialogTitleError");
         }
         finally
         {
@@ -105,25 +102,22 @@ public partial class ForgotPasswordViewModel : ValidationViewModelBase<ForgotPas
             var result = await _authService.ResetPasswordAsync(Email, Otp, NewPassword, cancellationToken);
             if (result.IsSuccess)
             {
-                MessageBox.Show(
-                    "Mật khẩu của bạn đã được đặt lại thành công. Vui lòng đăng nhập bằng mật khẩu mới.",
-                    "Đặt lại thành công",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                _dialogService.ShowInformationResource(
+                    "DialogMessageResetPasswordSuccess",
+                    "DialogTitleResetPasswordSuccess");
 
-                // Clear fields and go back to login
                 ResetState();
                 NavigateToLogin?.Invoke();
             }
             else
             {
-                MessageBox.Show(result.Error.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError(result.Error.Message, "DialogTitleError");
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error resetting password");
-            MessageBox.Show("Đã xảy ra lỗi khi đặt lại mật khẩu. Vui lòng thử lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowErrorResource("DialogMessageUnexpectedResetPasswordError", "DialogTitleError");
         }
         finally
         {

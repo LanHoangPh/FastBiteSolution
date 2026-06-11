@@ -41,7 +41,9 @@ FastBiteGroup.Desktop.Application/
   DependencyInjection.cs
 
 FastBiteGroup.Desktop.Infrastructure/
+  Authentication/
   ApiClients/
+  Http/
   Storage/
   DependencyInjection.cs
 
@@ -68,13 +70,14 @@ FastBiteGroup.Desktop.UI/
 ## Current App Shape
 
 - The UI project is the composition root.
-- `App.xaml.cs` builds the host, registers desktop services and ViewModels, starts the WPF shell, and initializes theme state.
+- `App.xaml.cs` builds the host, registers desktop services and ViewModels, starts the WPF shell, and initializes theme/language state.
 - `MainWindow` is a dashboard shell with sidebar navigation, settings popup, theme selection, metrics, access logs, and reusable component usage.
 - `MainWindowViewModel` owns shell display state, theme commands, sidebar state, dashboard metrics, and access log placeholder data.
+- Login, registration, and forgot-password screens are wired to typed auth API client methods through Application use cases or auth abstractions.
 - The app has reusable WPF components under `Views/Components`.
-- The app does not yet have real login, workspace, or chat workflows.
+- The app does not yet have real workspace selection, chat workflows, or backend-backed dashboard data.
 - Dashboard metrics and access logs are placeholder UI data until real workflows are wired.
-- `IAuthClient` exists as an abstraction placeholder but has no active API methods yet.
+- `IAuthClient` and `IUserClient` are typed Refit abstractions; Infrastructure configures concrete clients and auth headers.
 
 ## Local User Data
 
@@ -87,7 +90,9 @@ Runtime user data belongs under:
 Current usage:
 
 - `auth.dat`: encrypted token storage via DPAPI.
+- `refresh_token.dat`: encrypted refresh token storage via DPAPI.
 - `settings.json`: user preferences such as theme mode.
+- `language.json`: language preference.
 - `logs/log-.txt`: Serilog rolling logs.
 
 Do not store user preferences, tokens, or secrets in source-controlled `appsettings.json`.

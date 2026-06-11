@@ -130,4 +130,27 @@
     <sys:String x:Key="ValidationErrorFirstNameEmpty">First name is required.</sys:String>
     <sys:String x:Key="ValidationErrorDayOfBirthEmpty">Please enter your Date of Birth.</sys:String>
     <sys:String x:Key="ValidationErrorDayOfBirthInvalid">Invalid Date of Birth or you must be at least 12 years old.</sys:String>
+    
+    <!-- ==================== DIALOGS ==================== -->
+    <sys:String x:Key="DialogTitleLoginFailed">Sign in failed</sys:String>
+    <sys:String x:Key="DialogTitleRegisterSuccess">Registration successful</sys:String>
+    <sys:String x:Key="DialogTitleRegisterFailed">Registration failed</sys:String>
+    <sys:String x:Key="DialogTitleError">Error</sys:String>
+    <sys:String x:Key="DialogTitleGoogleAuth">Google Auth</sys:String>
+    <sys:String x:Key="DialogTitleMicrosoftAuth">Microsoft Auth</sys:String>
+    <sys:String x:Key="DialogTitleAppleAuth">Apple Auth</sys:String>
+    <sys:String x:Key="DialogTitleOtpSent">OTP sent</sys:String>
+    <sys:String x:Key="DialogTitleResetPasswordSuccess">Reset successful</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedLoginError">An error occurred while signing in. Please try again.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedRegisterError">An error occurred while registering. Please try again.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedSendOtpError">An error occurred while sending the request. Please try again.</sys:String>
+    <sys:String x:Key="DialogMessageUnexpectedResetPasswordError">An error occurred while resetting your password. Please try again.</sys:String>
+    <sys:String x:Key="DialogMessageGoogleLogin">Signing in with Google...</sys:String>
+    <sys:String x:Key="DialogMessageMicrosoftLogin">Signing in with Microsoft...</sys:String>
+    <sys:String x:Key="DialogMessageAppleLogin">Signing in with Apple...</sys:String>
+    <sys:String x:Key="DialogMessageGoogleRegister">Registering with Google...</sys:String>
+    <sys:String x:Key="DialogMessageMicrosoftRegister">Registering with Microsoft...</sys:String>
+    <sys:String x:Key="DialogMessageAppleRegister">Registering with Apple...</sys:String>
+    <sys:String x:Key="DialogMessageOtpSent">A 6-digit OTP verification code has been sent to your email. Please check your inbox.</sys:String>
+    <sys:String x:Key="DialogMessageResetPasswordSuccess">Your password has been reset successfully. Please sign in with your new password.</sys:String>
 </ResourceDictionary>

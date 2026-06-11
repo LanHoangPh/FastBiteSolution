@@ -31,14 +31,14 @@ When applying this skill, use these parameters to shape the output. They default
 3. **Typography Matters**: Stop using default `Segoe UI` at size 12 for everything. Establish a typographic scale (Display, Heading, Body, Caption) using `StaticResource`.
 
 ## Technical Rules
-* **No Hardcoded Colors or Margins**: All colors must be `DynamicResource` references. Margins must be standard (e.g., `4,8,12,16,24`).
+* **No Hardcoded Colors or Reusable Spacing**: All colors must be `DynamicResource` references. Reusable margins, padding, radius, dimensions, and effects must use project tokens from the shared resource dictionaries.
 * **Use Styles, not Inline Properties**: Instead of `<Button Background="Red" Foreground="White" />`, use `<Button Style="{DynamicResource PrimaryButtonStyle}" />`.
 * **Grid and DockPanel over StackPanel Math**: Use `Grid` with `*` and `Auto` sizing for complex layouts. Use `DockPanel` for classic top-bar/sidebar/content layouts.
 
 ## Design Rules
-* **Spacing Rhythm**: Standardize spacing to a 4px or 8px grid. E.g., `Margin="8"`, `Padding="16,8"`.
+* **Spacing Rhythm**: Standardize spacing to the project's token scale. Prefer keys such as `SpacingSm`, `SpacingMd`, `SpacingLg`, `ControlPadding`, `CardPadding`, and `WindowPadding` through `DynamicResource`.
 * **Anti-Slop Color**: Avoid default WPF `#FF0000` reds or `#0000FF` blues. Use a refined palette (e.g., Slate, Zinc) with a single, highly saturated accent color.
-* **Elevation & Borders**: Use subtle borders (`BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"`) and standard corner radii (`CornerRadius="4"` or `8`) instead of heavy drop shadows. Avoid the "WPF 3D border" look entirely.
+* **Elevation & Borders**: Use subtle borders (`BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"`) and standard radius tokens such as `RadiusSm` or `RadiusMd` through `DynamicResource` instead of heavy drop shadows. Avoid the "WPF 3D border" look entirely.
 
 ## Output Requirements
 * Output XAML that uses `ResourceDictionary` keys for styling.

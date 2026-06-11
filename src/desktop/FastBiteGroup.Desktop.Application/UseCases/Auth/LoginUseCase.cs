@@ -8,15 +8,18 @@ public sealed class LoginUseCase : IUseCase<LoginRequest, AuthResponse>
 {
     private readonly IAuthService _authService;
     private readonly ITokenProvider _tokenProvider;
+    private readonly ITokenStorage _tokenStorage;
     private readonly ISecureTokenStore _secureTokenStore;
 
     public LoginUseCase(
         IAuthService authService,
         ITokenProvider tokenProvider,
+        ITokenStorage tokenStorage,
         ISecureTokenStore secureTokenStore)
     {
         _authService = authService;
         _tokenProvider = tokenProvider;
+        _tokenStorage = tokenStorage;
         _secureTokenStore = secureTokenStore;
     }
 
@@ -32,9 +35,19 @@ public sealed class LoginUseCase : IUseCase<LoginRequest, AuthResponse>
         if (result.IsSuccess && result.Value != null)
         {
             _tokenProvider.SetAccessToken(result.Value.AccessToken, result.Value.AccessTokenExpiresAt);
-            if (rememberMe && !string.IsNullOrEmpty(result.Value.RefreshToken))
+            if (rememberMe)
             {
-                await _secureTokenStore.SaveRefreshTokenAsync(result.Value.RefreshToken);
+                await _tokenStorage.SaveTokenAsync(result.Value.AccessToken);
+
+                if (!string.IsNullOrEmpty(result.Value.RefreshToken))
+                {
+                    await _secureTokenStore.SaveRefreshTokenAsync(result.Value.RefreshToken);
+                }
+            }
+            else
+            {
+                await _tokenStorage.RemoveTokenAsync();
+                await _secureTokenStore.ClearAsync();
             }
         }
 

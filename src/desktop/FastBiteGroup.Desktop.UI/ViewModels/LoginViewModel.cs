@@ -1,10 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FastBiteGroup.Desktop.Application.Abstractions;
 using FastBiteGroup.Desktop.Application.Models.Auth;
+using FastBiteGroup.Desktop.Application.UseCases.Auth;
+using FastBiteGroup.Desktop.UI.Services;
 using FastBiteGroup.Desktop.UI.Validators;
 using Serilog;
 
@@ -12,7 +10,8 @@ namespace FastBiteGroup.Desktop.UI.ViewModels;
 
 public partial class LoginViewModel : ValidationViewModelBase<LoginViewModel>
 {
-    private readonly IAuthService _authService;
+    private readonly LoginUseCase _loginUseCase;
+    private readonly IDialogService _dialogService;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEmailEmpty))]
@@ -32,18 +31,18 @@ public partial class LoginViewModel : ValidationViewModelBase<LoginViewModel>
     [ObservableProperty]
     private bool _isLoading;
 
-    // Event triggered when login is successful to transition views
     public event Action? LoginSuccessful;
-
-    // Event triggered to transition to RegisterWindow
     public event Action? NavigateToRegister;
-
-    // Event triggered to transition to ForgotPassword Grid
     public event Action? NavigateToForgotPassword;
 
-    public LoginViewModel(IAuthService authService, LoginViewModelValidator validator) : base(validator)
+    public LoginViewModel(
+        LoginUseCase loginUseCase,
+        IDialogService dialogService,
+        LoginViewModelValidator validator)
+        : base(validator)
     {
-        _authService = authService;
+        _loginUseCase = loginUseCase;
+        _dialogService = dialogService;
     }
 
     [RelayCommand]
@@ -66,21 +65,20 @@ public partial class LoginViewModel : ValidationViewModelBase<LoginViewModel>
 
         try
         {
-            var result = await _authService.LoginAsync(new LoginRequest(Email, Password));
+            var result = await _loginUseCase.ExecuteAsync(new LoginRequest(Email, Password));
             if (result.IsSuccess)
             {
-                // Trigger transition to MainWindow
                 LoginSuccessful?.Invoke();
             }
             else
             {
-                MessageBox.Show(result.Error.Message, "Đăng nhập thất bại", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError(result.Error.Message, "DialogTitleLoginFailed");
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error occurred during login");
-            MessageBox.Show("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowErrorResource("DialogMessageUnexpectedLoginError", "DialogTitleError");
         }
         finally
         {
@@ -99,20 +97,20 @@ public partial class LoginViewModel : ValidationViewModelBase<LoginViewModel>
     private void GoogleLogin()
     {
         Log.Information("Google social login clicked.");
-        MessageBox.Show("Đăng nhập bằng tài khoản Google...", "Google Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageGoogleLogin", "DialogTitleGoogleAuth");
     }
 
     [RelayCommand]
     private void MicrosoftLogin()
     {
         Log.Information("Microsoft social login clicked.");
-        MessageBox.Show("Đăng nhập bằng tài khoản Microsoft...", "Microsoft Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageMicrosoftLogin", "DialogTitleMicrosoftAuth");
     }
 
     [RelayCommand]
     private void AppleLogin()
     {
         Log.Information("Apple social login clicked.");
-        MessageBox.Show("Đăng nhập bằng tài khoản Apple...", "Apple Auth", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowInformationResource("DialogMessageAppleLogin", "DialogTitleAppleAuth");
     }
 }
