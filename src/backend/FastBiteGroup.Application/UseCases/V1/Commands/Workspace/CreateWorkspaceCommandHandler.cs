@@ -4,32 +4,20 @@ using FastBiteGroup.Contract.Services.V1.Workspace;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 using FastBiteGroup.Domain.Abstractions;
-using FastBiteGroup.Domain.Enum;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Workspace;
 
-public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceCommand, WorkspaceResponse>
+public class CreateWorkspaceCommandHandler(
+    IWorkspaceRepository workspaceRepository,
+    IUnitOfWork unitOfWork,
+    ICurrentUser currentUser,
+    ICacheService cacheService)
+    : ICommandHandler<CreateWorkspaceCommand, WorkspaceResponse>
 {
-    private readonly IWorkspaceRepository _workspaceRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ICurrentUser _currentUser;
-    private readonly ICacheService _cacheService;
-
-    public CreateWorkspaceCommandHandler(
-        IWorkspaceRepository workspaceRepository,
-        IUnitOfWork unitOfWork,
-        ICurrentUser currentUser,
-        ICacheService cacheService)
-    {
-        _workspaceRepository = workspaceRepository;
-        _unitOfWork = unitOfWork;
-        _currentUser = currentUser;
-        _cacheService = cacheService;
-    }
-
     public async Task<Result<WorkspaceResponse>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
-        var userId = _currentUser.UserId;
+        var userId = currentUser.UserId;
         var workspaceId = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
 
@@ -57,11 +45,11 @@ public class CreateWorkspaceCommandHandler : ICommandHandler<CreateWorkspaceComm
             }
         };
 
-        _workspaceRepository.Add(workspace);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        await _cacheService.RemoveAsync(CacheKeys.UserWorkspaces(userId), cancellationToken);
+        workspaceRepository.Add(workspace);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(CacheKeys.UserWorkspaces(userId), cancellationToken);
 
-        var summary = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(workspaceId, userId, cancellationToken);
+        var summary = await workspaceRepository.GetWorkspaceSummaryForMemberAsync(workspaceId, userId, cancellationToken);
         return summary is null
             ? Result.Failure<WorkspaceResponse>(WorkspaceErrors.NotFound)
             : Result.Success(summary.ToResponse());

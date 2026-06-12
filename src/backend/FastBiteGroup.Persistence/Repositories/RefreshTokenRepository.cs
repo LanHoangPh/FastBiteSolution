@@ -4,13 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FastBiteGroup.Persistence.Repositories;
 
-internal sealed class RefreshTokenRepository
-    : RepositoryBase<AppRefreshToken, long>, IRefreshTokenRepository
+internal sealed class RefreshTokenRepository(ApplicationDbContext context)
+    : RepositoryBase<AppRefreshToken, long>(context), IRefreshTokenRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public RefreshTokenRepository(ApplicationDbContext context) : base(context)
-        => _context = context;
+    private readonly ApplicationDbContext _context = context;
 
     /// <inheritdoc />
     public Task<AppRefreshToken?> FindByTokenAsync(string token, CancellationToken ct = default)

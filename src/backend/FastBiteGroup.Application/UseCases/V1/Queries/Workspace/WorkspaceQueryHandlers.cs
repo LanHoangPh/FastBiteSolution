@@ -5,22 +5,14 @@ using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 
 namespace FastBiteGroup.Application.UseCases.V1.Queries.Workspace;
 
-public sealed class GetWorkspaceByIdQueryHandler : IQueryHandler<GetWorkspaceByIdQuery, WorkspaceDetailResponse>
+public sealed class GetWorkspaceByIdQueryHandler(IWorkspaceRepository workspaceRepository, ICurrentUser currentUser)
+    : IQueryHandler<GetWorkspaceByIdQuery, WorkspaceDetailResponse>
 {
-    private readonly IWorkspaceRepository _workspaceRepository;
-    private readonly ICurrentUser _currentUser;
-
-    public GetWorkspaceByIdQueryHandler(IWorkspaceRepository workspaceRepository, ICurrentUser currentUser)
-    {
-        _workspaceRepository = workspaceRepository;
-        _currentUser = currentUser;
-    }
-
     public async Task<Result<WorkspaceDetailResponse>> Handle(GetWorkspaceByIdQuery request, CancellationToken cancellationToken)
     {
-        var summary = await _workspaceRepository.GetWorkspaceSummaryForMemberAsync(
+        var summary = await workspaceRepository.GetWorkspaceSummaryForMemberAsync(
             request.WorkspaceId,
-            _currentUser.UserId,
+            currentUser.UserId,
             cancellationToken);
 
         return summary is null

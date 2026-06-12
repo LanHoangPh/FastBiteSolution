@@ -12,7 +12,7 @@ public class Result<TValue> : Result
 
     public TValue Value => IsSuccess
         ? _value!
-        : throw new InvalidOperationException("The value of a failure result can not be accessed."); // kiemtrả nếu IsSuccess là false thì không được phép truy cập vào Value, nếu truy cập sẽ ném ra lỗi InvalidOperationException
+        : throw new InvalidOperationException("The value of a failure result can not be accessed."); // kiểm tra nếu IsSuccess là false thì không được phép truy cập vào Value, nếu truy cập sẽ ném ra lỗi InvalidOperationException
 
     public static implicit operator Result<TValue>(TValue? value) => Create(value);
 }

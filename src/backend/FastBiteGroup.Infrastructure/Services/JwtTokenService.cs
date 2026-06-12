@@ -3,12 +3,9 @@ using FastBiteGroup.Infrastructure.DependencyInjection.Options;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
-internal sealed class JwtTokenService : IJwtTokenService
+internal sealed class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
 {
-    private readonly JwtOptions _options;
-
-    public JwtTokenService(IOptions<JwtOptions> options)
-        => _options = options.Value;
+    private readonly JwtOptions _options = options.Value;
 
     /// <inheritdoc />
     public (string Token, string Jti, DateTime ExpiresAt) GenerateAccessToken(

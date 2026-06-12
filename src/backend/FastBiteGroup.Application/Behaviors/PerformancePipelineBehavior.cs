@@ -1,23 +1,15 @@
-using MediatR;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace FastBiteGroup.Application.Behaviors;
 
-public sealed class PerformancePipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class PerformancePipelineBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly ILogger<TRequest> _logger;
-
-    public PerformancePipelineBehavior(ILogger<TRequest> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var timer = Stopwatch.StartNew();
-        var response = await next();
+        var response = await next(cancellationToken);
         timer.Stop();
         var elapsedMilliseconds = timer.ElapsedMilliseconds;
         if (elapsedMilliseconds <= 5000)
@@ -25,7 +17,7 @@ public sealed class PerformancePipelineBehavior<TRequest, TResponse> : IPipeline
             return response;
         }
         var requestName = typeof(TRequest).Name;
-        _logger.LogWarning(
+        logger.LogWarning(
             "FastBiteGroup long running request: {RequestName} ({ElapsedMilliseconds} milliseconds)",
             requestName,
             elapsedMilliseconds);

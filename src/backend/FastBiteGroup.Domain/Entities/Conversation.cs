@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Domain.Entities;
 

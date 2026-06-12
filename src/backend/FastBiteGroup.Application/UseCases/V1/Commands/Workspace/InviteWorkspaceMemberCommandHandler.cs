@@ -3,6 +3,7 @@ using FastBiteGroup.Contract.Services.V1.Workspace;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 using FastBiteGroup.Domain.Abstractions;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Workspace;
 

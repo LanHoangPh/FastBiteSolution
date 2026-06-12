@@ -1,6 +1,4 @@
-﻿using FastBiteGroup.Domain.Abstractions.Entities;
-
-namespace FastBiteGroup.Domain.Abstractions;
+﻿namespace FastBiteGroup.Domain.Abstractions;
 
 public abstract class EntityAuditBase<TKey> : EntityBase<TKey>, IEntityAuditBase<TKey>
 {

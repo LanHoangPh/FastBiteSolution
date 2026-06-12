@@ -2,13 +2,10 @@
 
 namespace FastBiteGroup.Application.Exception;
 
-public sealed class ValidationException : DomainException
+public sealed class ValidationException(IReadOnlyCollection<ValidationError> errors)
+    : DomainException("Validation Failure", "One or more validation errors occurred")
 {
-    public ValidationException(IReadOnlyCollection<ValidationError> errors)
-    : base("Validation Failure", "One or more validation errors occurred")
-    => Errors = errors;
-
-    public IReadOnlyCollection<ValidationError> Errors { get; }
+    public IReadOnlyCollection<ValidationError> Errors { get; } = errors;
 }
 
-public record ValidationError(string PropertyName, string ErrorMessage);
+public abstract record ValidationError(string PropertyName, string ErrorMessage);

@@ -4,21 +4,15 @@ using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 
 namespace FastBiteGroup.Application.UseCases.V1.Queries.Workspace;
 
-public sealed class GetMyWorkspaceInvitationsQueryHandler : IQueryHandler<GetMyWorkspaceInvitationsQuery, List<WorkspaceInvitationResponse>>
+public sealed class GetMyWorkspaceInvitationsQueryHandler(
+    IWorkspaceRepository workspaceRepository,
+    ICurrentUser currentUser)
+    : IQueryHandler<GetMyWorkspaceInvitationsQuery, List<WorkspaceInvitationResponse>>
 {
-    private readonly IWorkspaceRepository _workspaceRepository;
-    private readonly ICurrentUser _currentUser;
-
-    public GetMyWorkspaceInvitationsQueryHandler(IWorkspaceRepository workspaceRepository, ICurrentUser currentUser)
-    {
-        _workspaceRepository = workspaceRepository;
-        _currentUser = currentUser;
-    }
-
     public async Task<Result<List<WorkspaceInvitationResponse>>> Handle(GetMyWorkspaceInvitationsQuery request, CancellationToken cancellationToken)
     {
-        var invitations = await _workspaceRepository.GetPendingInvitationsByEmailAsync(
-            WorkspaceEmail.Normalize(_currentUser.Email),
+        var invitations = await workspaceRepository.GetPendingInvitationsByEmailAsync(
+            WorkspaceEmail.Normalize(currentUser.Email),
             cancellationToken);
 
         return Result.Success(invitations.Select(i => i.ToResponse()).ToList());

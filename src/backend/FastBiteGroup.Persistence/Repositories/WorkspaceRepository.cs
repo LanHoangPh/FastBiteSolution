@@ -1,15 +1,12 @@
 using FastBiteGroup.Domain.Abstractions.Repositories;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Persistence.Repositories;
 
-public class WorkspaceRepository : RepositoryBase<Workspace, Guid>, IWorkspaceRepository
+public class WorkspaceRepository(ApplicationDbContext context)
+    : RepositoryBase<Workspace, Guid>(context), IWorkspaceRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public WorkspaceRepository(ApplicationDbContext context) : base(context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<List<WorkspaceSummary>> GetActiveWorkspacesByUserIdAsync(
         Guid userId,

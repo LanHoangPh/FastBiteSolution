@@ -1,24 +1,15 @@
-using FastBiteGroup.Contract.Abstractions.Shared;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace FastBiteGroup.Application.Behaviors;
 
-public sealed class TracingPipelineBehaviors<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class TracingPipelineBehaviors<TRequest, TResponse>(ILogger<TRequest> logger)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly ILogger<TRequest> _logger;
-
-    public TracingPipelineBehaviors(ILogger<TRequest> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var timer = Stopwatch.StartNew();
-        var response = await next();
+        var response = await next(cancellationToken);
         timer.Stop();
 
         var elapsedTime = timer.ElapsedMilliseconds;
@@ -26,12 +17,12 @@ public sealed class TracingPipelineBehaviors<TRequest, TResponse> : IPipelineBeh
 
         if (response is Result { IsFailure: true } result)
         {
-            _logger.LogError("Request {RequestName} failed in {ElapsedTime} ms with error {@Error}",
+            logger.LogError("Request {RequestName} failed in {ElapsedTime} ms with error {@Error}",
                 requestName, elapsedTime, result.Error);
         }
         else
         {
-            _logger.LogInformation("Request {RequestName} executed successfully in {ElapsedTime} ms",
+            logger.LogInformation("Request {RequestName} executed successfully in {ElapsedTime} ms",
                 requestName, elapsedTime);
         }
 

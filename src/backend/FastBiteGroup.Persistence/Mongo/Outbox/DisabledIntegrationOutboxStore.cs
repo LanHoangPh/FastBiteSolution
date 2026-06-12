@@ -3,18 +3,14 @@ using Microsoft.Extensions.Logging;
 
 namespace FastBiteGroup.Persistence.Mongo.Outbox;
 
-public sealed class DisabledIntegrationOutboxStore : IIntegrationOutboxStore
+public sealed class DisabledIntegrationOutboxStore(ILogger<DisabledIntegrationOutboxStore> logger)
+    : IIntegrationOutboxStore
 {
-    private readonly ILogger<DisabledIntegrationOutboxStore> _logger;
-
-    public DisabledIntegrationOutboxStore(ILogger<DisabledIntegrationOutboxStore> logger)
-        => _logger = logger;
-
     public Task AddAsync(
         IntegrationOutboxMessage message,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogWarning(
+        logger.LogWarning(
             "Integration outbox is disabled. Message {MessageId} of type {MessageType} was not stored.",
             message.Id,
             message.Type);

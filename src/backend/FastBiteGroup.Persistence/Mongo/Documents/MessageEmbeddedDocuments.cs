@@ -1,3 +1,5 @@
+using FastBiteGroup.Domain.Enums;
+
 namespace FastBiteGroup.Persistence.Mongo.Documents;
 
 public sealed class AttachmentInfoDocument

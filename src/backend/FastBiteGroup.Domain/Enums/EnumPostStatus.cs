@@ -1,4 +1,4 @@
-﻿namespace FastBiteGroup.Domain.Enum;
+﻿namespace FastBiteGroup.Domain.Enums;
 
 public enum EnumPostStatus
 {

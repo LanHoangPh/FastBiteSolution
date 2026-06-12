@@ -2,22 +2,14 @@
 
 namespace FastBiteGroup.API.Middleware
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    public class GlobalExceptionHandler(
+        ILogger<GlobalExceptionHandler> logger,
+        IHostEnvironment environment)
+        : IExceptionHandler
     {
-        private readonly ILogger<GlobalExceptionHandler> _logger;
-        private readonly IHostEnvironment _environment;
-
-        public GlobalExceptionHandler(
-            ILogger<GlobalExceptionHandler> logger,
-            IHostEnvironment environment)
-        {
-            _logger = logger;
-            _environment = environment;
-        }
-
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+            logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
             var (statusCode, title) = exception switch
             {
@@ -30,7 +22,7 @@ namespace FastBiteGroup.API.Middleware
             {
                 Status = statusCode,
                 Title = title,
-                Detail = _environment.IsDevelopment() || statusCode < 500
+                Detail = environment.IsDevelopment() || statusCode < 500
                     ? exception.Message
                     : "An unexpected error occurred. Please try again later.",
                 Instance = httpContext.Request.Path

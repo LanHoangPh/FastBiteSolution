@@ -1,4 +1,4 @@
-namespace FastBiteGroup.Persistentce.Configurations;
+namespace FastBiteGroup.Persistence.Configurations;
 
 internal sealed class UserWorkspaceInvitationConfiguration : IEntityTypeConfiguration<UserWorkspaceInvitation>
 {

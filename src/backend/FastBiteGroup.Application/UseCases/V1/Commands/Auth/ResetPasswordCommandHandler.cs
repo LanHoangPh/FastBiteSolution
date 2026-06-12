@@ -3,32 +3,22 @@ using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
-public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
+public sealed class ResetPasswordCommandHandler(
+    IUserAuthService userAuthService,
+    IOtpService otpService,
+    IRefreshTokenRepository refreshTokenRepository)
+    : ICommandHandler<ResetPasswordCommand>
 {
-    private readonly IUserAuthService _userAuthService;
-    private readonly IOtpService _otpService;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-
-    public ResetPasswordCommandHandler(
-        IUserAuthService userAuthService,
-        IOtpService otpService,
-        IRefreshTokenRepository refreshTokenRepository)
-    {
-        _userAuthService = userAuthService;
-        _otpService = otpService;
-        _refreshTokenRepository = refreshTokenRepository;
-    }
-
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        var user = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
             return Result.Failure(AuthErrors.UserNotFound);
         }
 
         // Validate OTP from IOtpService
-        var validationResult = await _otpService.ValidateOtpAsync("RESET_PWD", request.Email, request.Otp, maxAttempts: 5, ct: cancellationToken);
+        var validationResult = await otpService.ValidateOtpAsync("RESET_PWD", request.Email, request.Otp, maxAttempts: 5, ct: cancellationToken);
 
         if (validationResult == OtpValidationResult.MaxAttemptsReached)
         {
@@ -40,9 +30,9 @@ public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordC
             return Result.Failure(AuthErrors.InvalidOtp);
         }
 
-        // OTP is valid, proceed to reset password. 
+        // OTP is valid, proceed to reset password.
         // This method will be implemented by another Agent.
-        var resetResult = await _userAuthService.ResetPasswordAsync(request.Email, request.NewPassword, cancellationToken);
+        var resetResult = await userAuthService.ResetPasswordAsync(request.Email, request.NewPassword, cancellationToken);
 
         if (resetResult.IsFailure)
         {
@@ -50,7 +40,7 @@ public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordC
         }
 
         // Security best practice: Revoke all existing refresh tokens after password reset
-        await _refreshTokenRepository.RevokeAllForUserAsync(user.Id, cancellationToken);
+        await refreshTokenRepository.RevokeAllForUserAsync(user.Id, cancellationToken);
 
         return Result.Success();
     }

@@ -2,12 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FastBiteGroup.Persistence;
 
-public sealed class ApplicationDbContext
-    : IdentityDbContext<AppUser, AppRoles, Guid>
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<AppUser, AppRoles, Guid>(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
-
     public DbSet<AdminAuditLog> AdminAuditLogs => Set<AdminAuditLog>();
     public DbSet<AdminNotifications> AdminNotifications => Set<AdminNotifications>();
     public DbSet<ContentReport> ContentReports => Set<ContentReport>();

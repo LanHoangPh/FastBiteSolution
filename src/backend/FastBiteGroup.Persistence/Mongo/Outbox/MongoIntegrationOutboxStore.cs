@@ -6,13 +6,11 @@ using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.Mongo.Outbox;
 
-public sealed class MongoIntegrationOutboxStore : IIntegrationOutboxStore
+public sealed class MongoIntegrationOutboxStore(MongoDbContext context, IOptions<MongoDbOptions> options)
+    : IIntegrationOutboxStore
 {
-    private readonly IMongoCollection<MongoOutboxMessageDocument> _collection;
-
-    public MongoIntegrationOutboxStore(MongoDbContext context, IOptions<MongoDbOptions> options)
-        => _collection = context.GetCollection<MongoOutboxMessageDocument>(
-            options.Value.OutboxCollectionName);
+    private readonly IMongoCollection<MongoOutboxMessageDocument> _collection = context.GetCollection<MongoOutboxMessageDocument>(
+        options.Value.OutboxCollectionName);
 
     public async Task AddAsync(
         IntegrationOutboxMessage message,

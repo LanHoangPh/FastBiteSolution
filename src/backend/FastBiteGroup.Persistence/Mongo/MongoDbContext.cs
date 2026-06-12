@@ -4,12 +4,9 @@ using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.Mongo;
 
-public sealed class MongoDbContext
+public sealed class MongoDbContext(IMongoClient client, IOptions<MongoDbOptions> options)
 {
-    private readonly IMongoDatabase _database;
-
-    public MongoDbContext(IMongoClient client, IOptions<MongoDbOptions> options)
-        => _database = client.GetDatabase(options.Value.DatabaseName);
+    private readonly IMongoDatabase _database = client.GetDatabase(options.Value.DatabaseName);
 
     public IMongoDatabase Database => _database;
 

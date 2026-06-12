@@ -1,5 +1,5 @@
-using FastBiteGroup.Domain.Enum;
 using FastBiteGroup.Domain.Abstractions;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Domain.Entities;
 

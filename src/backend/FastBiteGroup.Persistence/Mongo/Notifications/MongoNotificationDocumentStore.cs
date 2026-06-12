@@ -1,18 +1,15 @@
 using FastBiteGroup.Persistence.DependencyInjection.Options;
 using FastBiteGroup.Persistence.Mongo.Documents;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.Mongo.Notifications;
 
-public sealed class MongoNotificationDocumentStore : INotificationDocumentStore
+public sealed class MongoNotificationDocumentStore(MongoDbContext context, IOptions<MongoDbOptions> options)
+    : INotificationDocumentStore
 {
-    private readonly IMongoCollection<NotificationDocument> _collection;
-
-    public MongoNotificationDocumentStore(MongoDbContext context, IOptions<MongoDbOptions> options)
-        => _collection = context.GetCollection<NotificationDocument>(
-            options.Value.NotificationsCollectionName);
+    private readonly IMongoCollection<NotificationDocument> _collection = context.GetCollection<NotificationDocument>(
+        options.Value.NotificationsCollectionName);
 
     public Task AddAsync(
         NotificationDocument notification,

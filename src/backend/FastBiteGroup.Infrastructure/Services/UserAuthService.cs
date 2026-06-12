@@ -4,38 +4,33 @@ using FastBiteGroup.Persistence.Identity;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
-internal sealed class UserAuthService : IUserAuthService
+internal sealed class UserAuthService(UserManager<AppUser> userManager) : IUserAuthService
 {
-    private readonly UserManager<AppUser> _userManager;
-
-    public UserAuthService(UserManager<AppUser> userManager)
-        => _userManager = userManager;
-
     public async Task<UserDto?> FindByEmailAsync(string email, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        return user is null ? null : MapToDto(user, await _userManager.GetRolesAsync(user));
+        var user = await userManager.FindByEmailAsync(email);
+        return user is null ? null : MapToDto(user, await userManager.GetRolesAsync(user));
     }
 
     public async Task<UserDto?> FindByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByIdAsync(id.ToString());
-        return user is null ? null : MapToDto(user, await _userManager.GetRolesAsync(user));
+        var user = await userManager.FindByIdAsync(id.ToString());
+        return user is null ? null : MapToDto(user, await userManager.GetRolesAsync(user));
     }
 
     public async Task<bool> CheckPasswordAsync(Guid userId, string password, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return false;
 
-        var isMatch = await _userManager.CheckPasswordAsync(user, password);
+        var isMatch = await userManager.CheckPasswordAsync(user, password);
         if (!isMatch)
         {
-            await _userManager.AccessFailedAsync(user);
+            await userManager.AccessFailedAsync(user);
         }
         else
         {
-            await _userManager.ResetAccessFailedCountAsync(user);
+            await userManager.ResetAccessFailedCountAsync(user);
         }
 
         return isMatch;
@@ -43,9 +38,9 @@ internal sealed class UserAuthService : IUserAuthService
 
     public async Task<bool> IsLockedOutAsync(Guid userId, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return false;
-        return await _userManager.IsLockedOutAsync(user);
+        return await userManager.IsLockedOutAsync(user);
     }
 
     /// <inheritdoc />
@@ -66,22 +61,22 @@ internal sealed class UserAuthService : IUserAuthService
             CreatedAt = DateTime.UtcNow
         };
 
-        var result = await _userManager.CreateAsync(user, password);
+        var result = await userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             var error = string.Join(", ", result.Errors.Select(e => e.Description));
             return (null, error);
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+        var roleResult = await userManager.AddToRoleAsync(user, "Customer");
         if (!roleResult.Succeeded)
         {
-            await _userManager.DeleteAsync(user);
+            await userManager.DeleteAsync(user);
             return (null, FormatIdentityErrors(roleResult));
         }
 
         // Reload roles for the DTO (AddToRoleAsync does not populate the user's roles in memory)
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await userManager.GetRolesAsync(user);
         return (MapToDto(user, roles), null);
     }
 
@@ -104,66 +99,66 @@ internal sealed class UserAuthService : IUserAuthService
         // Generate a random secure password for Google users
         var randomPassword = Guid.NewGuid().ToString("N") + "Aa1!";
 
-        var result = await _userManager.CreateAsync(user, randomPassword);
+        var result = await userManager.CreateAsync(user, randomPassword);
         if (!result.Succeeded)
         {
             var error = string.Join(", ", result.Errors.Select(e => e.Description));
             return (null, error);
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+        var roleResult = await userManager.AddToRoleAsync(user, "Customer");
         if (!roleResult.Succeeded)
         {
-            await _userManager.DeleteAsync(user);
+            await userManager.DeleteAsync(user);
             return (null, FormatIdentityErrors(roleResult));
         }
 
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await userManager.GetRolesAsync(user);
 
         return (MapToDto(user, roles), null);
     }
 
     public async Task<string> GenerateEmailConfirmationTokenAsync(string email, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null) return string.Empty;
-        return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        return await userManager.GenerateEmailConfirmationTokenAsync(user);
     }
 
     public async Task<bool> ConfirmEmailWithTokenAsync(string email, string token, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null) return false;
-        var result = await _userManager.ConfirmEmailAsync(user, token);
+        var result = await userManager.ConfirmEmailAsync(user, token);
         if (result.Succeeded)
         {
             user.IsActive = true;
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
         }
         return result.Succeeded;
     }
 
     public async Task<bool> ActivateUserAsync(string email, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null) return false;
 
         user.EmailConfirmed = true;
         user.IsActive = true;
-        var result = await _userManager.UpdateAsync(user);
+        var result = await userManager.UpdateAsync(user);
         return result.Succeeded;
     }
 
     public async Task<Result> ResetPasswordAsync(string email, string newPassword, CancellationToken ct = default)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
             return Result.Failure(new Error("UserAuth.UserNotFound", "User not found"));
         }
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await userManager.ResetPasswordAsync(user, token, newPassword);
 
         if (result.Succeeded)
         {

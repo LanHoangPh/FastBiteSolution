@@ -80,7 +80,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRepositoryPersistence(this IServiceCollection services)
     {
-        services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();

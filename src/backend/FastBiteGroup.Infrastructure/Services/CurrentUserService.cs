@@ -4,7 +4,7 @@ namespace FastBiteGroup.Infrastructure.Services;
 
 /// <summary>
 /// Resolves the current user identity from the HTTP request's JWT via IHttpContextAccessor.
-/// 
+///
 /// Claim mapping matches what JwtTokenService.GenerateAccessToken writes:
 ///   - sub / NameIdentifier  → UserId
 ///   - email                 → Email
@@ -13,17 +13,12 @@ namespace FastBiteGroup.Infrastructure.Services;
 ///   - lastName              → LastName
 ///   - jti                   → Jti
 ///   - role                  → Roles
-/// 
+///
 /// Lifetime: Scoped (one per HTTP request — matches IHttpContextAccessor behaviour).
 /// </summary>
-internal sealed class CurrentUserService : ICurrentUser
+internal sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUser
 {
-    private readonly ClaimsPrincipal _principal;
-
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-    {
-        _principal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
-    }
+    private readonly ClaimsPrincipal _principal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
 
     /// <inheritdoc />
     public bool IsAuthenticated =>

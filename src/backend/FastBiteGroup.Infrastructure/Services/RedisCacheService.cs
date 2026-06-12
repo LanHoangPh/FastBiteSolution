@@ -3,14 +3,11 @@ using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
-internal sealed class RedisCacheService : ICacheService
+internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultiplexer) : ICacheService
 {
-    private readonly IDatabase _db;
+    private readonly IDatabase _db = connectionMultiplexer.GetDatabase();
 
     private const string BlacklistKeyPrefix = "auth:blacklist:jti:";
-
-    public RedisCacheService(IConnectionMultiplexer connectionMultiplexer)
-        => _db = connectionMultiplexer.GetDatabase();
 
     /// <inheritdoc />
     public async Task SetAsync<T>(string key, T value, TimeSpan expiry, CancellationToken ct = default)

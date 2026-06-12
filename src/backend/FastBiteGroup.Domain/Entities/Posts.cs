@@ -1,3 +1,5 @@
+using FastBiteGroup.Domain.Enums;
+
 namespace FastBiteGroup.Domain.Entities;
 
 public class Posts : IDateTracking, ISoftDelete

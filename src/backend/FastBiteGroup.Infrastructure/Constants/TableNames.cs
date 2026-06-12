@@ -1,4 +1,4 @@
-namespace FastBiteGroup.Persistence.Constants;
+namespace FastBiteGroup.Infrastructure.Constants;
 
 internal static class TableNames
 {

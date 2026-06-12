@@ -1,4 +1,4 @@
-﻿namespace FastBiteGroup.Domain.Enum;
+﻿namespace FastBiteGroup.Domain.Enums;
 
 public enum EnumAdminActionType
 {
@@ -37,7 +37,7 @@ public enum EnumAdminActionType
     UserRoleAssigned,
     UserRoleRemoved,
 
-    // Role admin 
+    // Role admin
     RoleCreated,
     RoleUpdated,
     RoleDeleted,

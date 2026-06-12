@@ -6,21 +6,14 @@ using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.Mongo;
 
-public sealed class MongoIndexInitializer : IHostedService
+public sealed class MongoIndexInitializer(MongoDbContext context, IOptions<MongoDbOptions> options) : IHostedService
 {
-    private readonly IMongoCollection<MessageDocument> _messageCollection;
-    private readonly IMongoCollection<NotificationDocument> _notificationCollection;
-    private readonly IMongoCollection<MongoOutboxMessageDocument> _outboxCollection;
-
-    public MongoIndexInitializer(MongoDbContext context, IOptions<MongoDbOptions> options)
-    {
-        _messageCollection = context.GetCollection<MessageDocument>(
-            options.Value.MessagesCollectionName);
-        _notificationCollection = context.GetCollection<NotificationDocument>(
-            options.Value.NotificationsCollectionName);
-        _outboxCollection = context.GetCollection<MongoOutboxMessageDocument>(
-            options.Value.OutboxCollectionName);
-    }
+    private readonly IMongoCollection<MessageDocument> _messageCollection = context.GetCollection<MessageDocument>(
+        options.Value.MessagesCollectionName);
+    private readonly IMongoCollection<NotificationDocument> _notificationCollection = context.GetCollection<NotificationDocument>(
+        options.Value.NotificationsCollectionName);
+    private readonly IMongoCollection<MongoOutboxMessageDocument> _outboxCollection = context.GetCollection<MongoOutboxMessageDocument>(
+        options.Value.OutboxCollectionName);
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

@@ -1,7 +1,6 @@
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
-using FluentValidation;
 
-namespace FastBiteGroup.Application.Validators;
+namespace FastBiteGroup.Application.Validators.Workspace;
 
 public class UpdateWorkspaceValidator : AbstractValidator<UpdateWorkspaceCommand>
 {

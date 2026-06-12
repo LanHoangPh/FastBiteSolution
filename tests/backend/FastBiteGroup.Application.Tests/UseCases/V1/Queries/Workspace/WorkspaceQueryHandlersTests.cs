@@ -6,7 +6,7 @@ using FastBiteGroup.Contract.Services.V1.Workspace.Queries;
 using FastBiteGroup.Contract.Services.V1.Workspace.Responses;
 using FastBiteGroup.Domain.Abstractions.Repositories;
 using FastBiteGroup.Domain.Entities;
-using FastBiteGroup.Domain.Enum;
+using FastBiteGroup.Domain.Enums;
 using FluentAssertions;
 using NSubstitute;
 

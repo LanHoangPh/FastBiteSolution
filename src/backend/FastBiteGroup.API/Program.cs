@@ -3,6 +3,7 @@ using FastBiteGroup.API.Middleware;
 using FastBiteGroup.Application.DependencyInjection.Extentions;
 using FastBiteGroup.Infrastructure.DependencyInjection.Extentions;
 using FastBiteGroup.Persistence.DependencyInjection.Extensions;
+using FastBiteGroup.ServiceDefaults;
 using Serilog;
 
 namespace FastBiteGroup.API;

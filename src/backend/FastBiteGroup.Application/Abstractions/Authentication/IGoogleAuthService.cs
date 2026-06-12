@@ -1,5 +1,3 @@
-using FastBiteGroup.Contract.Abstractions.Shared;
-
 namespace FastBiteGroup.Application.Abstractions.Authentication;
 
 public record GooglePayload(string Email, string FirstName, string LastName, string Picture);

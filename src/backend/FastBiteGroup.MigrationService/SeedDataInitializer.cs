@@ -13,7 +13,7 @@ public sealed class SeedDataInitializer(
     IOptions<SeedDataOptions> options,
     ILogger<SeedDataInitializer> logger)
 {
-    private readonly SeedDataOptions seedOptions = options.Value;
+    private readonly SeedDataOptions _seedOptions = options.Value;
 
     public async Task SeedAsync(CancellationToken cancellationToken)
     {
@@ -26,7 +26,7 @@ public sealed class SeedDataInitializer(
 
     private async Task SeedRolesAsync()
     {
-        foreach (var roleName in seedOptions.Roles.Distinct(StringComparer.OrdinalIgnoreCase))
+        foreach (var roleName in _seedOptions.Roles.Distinct(StringComparer.OrdinalIgnoreCase))
         {
             if (await roleManager.RoleExistsAsync(roleName))
             {
@@ -42,7 +42,7 @@ public sealed class SeedDataInitializer(
 
     private async Task<AppUser?> SeedAdminUserAsync()
     {
-        var adminOptions = seedOptions.Admin;
+        var adminOptions = _seedOptions.Admin;
         var admin = await userManager.FindByEmailAsync(adminOptions.Email);
 
         if (admin is null)

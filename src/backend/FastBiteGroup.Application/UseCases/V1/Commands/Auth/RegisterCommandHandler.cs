@@ -6,29 +6,19 @@ using System.Text.Json;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
-internal sealed class RegisterCommandHandler
+internal sealed class RegisterCommandHandler(
+    IUserAuthService userAuthService,
+    IIntegrationOutboxStore outboxStore,
+    ILogger<RegisterCommandHandler>? logger = null)
     : ICommandHandler<AuthCommands.RegisterCommand, RegisterResponse>
 {
-    private readonly IUserAuthService _userAuthService;
-    private readonly IIntegrationOutboxStore _outboxStore;
-    private readonly ILogger<RegisterCommandHandler> _logger;
-
-    public RegisterCommandHandler(
-        IUserAuthService userAuthService,
-        IIntegrationOutboxStore outboxStore,
-        ILogger<RegisterCommandHandler>? logger = null)
-    {
-        _userAuthService = userAuthService;
-        _outboxStore = outboxStore;
-        _logger = logger ?? NullLogger<RegisterCommandHandler>.Instance;
-    }
+    private readonly ILogger<RegisterCommandHandler> _logger = logger ?? NullLogger<RegisterCommandHandler>.Instance;
 
     public async Task<Result<RegisterResponse>> Handle(
         AuthCommands.RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        // 1. Check if email already exists
-        var existing = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        var existing = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (existing is not null)
         {
             _logger.LogWarning("Registration failed: email already exists.");
@@ -36,8 +26,8 @@ internal sealed class RegisterCommandHandler
                 AuthErrors.EmailAlreadyExists(request.Email));
         }
 
-        // 2. Create user (inactive, email not confirmed)
-        var (user, errorMessage) = await _userAuthService.CreateUserAsync(
+        // Create user (inactive, email not confirmed)
+        var (user, errorMessage) = await userAuthService.CreateUserAsync(
             request.Email, request.Password, request.FirstName, request.LastName,
             request.DayOfBirth, cancellationToken);
 
@@ -47,10 +37,9 @@ internal sealed class RegisterCommandHandler
             return Result.Failure<RegisterResponse>(AuthErrors.RegistrationFailed(errorMessage!));
         }
 
-        // 3. Generate Identity's purpose-specific email confirmation token.
-        var emailConfirmationToken = await _userAuthService.GenerateEmailConfirmationTokenAsync(user.Email, cancellationToken);
+        var emailConfirmationToken = await userAuthService.GenerateEmailConfirmationTokenAsync(user.Email, cancellationToken);
 
-        // 4. Publish to Outbox
+        //Publish to Outbox
         var integrationEvent = new UserRegisteredIntegrationEvent(
             user.Id,
             user.Email,
@@ -62,7 +51,7 @@ internal sealed class RegisterCommandHandler
             JsonSerializer.Serialize(integrationEvent),
             DateTimeOffset.UtcNow);
 
-        await _outboxStore.AddAsync(outboxMessage, cancellationToken);
+        await outboxStore.AddAsync(outboxMessage, cancellationToken);
 
         _logger.LogInformation("Registration outbox message saved for {Email}.", user.Email);
 

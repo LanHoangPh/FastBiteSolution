@@ -10,14 +10,9 @@ namespace FastBiteGroup.Persistence.Repositories;
 /// All write operations (Add/Update/Remove) only stage changes — call IUnitOfWork.SaveChangesAsync to persist.
 /// Read operations use AsNoTracking for query-only paths.
 /// </summary>
-public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
+public class RepositoryBase<TEntity, TKey>(ApplicationDbContext dbContext) : IRepositoryBase<TEntity, TKey>
     where TEntity : EntityBase<TKey>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public RepositoryBase(ApplicationDbContext dbContext)
-        => _dbContext = dbContext;
-
     /// <summary>
     /// Returns tracked or untracked queryable depending on caller intent.
     /// Internal helper — do NOT expose publicly.
@@ -27,7 +22,7 @@ public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
         bool asNoTracking,
         Expression<Func<TEntity, object>>[] includeProperties)
     {
-        IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+        IQueryable<TEntity> query = dbContext.Set<TEntity>();
 
         if (asNoTracking)
             query = query.AsNoTracking();
@@ -83,17 +78,17 @@ public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
 
     /// <inheritdoc />
     public void Add(TEntity entity)
-        => _dbContext.Set<TEntity>().Add(entity);
+        => dbContext.Set<TEntity>().Add(entity);
 
     /// <inheritdoc />
     public void Update(TEntity entity)
-        => _dbContext.Set<TEntity>().Update(entity);
+        => dbContext.Set<TEntity>().Update(entity);
 
     /// <inheritdoc />
     public void Remove(TEntity entity)
-        => _dbContext.Set<TEntity>().Remove(entity);
+        => dbContext.Set<TEntity>().Remove(entity);
 
     /// <inheritdoc />
     public void RemoveMultiple(List<TEntity> entities)
-        => _dbContext.Set<TEntity>().RemoveRange(entities);
+        => dbContext.Set<TEntity>().RemoveRange(entities);
 }

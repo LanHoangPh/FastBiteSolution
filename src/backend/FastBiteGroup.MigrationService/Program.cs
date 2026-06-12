@@ -1,5 +1,6 @@
 using FastBiteGroup.MigrationService;
 using FastBiteGroup.Persistence.DependencyInjection.Extensions;
+using FastBiteGroup.ServiceDefaults;
 using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);

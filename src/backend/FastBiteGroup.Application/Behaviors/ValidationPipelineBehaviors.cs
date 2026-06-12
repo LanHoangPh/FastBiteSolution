@@ -1,31 +1,22 @@
-﻿using FastBiteGroup.Contract.Abstractions.Shared;
-using FluentValidation;
-using MediatR;
+﻿namespace FastBiteGroup.Application.Behaviors;
 
-namespace FastBiteGroup.Application.Behaviors;
-
-public sealed class ValidationPipelineBehaviors<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-     where TRequest : notnull
+public sealed class ValidationPipelineBehaviors<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
     where TResponse : Result
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationPipelineBehaviors(IEnumerable<IValidator<TRequest>> validators)
-    => _validators = validators;
-
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (!_validators.Any())
+        if (!validators.Any())
         {
-            return await next();
+            return await next(cancellationToken);
         }
 
         var context = new ValidationContext<TRequest>(request);
         var validationResults = await Task.WhenAll(
-            _validators.Select(validator => validator.ValidateAsync(context, cancellationToken)));
+            validators.Select(validator => validator.ValidateAsync(context, cancellationToken)));
 
-        Error[] errors = validationResults
+        var errors = validationResults
             .SelectMany(result => result.Errors)
             .Where(failure => failure is not null)
             .Select(failure => new Error(failure.PropertyName, failure.ErrorMessage))
@@ -37,7 +28,7 @@ public sealed class ValidationPipelineBehaviors<TRequest, TResponse> : IPipeline
             return CreateValidationResult<TResponse>(errors);
         }
 
-        return await next();
+        return await next(cancellationToken);
 
     }
     private static TResult CreateValidationResult<TResult>(Error[] errors)
@@ -48,11 +39,11 @@ public sealed class ValidationPipelineBehaviors<TRequest, TResponse> : IPipeline
             return (ValidationResult.WithErrors(errors) as TResult)!;
         }
 
-        object validationResult = typeof(ValidationResult<>)
+        var validationResult = typeof(ValidationResult<>)
         .GetGenericTypeDefinition()
         .MakeGenericType(typeof(TResult).GenericTypeArguments[0])
         .GetMethod(nameof(ValidationResult.WithErrors))!
-        .Invoke(null, new object?[] { errors })!;
+        .Invoke(null, [errors])!;
 
         return (TResult)validationResult;
     }

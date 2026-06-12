@@ -1,4 +1,4 @@
-﻿namespace FastBiteGroupMCA.Persistentce.Configurations;
+﻿namespace FastBiteGroup.Persistence.Configurations;
 
 internal sealed class PollsConfiguration : IEntityTypeConfiguration<Polls>
 {

@@ -1,18 +1,15 @@
 using FastBiteGroup.Persistence.DependencyInjection.Options;
 using FastBiteGroup.Persistence.Mongo.Documents;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FastBiteGroup.Persistence.Mongo.Messages;
 
-public sealed class MongoMessageDocumentStore : IMessageDocumentStore
+public sealed class MongoMessageDocumentStore(MongoDbContext context, IOptions<MongoDbOptions> options)
+    : IMessageDocumentStore
 {
-    private readonly IMongoCollection<MessageDocument> _collection;
-
-    public MongoMessageDocumentStore(MongoDbContext context, IOptions<MongoDbOptions> options)
-        => _collection = context.GetCollection<MessageDocument>(
-            options.Value.MessagesCollectionName);
+    private readonly IMongoCollection<MessageDocument> _collection = context.GetCollection<MessageDocument>(
+        options.Value.MessagesCollectionName);
 
     public Task AddAsync(MessageDocument message, CancellationToken cancellationToken = default)
         => _collection.InsertOneAsync(message, cancellationToken: cancellationToken);

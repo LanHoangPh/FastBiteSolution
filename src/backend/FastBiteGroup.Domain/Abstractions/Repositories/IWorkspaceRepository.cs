@@ -1,4 +1,5 @@
 using FastBiteGroup.Domain.Entities;
+using FastBiteGroup.Domain.Enums;
 
 namespace FastBiteGroup.Domain.Abstractions.Repositories;
 

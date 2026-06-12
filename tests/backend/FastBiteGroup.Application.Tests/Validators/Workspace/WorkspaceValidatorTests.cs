@@ -1,8 +1,8 @@
-using FastBiteGroup.Application.Validators;
+using FastBiteGroup.Application.Validators.Workspace;
 using FastBiteGroup.Contract.Services.V1.Workspace.Commands;
 using FluentAssertions;
 
-namespace FastBiteGroup.Contract.Tests.Workspace;
+namespace FastBiteGroup.Application.Tests.Validators.Workspace;
 
 public class WorkspaceValidatorTests
 {

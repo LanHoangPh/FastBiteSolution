@@ -1,5 +1,5 @@
 ﻿
-namespace FastBiteGroupMCA.Persistentce.Configurations;
+namespace FastBiteGroup.Persistence.Configurations;
 
 public class PostAttachmentConfiguration : IEntityTypeConfiguration<PostAttachment>
 {

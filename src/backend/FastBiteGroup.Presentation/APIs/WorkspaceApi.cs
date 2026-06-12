@@ -67,23 +67,27 @@ public class WorkspaceApi : ApiEndpoint, IEndpoint
 
         group.MapPatch("/{workspaceId:guid}", UpdateWorkspace)
             .WithName("UpdateWorkspace")
+            .WithSummary("Update a workspace")
             .Produces<WorkspaceResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
         group.MapDelete("/{workspaceId:guid}", ArchiveWorkspace)
             .WithName("ArchiveWorkspace")
+            .WithSummary("Delete a workspace")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
         group.MapPost("/{workspaceId:guid}/invitations", InviteWorkspaceMember)
             .WithName("InviteWorkspaceMember")
+            .WithSummary("Invite a workspace")
             .Produces<WorkspaceInvitationResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
         group.MapPost("/{workspaceId:guid}/invite-links", CreateWorkspaceInviteLink)
             .WithName("CreateWorkspaceInviteLink")
+            .WithSummary("Create a workspace invite link")
             .Produces<WorkspaceInviteLinkResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status403Forbidden);

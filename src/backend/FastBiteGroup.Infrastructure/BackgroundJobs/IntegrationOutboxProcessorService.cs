@@ -6,22 +6,14 @@ using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.BackgroundJobs;
 
-public sealed class IntegrationOutboxProcessorService : BackgroundService
+public sealed class IntegrationOutboxProcessorService(
+    IServiceProvider serviceProvider,
+    ILogger<IntegrationOutboxProcessorService> logger)
+    : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<IntegrationOutboxProcessorService> _logger;
-
-    public IntegrationOutboxProcessorService(
-        IServiceProvider serviceProvider,
-        ILogger<IntegrationOutboxProcessorService> logger)
-    {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("IntegrationOutboxProcessorService is starting.");
+        logger.LogInformation("IntegrationOutboxProcessorService is starting.");
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -31,7 +23,7 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred processing outbox messages.");
+                logger.LogError(ex, "Error occurred processing outbox messages.");
             }
 
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
@@ -40,7 +32,7 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
 
     private async Task ProcessOutboxMessagesAsync(CancellationToken cancellationToken)
     {
-        using var scope = _serviceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
         var outboxStore = scope.ServiceProvider.GetRequiredService<IIntegrationOutboxStore>();
         var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
@@ -110,7 +102,7 @@ public sealed class IntegrationOutboxProcessorService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process outbox message {MessageId}", message.Id);
+                logger.LogError(ex, "Failed to process outbox message {MessageId}", message.Id);
                 await outboxStore.MarkFailedAsync(message.Id, ex.ToString(), cancellationToken);
             }
         }

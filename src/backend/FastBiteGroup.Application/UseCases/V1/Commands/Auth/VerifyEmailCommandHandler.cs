@@ -4,32 +4,20 @@ using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
-internal sealed class VerifyEmailCommandHandler
+internal sealed class VerifyEmailCommandHandler(
+    IUserAuthService userAuthService,
+    IJwtTokenService jwtTokenService,
+    IRefreshTokenRepository refreshTokenRepository,
+    ILogger<VerifyEmailCommandHandler>? logger = null)
     : ICommandHandler<AuthCommands.VerifyEmailCommand, AuthResponse>
 {
-    private readonly IUserAuthService _userAuthService;
-    private readonly IJwtTokenService _jwtTokenService;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly ILogger<VerifyEmailCommandHandler> _logger;
-
-    public VerifyEmailCommandHandler(
-        IUserAuthService userAuthService,
-        IJwtTokenService jwtTokenService,
-        IRefreshTokenRepository refreshTokenRepository,
-        ILogger<VerifyEmailCommandHandler>? logger = null)
-    {
-        _userAuthService = userAuthService;
-        _jwtTokenService = jwtTokenService;
-        _refreshTokenRepository = refreshTokenRepository;
-        _logger = logger ?? NullLogger<VerifyEmailCommandHandler>.Instance;
-    }
+    private readonly ILogger<VerifyEmailCommandHandler> _logger = logger ?? NullLogger<VerifyEmailCommandHandler>.Instance;
 
     public async Task<Result<AuthResponse>> Handle(
         AuthCommands.VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
-        // 1. Get user
-        var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        var user = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
             return Result.Failure<AuthResponse>(AuthErrors.UserNotFound);
@@ -40,8 +28,8 @@ internal sealed class VerifyEmailCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.EmailAlreadyConfirmed);
         }
 
-        // 2. Confirm email using ASP.NET Identity's purpose-specific token.
-        var isValid = await _userAuthService.ConfirmEmailWithTokenAsync(
+        //Confirm email using ASP.NET Identity's purpose-specific token.
+        var isValid = await userAuthService.ConfirmEmailWithTokenAsync(
             request.Email,
             request.Token,
             cancellationToken);
@@ -53,17 +41,15 @@ internal sealed class VerifyEmailCommandHandler
         }
 
         // Refetch user to get updated state (IsActive, EmailConfirmed)
-        user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        user = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
 
-        // 4. Generate tokens
-        var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
+        var (accessToken, jti, accessExpiresAt) = jwtTokenService.GenerateAccessToken(
             user!.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles);
-        var refreshTokenString = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenString = jwtTokenService.GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
-
-        // 5. Persist refresh token
+        
         var refreshToken = AppRefreshToken.Create(refreshTokenString, jti, user.Id, refreshExpiresAt);
-        _refreshTokenRepository.Add(refreshToken);
+        refreshTokenRepository.Add(refreshToken);
 
         var response = new AuthResponse(
             accessToken,

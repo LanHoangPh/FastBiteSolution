@@ -28,7 +28,6 @@ internal sealed class LoginCommandHandler
         AuthCommands.LoginCommand request,
         CancellationToken cancellationToken)
     {
-        // 1. Find user
         var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
@@ -42,14 +41,14 @@ internal sealed class LoginCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.AccountInactive);
         }
 
-        // 2. Check lockout first
+        // Check lockout first
         if (await _userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
         {
             _logger.LogWarning("Login blocked for locked account. UserId: {UserId}", user.Id);
             return Result.Failure<AuthResponse>(AuthErrors.AccountLocked);
         }
 
-        // 3. Verify password
+        // Verify password
         var passwordValid = await _userAuthService.CheckPasswordAsync(user.Id, request.Password, cancellationToken);
         if (!passwordValid)
         {
@@ -57,13 +56,12 @@ internal sealed class LoginCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
-        // 4. Generate tokens
+        // Generate tokens
         var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
             user.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles);
         var refreshTokenString = _jwtTokenService.GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
-        // 5. Persist refresh token
         var refreshToken = AppRefreshToken.Create(refreshTokenString, jti, user.Id, refreshExpiresAt);
         _refreshTokenRepository.Add(refreshToken);
 

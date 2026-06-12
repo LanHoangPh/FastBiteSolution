@@ -2,14 +2,9 @@ using FastBiteGroup.Application.Abstractions.Authentication;
 
 namespace FastBiteGroup.Infrastructure.Services;
 
-internal sealed class OtpService : IOtpService
+internal sealed class OtpService(IConnectionMultiplexer connectionMultiplexer) : IOtpService
 {
-    private readonly IDatabase _db;
-
-    public OtpService(IConnectionMultiplexer connectionMultiplexer)
-    {
-        _db = connectionMultiplexer.GetDatabase();
-    }
+    private readonly IDatabase _db = connectionMultiplexer.GetDatabase();
 
     public async Task<string> GenerateOtpAsync(string purpose, string identifier, TimeSpan? expiry = null, CancellationToken ct = default)
     {

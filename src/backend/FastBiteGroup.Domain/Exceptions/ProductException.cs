@@ -2,18 +2,9 @@
 {
     public static class ProductException
     {
-        public class ProductNotFoundException : NotFoundException
-        {
-            public ProductNotFoundException(int id)
-                : base($"Product with id {id} not found.")
-            {
-            }
-        }
-        public class ProductPriceInvalidException : BadRequestException
-        {
-            public ProductPriceInvalidException(decimal invalidPrice)
-                : base($"Price cannot be negative. Provided value: {invalidPrice}") { }
-        }
+        public class ProductNotFoundException(int id) : NotFoundException($"Product with id {id} not found.");
+        public class ProductPriceInvalidException(decimal invalidPrice)
+            : BadRequestException($"Price cannot be negative. Provided value: {invalidPrice}");
 
     }
 }

@@ -1,25 +1,17 @@
-﻿using FluentValidation;
-using MediatR;
-
-namespace FastBiteGroup.Application.Behaviors
+﻿namespace FastBiteGroup.Application.Behaviors
 {
-    public sealed class ValidateDefaultBehaviors<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    public sealed class ValidateDefaultBehaviors<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+        : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : notnull
     {
-        private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-        public ValidateDefaultBehaviors(IEnumerable<IValidator<TRequest>> validators)
-        => _validators = validators;
-
-
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            if (!_validators.Any())
+            if (!validators.Any())
             {
-                return await next();
+                return await next(cancellationToken);
             }
             var context = new ValidationContext<TRequest>(request);
-            var failures = _validators
+            var failures = validators
                 .Select(v => v.Validate(context))
                 .SelectMany(result => result.Errors)
                 .Where(f => f != null)

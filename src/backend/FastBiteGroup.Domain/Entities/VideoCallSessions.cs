@@ -1,4 +1,6 @@
-﻿namespace FastBiteGroup.Domain.Entities;
+﻿using FastBiteGroup.Domain.Enums;
+
+namespace FastBiteGroup.Domain.Entities;
 
 public class VideoCallSessions : ISoftDelete
 {
