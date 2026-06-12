@@ -14,7 +14,7 @@ internal static class ApiExtensions
         IResourceBuilder<ParameterResource> secretKey,
         IResourceBuilder<ParameterResource> apikeySendGrid,
         IResourceBuilder<ParameterResource> googleClientId,
-        IResourceBuilder<ParameterResource> mongoDBAtlas)
+        IResourceBuilder<ParameterResource> mongoDbAtlas)
     {
         return builder.AddProject<Projects.FastBiteGroup_API>("api")
             .WithReference(database)
@@ -25,7 +25,7 @@ internal static class ApiExtensions
             .WithEnvironment("JwtOptions__SecretKey", secretKey)
             .WithEnvironment("SendGridOptions__ApiKey", apikeySendGrid)
             .WithEnvironment("GoogleAuth__ClientId", googleClientId)
-            .WithEnvironment("MongoDbOptions__ConnectionString", mongoDBAtlas)
+            .WithEnvironment("MongoDbOptions__ConnectionString", mongoDbAtlas)
             //.WaitFor(mongoDB)
             .WaitFor(database);
             //.WaitFor(cache);

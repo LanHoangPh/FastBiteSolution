@@ -8,26 +8,13 @@ internal static class DesktopExtensions
         this IDistributedApplicationBuilder builder,
         IResourceBuilder<ProjectResource> api)
     {
-        var desktopPath = builder.Configuration["DESKTOP_PATH"]
-            ?? Path.GetFullPath(Path.Combine(
-                builder.AppHostDirectory,
-                "..",
-                "..",
-                "fastbite-desktop",
-                "src",
-                "FastBiteGroup.Desktop"));
+        const string desktopPath = @"..\..\..\..\..\";
+        var desktop = builder.Configuration[""] ?? Path.GetFullPath(desktopPath);
 
-        if (!OperatingSystem.IsWindows() || !Directory.Exists(desktopPath))
+        if (Directory.Exists(desktop))
         {
-            return;
+
         }
 
-        builder.AddExecutable(
-                name: "desktop-wpf",
-                command: "dotnet",
-                workingDirectory: desktopPath,
-                args: ["run"])
-            .WaitFor(api)
-            .WithEnvironment("FASTBITE_API_BASE_URL", api.GetEndpoint("http"));
     }
 }

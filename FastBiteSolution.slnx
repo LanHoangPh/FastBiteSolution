@@ -20,6 +20,7 @@
     <Project Path="src/desktop/FastBiteGroup.Desktop.Infrastructure/FastBiteGroup.Desktop.Infrastructure.csproj" />
     <Project Path="src/desktop/FastBiteGroup.Desktop.Domain/FastBiteGroup.Desktop.Domain.csproj" />
   </Folder>
+  <Folder Name="/src/desktop_tauri/" />
   <Folder Name="/src/frontend/" />
   <Folder Name="/tests/" />
   <Folder Name="/tests/backend/">

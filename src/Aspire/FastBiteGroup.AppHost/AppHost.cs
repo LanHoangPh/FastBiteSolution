@@ -1,13 +1,14 @@
 using FastBiteGroup.AppHost.Extensions;
 
 var builder = DistributedApplication.CreateBuilder(args);
-// manager key 
+// manager key
 var mediatrLicense = builder.AddParameter("mediatr-license", secret: true);
 var autoMapperLicense = builder.AddParameter("automapper-license", secret: true);
 var secretKey = builder.AddParameter("jwt-secret-key", secret: true);
 var apikeySendGrid = builder.AddParameter("sendgrid-api-key", secret: true);
 var googleClientId = builder.AddParameter("google-client-id", secret: true);
 var mongoDbConnectionString = builder.AddParameter("mongodb-connection-string", secret: true);
+
 
 
 // --use local resources for database and cache to speed up development feedback loop

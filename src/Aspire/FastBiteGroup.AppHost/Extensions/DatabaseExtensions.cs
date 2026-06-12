@@ -10,7 +10,7 @@ internal static class DatabaseExtensions
         return postgres.AddDatabase("DefaultConnection");
     }
 
-    internal static IResourceBuilder<MongoDBDatabaseResource> AddApplicationMongoDB(
+    internal static IResourceBuilder<MongoDBDatabaseResource> AddApplicationMongoDb(
         this IDistributedApplicationBuilder builder)
     {
         var postgres = builder.AddMongoDB("mongodb");
@@ -18,7 +18,7 @@ internal static class DatabaseExtensions
         return postgres.AddDatabase("MongoDBConnection");
     }
 
-    internal static IResourceBuilder<IResourceWithConnectionString> AddApplicationMongoDBConnection(
+    internal static IResourceBuilder<IResourceWithConnectionString> AddApplicationMongoDbConnection(
         this IDistributedApplicationBuilder builder)
     {
         return builder.AddConnectionString("MongoDBConnection");
