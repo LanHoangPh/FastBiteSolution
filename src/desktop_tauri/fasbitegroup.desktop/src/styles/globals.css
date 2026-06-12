@@ -81,6 +81,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --autofill-bg: #f1f5f9;
 }
 
 .dark {
@@ -115,6 +116,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --autofill-bg: #1e293b;
 }
 
 @layer base {
@@ -184,4 +186,43 @@
 
 .social-login-button {
   @apply h-10 rounded-xl transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900 border-border/50 flex items-center justify-center cursor-pointer active:scale-95 w-full;
+}
+
+/* Disable Edge/IE native password reveal eye icon and clear buttons */
+input::-ms-reveal,
+input::-ms-clear,
+::-ms-reveal,
+::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide Webkit's native autofill/credentials icons */
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button,
+::-webkit-contacts-auto-fill-button,
+::-webkit-credentials-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+}
+
+/* Hide browser native calendar picker indicator on date inputs */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Fix browser autofill background breaking custom input styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground) !important;
+  transition: background-color 5000000s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px var(--autofill-bg) inset !important;
 }

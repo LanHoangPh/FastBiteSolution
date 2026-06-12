@@ -6,31 +6,71 @@ import { Separator } from "@/shared/components/ui/separator";
 import { PasswordInput } from "./PasswordInput";
 import { SocialLoginButtons } from "./SocialLoginButtons";
 import { Mail, LogIn, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/shared/utils";
+import { validateLoginForm } from "@/shared/validation/auth-validation";
+
+import { authService } from "@/services/auth-service";
 
 interface AuthCardProps {
   onLoginSuccess: () => void;
   onNavigateToRegister: () => void;
+  onNavigateToForgotPassword: () => void;
+  onRequireVerification: (email: string) => void;
+  successMessage?: string;
 }
 
 export function AuthCard({
   onLoginSuccess,
   onNavigateToRegister,
+  onNavigateToForgotPassword,
+  onRequireVerification,
+  successMessage,
 }: AuthCardProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
+    setError("");
+    setFormErrors({});
+
+    const { errors, isValid } = validateLoginForm(email, password);
+    if (!isValid) {
+      setFormErrors(errors);
+      return;
+    }
 
     setIsLoading(true);
 
-    // Simulate login delay
-    setTimeout(() => {
-      setIsLoading(false);
+    const res = await authService.login(email, password);
+    setIsLoading(false);
+
+    if (res.error) {
+      if (
+        res.error.includes("Auth.AccountInactive") ||
+        res.error.includes("AccountInactive")
+      ) {
+        // Redirect to email verification
+        onRequireVerification(email);
+      } else if (
+        res.error.includes("Auth.InvalidCredentials") ||
+        res.error.includes("InvalidCredentials")
+      ) {
+        setError(t("auth.errors.invalidCredentials"));
+      } else {
+        setError(res.error);
+      }
+    } else {
       onLoginSuccess();
-    }, 1200);
+    }
   };
 
   return (
@@ -43,52 +83,97 @@ export function AuthCard({
 
         {/* 2. Title */}
         <h2 className="text-[22px] font-bold text-center tracking-tight text-foreground mt-6">
-          Sign in with email
+          {t("auth.loginTitle")}
         </h2>
 
         {/* 3. Subtitle */}
         <p className="text-[13.5px] text-muted-foreground text-center mt-2 max-w-[270px] mx-auto leading-relaxed">
-          Make a new doc to bring your words, data, and teams together. For free
+          {t("auth.loginSubtitle")}
         </p>
 
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-6 w-full">
           {/* 4. Email Input */}
-          <div className="auth-input-wrapper">
-            <Mail className="absolute left-3 size-4 text-muted-foreground pointer-events-none z-10" />
-            <Input
-              type="email"
-              placeholder="Email"
-              required
-              aria-label="Email Address"
-              className="auth-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-            />
+          <div className="space-y-1 w-full">
+            <div className="auth-input-wrapper">
+              <Mail className="absolute left-3 size-4 text-muted-foreground pointer-events-none z-10" />
+              <Input
+                type="email"
+                placeholder={t("auth.email")}
+                required
+                aria-label="Email Address"
+                className={cn(
+                  "auth-input",
+                  formErrors.email &&
+                    "border-red-500 focus-visible:ring-red-500/20",
+                )}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (formErrors.email)
+                    setFormErrors((prev) => ({ ...prev, email: undefined }));
+                }}
+                disabled={isLoading}
+              />
+            </div>
+            {formErrors.email && (
+              <p className="text-[11px] text-red-500 px-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                {t(formErrors.email)}
+              </p>
+            )}
           </div>
 
           {/* 5. Password Input */}
-          <PasswordInput
-            placeholder="Password"
-            required
-            aria-label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-          />
+          <div className="space-y-1 w-full">
+            <PasswordInput
+              placeholder={t("auth.password")}
+              required
+              aria-label="Password"
+              className={
+                formErrors.password
+                  ? "border-red-500 focus-visible:ring-red-500/20"
+                  : ""
+              }
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (formErrors.password)
+                  setFormErrors((prev) => ({ ...prev, password: undefined }));
+              }}
+              disabled={isLoading}
+            />
+            {formErrors.password && (
+              <p className="text-[11px] text-red-500 px-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                {t(formErrors.password)}
+              </p>
+            )}
+          </div>
 
           {/* 6. Forgot Password */}
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={(e) => e.preventDefault()}
+              onClick={() => onNavigateToForgotPassword()}
               className="auth-forgot-button"
               aria-label="Forgot password"
             >
-              Forgot password?
+              {t("auth.forgotPassword")}
             </button>
           </div>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="text-xs text-green-600 dark:text-green-400 text-center font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+              ✓ {successMessage}
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-xs text-red-500 dark:text-red-400 text-center font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+              ⚠️ {error}
+            </div>
+          )}
 
           {/* 7. Primary Button */}
           <Button
@@ -101,7 +186,7 @@ export function AuthCard({
               <span className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                Get Started
+                {t("auth.getStarted")}
                 <ArrowRight className="size-4" />
               </>
             )}
@@ -111,13 +196,13 @@ export function AuthCard({
         {/* Switch to Register */}
         <div className="text-center mt-4">
           <span className="text-xs text-muted-foreground">
-            Don't have an account?{" "}
+            {t("auth.dontHaveAccount")}{" "}
             <button
               type="button"
               onClick={onNavigateToRegister}
               className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline cursor-pointer"
             >
-              Sign up
+              {t("auth.signUp")}
             </button>
           </span>
         </div>
@@ -126,7 +211,7 @@ export function AuthCard({
         <div className="auth-divider">
           <Separator className="flex-1" />
           <span className="text-[12px] text-muted-foreground uppercase tracking-widest font-semibold whitespace-nowrap">
-            Or sign in with
+            {t("auth.orSignInWith")}
           </span>
           <Separator className="flex-1" />
         </div>

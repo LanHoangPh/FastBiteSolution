@@ -8,13 +8,26 @@ internal static class DesktopExtensions
         this IDistributedApplicationBuilder builder,
         IResourceBuilder<ProjectResource> api)
     {
-        const string desktopPath = @"..\..\..\..\..\";
-        var desktop = builder.Configuration[""] ?? Path.GetFullPath(desktopPath);
+        var desktopPath = builder.Configuration["DESKTOP_PATH"]
+            ?? Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "desktop_tauri", "fasbitegroup.desktop"));
 
-        if (Directory.Exists(desktop))
+        if (Directory.Exists(desktopPath))
         {
+            var runDesktop = builder.Configuration["RUN_DESKTOP"] == "true";
 
+            if (runDesktop)
+            {
+                builder.AddExecutable("desktop-app", "pnpm", desktopPath, "tauri", "dev")
+                    .WithReference(api)
+                    .ExcludeFromManifest();
+            }
+            else
+            {
+                builder.AddExecutable("web-app", "pnpm", desktopPath, "dev")
+                    .WithReference(api)
+                    .WithHttpEndpoint(port: 1420, name: "frontend", isProxied: false)
+                    .ExcludeFromManifest();
+            }
         }
-
     }
 }

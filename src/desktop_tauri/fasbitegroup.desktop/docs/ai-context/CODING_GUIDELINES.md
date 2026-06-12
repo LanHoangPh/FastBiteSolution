@@ -35,25 +35,50 @@
   const className = cn("text-sm text-foreground", customClasses);
   ```
 - **CSS Variables Only**: Do not hardcode specific hex colors (like `#0f172a`) directly in the codebase. Reference theme tokens defined in `globals.css` (e.g. `bg-card`, `text-primary`).
+- **No Hardcoded CSS/Styles**: Do not write custom inline styles (`style={{...}}`) or local CSS files for React components. All custom UI styling must be declared centrally in the global CSS (`globals.css`) utilizing theme variables to natively support both Light and Dark modes.
 
 ---
 
 ## 4. Forms and Validation
 
-- **No Manual Validation**: Never check empty strings or email formats using manual `if/else` inside components.
-- **React Hook Form + Zod**: Bind forms using React Hook Form and enforce constraints with Zod schemas.
+- **Separation of Validation**: Never write manual validation logic (like check empty strings, length, or regex patterns) inside the submit handler of UI components.
+- **Validation Options**:
+  1. **React Hook Form + Zod**: For complex business forms.
+  2. **Centralized TS Validators**: For lightweight, multi-language modules. Put validators under `src/shared/validation/` returning i18n translation keys.
+- **Field-level Error Feedback**:
+  - Show a red border on input fields with errors using `cn("auth-input", errors.field && "border-red-500")`.
+  - Render a small red translation label directly below the field: `<p className="text-red-500">{t(errors.field)}</p>`.
 
-Example:
-```typescript
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+---
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-```
+## 4.1 Browser dev compatibility & Custom inputs
+
+- **Lazy Import Tauri APIs**: To prevent crashes on standard web browsers (Web Dev mode), do not use top-level imports for Tauri plugins (e.g. `@tauri-apps/plugin-http` or `@tauri-apps/api/*`). Instead, check `isTauri` at runtime and dynamically import them:
+  ```typescript
+  const module = await import("@tauri-apps/plugin-http");
+  ```
+- **Custom Input Behaviors**:
+  - Hiding browser overlays: Edge password reveal buttons (`::-ms-reveal`) and native input indicators must be hidden via `!important` CSS rules.
+  - Date picker popup: Remove native indicators on `input[type="date"]` and trigger `.showPicker()` programmatically using a React `ref` when clicking either the input field or its starting icon wrapper.
+
+---
+
+## 4.2 Shared SVG Icon Wrapper Pattern
+
+- **Avoid raw inline SVGs**: Never paste raw `<svg>` structures directly into feature screens or layout files.
+- **Use SvgIcon Wrapper**: Use the shared [SvgIcon.tsx](file:///d:/CodeVs/FastBiteSolution/src/desktop_tauri/fasbitegroup.desktop/src/shared/components/ui/svg-icon.tsx) component to encapsulate custom SVGs.
+- **Encapsulate Reusable Icons**: Create dedicated React components for each external SVG under `src/shared/components/icons/` (e.g., `FluentTranslateIcon.tsx`).
+  - Override `viewBox` to match the source SVG coordinates.
+  - Set `fill="currentColor"` and `stroke="none"` (with `strokeWidth={0}`) for fill-based (shape) paths.
+  - Expose default standard SVG attributes by omitting the `children` prop.
+
+---
+
+## 4.3 Logging Architecture & Conventions
+
+- **No console.log in Production**: Avoid leaving raw `console.log()` statements in component files.
+- **Use Native Tauri Logger**: Utilize the Tauri Logger plugin (`@tauri-apps/plugin-log`) in desktop native environment which dynamically logs output to the project directory `/logs/app.log`.
+- **Logger Wrapper**: Use the centralized frontend logger utility for logging error, info, and warn events, which auto-detects browser dev environment vs Tauri native runtime.
 
 ---
 

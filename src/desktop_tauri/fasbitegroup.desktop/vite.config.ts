@@ -5,6 +5,8 @@ import path from "path";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
+// @ts-expect-error process is a nodejs global
+const apiUri = process.env.services__api__http__0 || "http://localhost:5000";
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
@@ -13,6 +15,9 @@ export default defineConfig(async () => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  define: {
+    "import.meta.env.VITE_API_URL": JSON.stringify(apiUri),
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

@@ -55,9 +55,11 @@ All frontend code resides under the `src/` directory, adhering strictly to Featu
 1. **Never use `invoke` directly in UI**: Wrap all Tauri commands in a service file under `src/services/` (e.g., `greet-service.ts`) and import the service function into the React component instead.
 2. **Responsive Styling (Tailwind v4)**: Mobile-first mindset using Tailwind breakpoints (`sm:`, `md:`, `lg:`). Giao diện phải co giãn tốt và không được vỡ hay đè nút khi thu nhỏ cửa sổ ứng dụng về `900x600`.
 3. **TypeScript Strictness**: `"strict": true` is enabled. Do not use `any` unless absolutely necessary; prefer `unknown` and validate.
-4. **Form Validation**: Always validate forms using React Hook Form + Zod.
+4. **Form Validation**: Use React Hook Form + Zod for complex forms, or Centralized TS Validators under `src/shared/validation/` (returning i18n translation keys) for lightweight forms. Error fields must display red borders and translation labels.
 5. **Theme Variables**: Color tokens, spacing, and border radius must utilize CSS Variables in `src/styles/globals.css`. Support both Dark and Light modes.
-6. **No global CSS pollution**: `globals.css` should only contain tokens and base layer configuration. Component-specific CSS must be handled in-line via Tailwind or CSS Modules.
+6. **No custom raw CSS/inline styles**: All custom UI styling must be declared centrally in the global CSS (`globals.css`) utilizing theme variables to support light/dark modes. Inline styles or component-specific CSS files are forbidden.
+7. **Shared SVG Icons**: Never paste raw `<svg>` structures directly into pages/features. Wrap them in [SvgIcon.tsx](file:///d:/CodeVs/FastBiteSolution/src/desktop_tauri/fasbitegroup.desktop/src/shared/components/ui/svg-icon.tsx) and define custom icon components under `src/shared/components/icons/`.
+8. **Logging Conventions**: Frontend logging must utilize the shared logger wrapping `@tauri-apps/plugin-log` which outputs to the `/logs/app.log` file in the project root directory during native execution.
 
 ---
 
@@ -71,3 +73,11 @@ All frontend code resides under the `src/` directory, adhering strictly to Featu
 - Ensure any newly added UI components are stored in `src/shared/components/ui/` or `src/shared/components/common/`.
 - Ensure new shadcn components match the updated paths in `components.json`.
 - Adhere strictly to the structured response format for technical answers: Problem Analysis -> Proposed Architecture -> Detail Implementation -> Sample Code -> Best Practices.
+
+### 3. Before Making Any Changes (Mandatory)
+Before starting any task or making code modifications, AI agents MUST read the following context and rule files in order:
+1. `docs/ai-context/README.md`
+2. `docs/ai-context/PROJECT_CONTEXT.md`
+3. `docs/ai-context/ARCHITECTURE.md`
+4. `docs/ai-context/CODING_GUIDELINES.md`
+5. `TAURI_REACT_SHADCN_RULES.md`

@@ -38,6 +38,6 @@ var api = builder.AddApplicationApi(
     .WaitForCompletion(migrations);
 
 // builder.AddOptionalFrontend(api);
-// builder.AddOptionalDesktop(api);
+builder.AddOptionalDesktop(api);
 
 builder.Build().Run();

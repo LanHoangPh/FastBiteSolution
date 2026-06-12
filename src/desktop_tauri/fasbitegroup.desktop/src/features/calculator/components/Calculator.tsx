@@ -12,6 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useTheme } from "@/app/theme-provider";
+import { useTranslation } from "react-i18next";
 
 interface HistoryItem {
   id: string;
@@ -24,6 +25,7 @@ interface CalculatorProps {
 }
 
 export function Calculator({ onLogout }: CalculatorProps) {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const [display, setDisplay] = useState<string>("0");
   const [formula, setFormula] = useState<string>("");
@@ -299,7 +301,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
               <Sparkles className="size-4" />
             </div>
             <span className="font-bold text-sm tracking-wider uppercase opacity-80">
-              Neumorphic Calc
+              {t("calculator.title")}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -308,7 +310,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
               size="icon"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               className="rounded-full opacity-70 hover:opacity-100 transition-all duration-300 text-foreground"
-              title="Toggle theme"
+              title={t("calculator.theme")}
             >
               {isDark ? (
                 <Sun className="size-4" />
@@ -325,7 +327,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
                   ? "bg-primary/20 text-primary hover:bg-primary/30"
                   : "opacity-70 hover:opacity-100"
               }`}
-              title="Calculation history"
+              title={t("calculator.history")}
             >
               <History className="size-4" />
             </Button>
@@ -334,7 +336,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
               size="icon"
               onClick={onLogout}
               className="rounded-full opacity-70 hover:opacity-100 text-destructive hover:bg-destructive/10 transition-all duration-300"
-              title="Sign out"
+              title={t("calculator.logout")}
             >
               <LogOut className="size-4" />
             </Button>
@@ -515,7 +517,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
           }`}
         >
           <div className="flex justify-between items-center p-4 border-b border-border/70">
-            <span className="font-bold text-sm tracking-wide">History</span>
+            <span className="font-bold text-sm tracking-wide">{t("calculator.history")}</span>
             <div className="flex items-center gap-1">
               {history.length > 0 && (
                 <Button
@@ -533,7 +535,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
                 onClick={() => setShowHistory(false)}
                 className="text-xs"
               >
-                Close
+                {t("calculator.close", "Close")}
               </Button>
             </div>
           </div>
@@ -542,7 +544,7 @@ export function Calculator({ onLogout }: CalculatorProps) {
             {history.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground text-xs gap-1">
                 <History className="size-8 opacity-30 mb-1" />
-                No calculations yet
+                {t("calculator.noHistory")}
               </div>
             ) : (
               <div className="space-y-3">

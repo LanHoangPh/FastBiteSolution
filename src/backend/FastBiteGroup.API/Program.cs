@@ -31,6 +31,16 @@ public class Program
 
         builder.AddServiceDefaults();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowDevelopment", policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            });
+        });
+
         builder.Services.AddPostgreSqlPersistence(config);
         builder.Services.AddMongoPersistence(config);
         builder.Services.AddIdentityPersistence();
@@ -79,6 +89,8 @@ public class Program
         }
 
         app.UseSerilogRequestLogging();
+
+        app.UseCors("AllowDevelopment");
 
         app.UseAuthentication();
         app.UseTokenBlacklist();

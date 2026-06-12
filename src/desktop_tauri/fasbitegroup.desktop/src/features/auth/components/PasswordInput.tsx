@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils";
 
-export function PasswordInput({ ...props }: React.ComponentProps<"input">) {
+export function PasswordInput({ className, ...props }: React.ComponentProps<"input">) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
@@ -10,7 +11,7 @@ export function PasswordInput({ ...props }: React.ComponentProps<"input">) {
       <Lock className="absolute left-3 size-4 text-muted-foreground pointer-events-none z-10" />
       <Input
         type={showPassword ? "text" : "password"}
-        className="auth-input"
+        className={cn("auth-input", className)}
         {...props}
       />
       <button

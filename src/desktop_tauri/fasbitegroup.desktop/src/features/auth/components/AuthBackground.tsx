@@ -1,4 +1,3 @@
-
 export function AuthBackground() {
   return (
     <div className="auth-background">
