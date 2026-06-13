@@ -1,36 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { authService } from "@/services/auth-service";
-import { Key, ShieldCheck, ArrowRight } from "lucide-react";
+import { Link, ShieldCheck, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/shared/utils";
 import { validateVerifyEmailForm } from "@/shared/validation/auth-validation";
 
 interface VerifyEmailCardProps {
   email: string;
+  initialToken?: string;
   onVerificationSuccess: () => void;
   onNavigateToLogin: () => void;
 }
 
 export function VerifyEmailCard({
   email,
+  initialToken,
   onVerificationSuccess,
   onNavigateToLogin,
 }: VerifyEmailCardProps) {
   const { t } = useTranslation();
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(initialToken || "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{ token?: string }>({});
+
+  const parseTokenAndEmail = (input: string) => {
+    let parsedToken = input.trim();
+    let parsedEmail = email;
+
+    if (input.includes("?")) {
+      try {
+        const urlParams = new URLSearchParams(input.substring(input.indexOf("?")));
+        const t = urlParams.get("token");
+        const e = urlParams.get("email");
+        if (t) parsedToken = t;
+        if (e) parsedEmail = e;
+      } catch (err) {
+        // Fallback
+      }
+    }
+    return { token: parsedToken, email: parsedEmail };
+  };
+
+  useEffect(() => {
+    if (initialToken && email) {
+      const autoVerify = async () => {
+        setIsLoading(true);
+        const res = await authService.verifyEmail(email, initialToken);
+        setIsLoading(false);
+        if (res.error) {
+          if (res.error.includes("Auth.InvalidToken") || res.error.includes("InvalidToken")) {
+            setError(t("auth.errors.invalidToken"));
+          } else {
+            setError(res.error);
+          }
+        } else {
+          onVerificationSuccess();
+        }
+      };
+      autoVerify();
+    }
+  }, [initialToken, email, onVerificationSuccess, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setFormErrors({});
 
-    const { errors, isValid } = validateVerifyEmailForm(token);
+    const { token: parsedToken, email: parsedEmail } = parseTokenAndEmail(token);
+
+    const { errors, isValid } = validateVerifyEmailForm(parsedToken);
     if (!isValid) {
       setFormErrors(errors);
       return;
@@ -38,7 +80,7 @@ export function VerifyEmailCard({
 
     setIsLoading(true);
 
-    const res = await authService.verifyEmail(email, token);
+    const res = await authService.verifyEmail(parsedEmail, parsedToken);
     setIsLoading(false);
 
     if (res.error) {
@@ -72,15 +114,15 @@ export function VerifyEmailCard({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-6 w-full">
-          {/* OTP Code Input */}
+          {/* Verification Token/Link Input */}
           <div className="space-y-1 w-full">
             <div className="auth-input-wrapper">
-              <Key className="absolute left-3 size-4 text-muted-foreground pointer-events-none z-10" />
+              <Link className="absolute left-3 size-4 text-muted-foreground pointer-events-none z-10" />
               <Input
                 type="text"
-                placeholder={t("auth.verificationCode")}
+                placeholder={t("auth.verificationToken")}
                 required
-                maxLength={100}
+                maxLength={1000}
                 className={cn("auth-input", formErrors.token && "border-red-500 focus-visible:ring-red-500/20")}
                 value={token}
                 onChange={(e) => {

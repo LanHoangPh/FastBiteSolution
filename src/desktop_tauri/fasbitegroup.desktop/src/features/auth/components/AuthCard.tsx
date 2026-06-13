@@ -30,6 +30,7 @@ export function AuthCard({
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{
@@ -50,7 +51,7 @@ export function AuthCard({
 
     setIsLoading(true);
 
-    const res = await authService.login(email, password);
+    const res = await authService.login(email, password, rememberMe);
     setIsLoading(false);
 
     if (res.error) {
@@ -149,8 +150,17 @@ export function AuthCard({
             )}
           </div>
 
-          {/* 6. Forgot Password */}
-          <div className="flex justify-end">
+          {/* 6. Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between select-none">
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="rounded border-border/80 text-indigo-600 focus:ring-indigo-500/30 bg-slate-100/50 dark:bg-slate-800/30 size-3.5 cursor-pointer accent-indigo-600"
+              />
+              {t("auth.rememberMe")}
+            </label>
             <button
               type="button"
               onClick={() => onNavigateToForgotPassword()}
@@ -217,7 +227,10 @@ export function AuthCard({
         </div>
 
         {/* 9. Social Login Buttons */}
-        <SocialLoginButtons />
+        <SocialLoginButtons 
+          onLoginSuccess={onLoginSuccess}
+          onLoginError={(err) => setError(err)}
+        />
       </CardContent>
     </Card>
   );

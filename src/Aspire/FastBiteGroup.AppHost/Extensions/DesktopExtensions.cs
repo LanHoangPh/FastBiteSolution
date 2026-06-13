@@ -23,10 +23,12 @@ internal static class DesktopExtensions
             }
             else
             {
-                builder.AddExecutable("web-app", "pnpm", desktopPath, "dev")
+                var webApp = builder.AddExecutable("web-app", "pnpm", desktopPath, "dev")
                     .WithReference(api)
                     .WithHttpEndpoint(port: 1420, name: "frontend", isProxied: false)
                     .ExcludeFromManifest();
+
+                api.WithEnvironment("ApiSettings__FrontendUrl", webApp.GetEndpoint("frontend"));
             }
         }
     }

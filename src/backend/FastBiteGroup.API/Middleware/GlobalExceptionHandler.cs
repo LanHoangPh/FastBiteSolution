@@ -1,4 +1,4 @@
-﻿using FastBiteGroup.Domain.Exceptions;
+using FastBiteGroup.Domain.Exceptions;
 
 namespace FastBiteGroup.API.Middleware
 {
@@ -16,6 +16,7 @@ namespace FastBiteGroup.API.Middleware
                 BadRequestException badRequestException => (StatusCodes.Status400BadRequest, badRequestException.Title),
                 NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Title),
                 FluentValidation.ValidationException => (StatusCodes.Status400BadRequest, "Validation Error"),
+                BadHttpRequestException badHttpRequestException => (badHttpRequestException.StatusCode, "Bad Request"),
                 _ => (StatusCodes.Status500InternalServerError, "Server Error")
             };
             var problemDetails = new ProblemDetails

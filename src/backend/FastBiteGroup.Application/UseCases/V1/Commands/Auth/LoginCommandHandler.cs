@@ -4,31 +4,20 @@ using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
-internal sealed class LoginCommandHandler
+internal sealed class LoginCommandHandler(
+    IUserAuthService userAuthService,
+    IJwtTokenService jwtTokenService,
+    IRefreshTokenRepository refreshTokenRepository,
+    ILogger<LoginCommandHandler>? logger = null)
     : ICommandHandler<AuthCommands.LoginCommand, AuthResponse>
 {
-    private readonly IUserAuthService _userAuthService;
-    private readonly IJwtTokenService _jwtTokenService;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly ILogger<LoginCommandHandler> _logger;
-
-    public LoginCommandHandler(
-        IUserAuthService userAuthService,
-        IJwtTokenService jwtTokenService,
-        IRefreshTokenRepository refreshTokenRepository,
-        ILogger<LoginCommandHandler>? logger = null)
-    {
-        _userAuthService = userAuthService;
-        _jwtTokenService = jwtTokenService;
-        _refreshTokenRepository = refreshTokenRepository;
-        _logger = logger ?? NullLogger<LoginCommandHandler>.Instance;
-    }
+    private readonly ILogger<LoginCommandHandler> _logger = logger ?? NullLogger<LoginCommandHandler>.Instance;
 
     public async Task<Result<AuthResponse>> Handle(
         AuthCommands.LoginCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userAuthService.FindByEmailAsync(request.Email, cancellationToken);
+        var user = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
             _logger.LogWarning("Login failed: invalid credentials.");
@@ -42,14 +31,14 @@ internal sealed class LoginCommandHandler
         }
 
         // Check lockout first
-        if (await _userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
+        if (await userAuthService.IsLockedOutAsync(user.Id, cancellationToken))
         {
             _logger.LogWarning("Login blocked for locked account. UserId: {UserId}", user.Id);
             return Result.Failure<AuthResponse>(AuthErrors.AccountLocked);
         }
 
         // Verify password
-        var passwordValid = await _userAuthService.CheckPasswordAsync(user.Id, request.Password, cancellationToken);
+        var passwordValid = await userAuthService.CheckPasswordAsync(user.Id, request.Password, cancellationToken);
         if (!passwordValid)
         {
             _logger.LogWarning("Login failed: invalid credentials. UserId: {UserId}", user.Id);
@@ -57,13 +46,13 @@ internal sealed class LoginCommandHandler
         }
 
         // Generate tokens
-        var (accessToken, jti, accessExpiresAt) = _jwtTokenService.GenerateAccessToken(
+        var (accessToken, jti, accessExpiresAt) = jwtTokenService.GenerateAccessToken(
             user.Id, user.Email, user.UserName, user.FirstName, user.LastName, user.Roles);
-        var refreshTokenString = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenString = jwtTokenService.GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
         var refreshToken = AppRefreshToken.Create(refreshTokenString, jti, user.Id, refreshExpiresAt);
-        _refreshTokenRepository.Add(refreshToken);
+        refreshTokenRepository.Add(refreshToken);
 
         var response = new AuthResponse(
             accessToken,

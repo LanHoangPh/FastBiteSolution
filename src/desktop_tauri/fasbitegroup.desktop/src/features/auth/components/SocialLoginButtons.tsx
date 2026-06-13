@@ -1,6 +1,54 @@
 import { Button } from "@/shared/components/ui/button";
+import { authService } from "@/services/auth-service";
 
-export function SocialLoginButtons() {
+interface SocialLoginButtonsProps {
+  onLoginSuccess?: () => void;
+  onLoginError?: (error: string) => void;
+}
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "938749832749-abcdefgh.apps.googleusercontent.com";
+const isTauri = typeof window !== "undefined" && Boolean((window as any).__TAURI_INTERNALS__);
+
+export function SocialLoginButtons({
+  onLoginSuccess,
+  onLoginError,
+}: SocialLoginButtonsProps) {
+  const handleGoogleLogin = async () => {
+    try {
+      let idToken: string | null = null;
+
+      if (isTauri) {
+        // 1. In Tauri, calculate the authUrl and invoke the login flow on the backend
+        const redirectUri = "http://localhost:14250/callback";
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=id_token&scope=openid%20email%20profile&nonce=random_nonce&response_mode=query`;
+
+        // Call the Tauri command which starts TCP listener, opens popup window, and automatically closes it
+        const { invoke } = await import("@tauri-apps/api/core");
+        idToken = await invoke<string>("start_google_login_flow", { authUrl });
+      } else {
+        // 2. In browser mode, display a prompt to manually enter an ID token for development testing
+        const pastedToken = prompt(
+          "Google Sign-In is only fully automated in desktop mode. For browser testing, please paste a valid Google ID token:"
+        );
+        if (pastedToken) {
+          idToken = pastedToken.trim();
+        }
+      }
+
+      if (!idToken) return;
+
+      const res = await authService.googleLogin(idToken);
+      if (res.error) {
+        onLoginError?.(res.error);
+      } else {
+        onLoginSuccess?.();
+      }
+    } catch (err) {
+      console.error("Google sign in failed:", err);
+      onLoginError?.(err instanceof Error ? err.message : "Google authentication failed");
+    }
+  };
+
   return (
     <div className="social-login-grid">
       {/* Google Button */}
@@ -9,7 +57,7 @@ export function SocialLoginButtons() {
         type="button"
         className="social-login-button"
         aria-label="Sign in with Google"
-        onClick={() => console.log("Google sign in clicked")}
+        onClick={handleGoogleLogin}
       >
         <svg className="size-4.5" viewBox="0 0 24 24" fill="currentColor">
           <path

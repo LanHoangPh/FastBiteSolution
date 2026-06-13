@@ -63,6 +63,7 @@ public class Program
         builder.Services.AddSwagger();
 
         builder.Services.AddTransient<TokenBlacklistMiddleware>();
+        builder.Services.AddTransient<JsonControlCharacterEscaperMiddleware>();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
@@ -82,6 +83,7 @@ public class Program
         app.MapDefaultEndpoints();
 
         app.UseExceptionHandler();
+        app.UseJsonControlCharacterEscaper();
 
         if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         {

@@ -82,6 +82,13 @@ export const validators = {
       return "auth.validation.invalidOtpLength";
     }
     return null;
+  },
+
+  token: (token: string): string | null => {
+    if (!token || !token.trim()) {
+      return "auth.validation.tokenRequired";
+    }
+    return null;
   }
 };
 
@@ -157,9 +164,9 @@ export function validateResetPasswordForm(fields: {
 }
 
 export function validateVerifyEmailForm(token: string) {
-  const otpError = validators.otp(token);
+  const tokenError = validators.token(token);
   return {
-    errors: { token: otpError || undefined },
-    isValid: !otpError
+    errors: { token: tokenError || undefined },
+    isValid: !tokenError
   };
 }

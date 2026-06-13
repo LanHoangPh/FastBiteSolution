@@ -368,3 +368,4 @@ FodyWeavers.xsd
 *.suo
 *.user
 *.userprefs
+.env.example

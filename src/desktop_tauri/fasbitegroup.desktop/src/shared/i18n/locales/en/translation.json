@@ -5,6 +5,7 @@
     "registerTitle": "Create an account",
     "registerSubtitle": "Sign up now to start tracking your calculations and sync your devices.",
     "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
     "dontHaveAccount": "Don't have an account?",
     "signUp": "Sign up",
     "alreadyHaveAccount": "Already have an account?",
@@ -23,8 +24,9 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 6 characters",
     "verifyEmailTitle": "Verify your email",
-    "verifyEmailSubtitle": "We sent a verification code to {{email}}. Please enter it below.",
+    "verifyEmailSubtitle": "We sent a magic link to {{email}}. Please click the link, or copy the link/token and paste it below to sign in.",
     "verificationCode": "Verification Code",
+    "verificationToken": "Verification Token or Link",
     "confirmSignIn": "Confirm & Sign In",
     "backToSignIn": "Back to Sign In",
     "resetPasswordTitle": "Reset password",
@@ -42,7 +44,7 @@
     "errors": {
       "invalidCredentials": "Email or password is incorrect.",
       "emailAlreadyExists": "This email address is already registered.",
-      "invalidToken": "Invalid or expired verification code.",
+      "invalidToken": "Invalid or expired verification link or token.",
       "invalidOtp": "Invalid or expired OTP code.",
       "accountBlocked": "Too many failed attempts. Please request a new OTP code.",
       "tooManyRequests": "Too many requests. Please wait a moment before trying again.",
@@ -63,7 +65,8 @@
       "confirmPasswordRequired": "Please confirm your password",
       "passwordsDoNotMatch": "Passwords do not match",
       "otpRequired": "Verification code is required",
-      "invalidOtpLength": "Code must be exactly 6 characters"
+      "invalidOtpLength": "Code must be exactly 6 characters",
+      "tokenRequired": "Verification link or token is required"
     }
   },
   "calculator": {

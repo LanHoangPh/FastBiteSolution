@@ -30,12 +30,12 @@ public class AuthApi : ApiEndpoint, IEndpoint
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         // POST /api/v1/auth/verify-email
-        group.MapPost("/verify-email", VerifyEmail)
-            .AllowAnonymous()
-            .WithSummary("Verify email via Identity confirmation token and receive JWT token pair")
-            .Produces<AuthResponse>(StatusCodes.Status200OK)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status400BadRequest);
+        //group.MapPost("/verify-email", VerifyEmail)
+            //.AllowAnonymous()
+            //.WithSummary("Verify email via Identity confirmation token and receive JWT token pair")
+            //.Produces<AuthResponse>(StatusCodes.Status200OK)
+            //.ProducesValidationProblem()
+            //.ProducesProblem(StatusCodes.Status400BadRequest);
 
         // GET /api/v1/auth/verify-email?email={email}&token={token}
         group.MapGet("/verify-email", VerifyEmailByLink)
@@ -180,7 +180,7 @@ public class AuthApi : ApiEndpoint, IEndpoint
     }
 
     private static async Task<IResult> ForgotPassword(
-        [FromBody] AuthCommands.ForgotPasswordCommand command,
+        [FromBody] ForgotPasswordCommand command,
         ISender sender,
         CancellationToken ct)
     {
@@ -189,7 +189,7 @@ public class AuthApi : ApiEndpoint, IEndpoint
     }
 
     private static async Task<IResult> ResetPassword(
-        [FromBody] AuthCommands.ResetPasswordCommand command,
+        [FromBody] ResetPasswordCommand command,
         ISender sender,
         CancellationToken ct)
     {

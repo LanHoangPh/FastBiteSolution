@@ -5,6 +5,7 @@
     "registerTitle": "Tạo tài khoản mới",
     "registerSubtitle": "Đăng ký ngay để lưu trữ lịch sử tính toán và đồng bộ hóa giữa các thiết bị của bạn.",
     "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ đăng nhập",
     "dontHaveAccount": "Chưa có tài khoản?",
     "signUp": "Đăng ký ngay",
     "alreadyHaveAccount": "Đã có tài khoản?",
@@ -23,8 +24,9 @@
     "passwordsDoNotMatch": "Mật khẩu xác nhận không khớp",
     "passwordTooShort": "Mật khẩu phải chứa ít nhất 6 ký tự",
     "verifyEmailTitle": "Xác thực địa chỉ Email",
-    "verifyEmailSubtitle": "Chúng tôi đã gửi mã xác thực đến {{email}}. Vui lòng nhập mã bên dưới.",
+    "verifyEmailSubtitle": "Chúng tôi đã gửi link xác thực đến {{email}}. Vui lòng nhấn vào link, hoặc sao chép link/token và dán vào ô bên dưới để đăng nhập.",
     "verificationCode": "Mã xác thực",
+    "verificationToken": "Mã xác thực hoặc Link",
     "confirmSignIn": "Xác nhận & Đăng nhập",
     "backToSignIn": "Quay lại Đăng nhập",
     "resetPasswordTitle": "Khôi phục mật khẩu",
@@ -42,7 +44,7 @@
     "errors": {
       "invalidCredentials": "Email hoặc mật khẩu không chính xác.",
       "emailAlreadyExists": "Địa chỉ email này đã được đăng ký sử dụng.",
-      "invalidToken": "Mã xác thực không hợp lệ hoặc đã hết hạn.",
+      "invalidToken": "Link hoặc mã token xác thực không hợp lệ hoặc đã hết hạn.",
       "invalidOtp": "Mã OTP không hợp lệ hoặc đã hết hạn.",
       "accountBlocked": "Tài khoản bị tạm khóa do nhập sai nhiều lần. Vui lòng yêu cầu mã OTP mới.",
       "tooManyRequests": "Quá nhiều yêu cầu. Vui lòng đợi một lát rồi thử lại.",
@@ -63,7 +65,8 @@
       "confirmPasswordRequired": "Vui lòng xác nhận Mật khẩu",
       "passwordsDoNotMatch": "Mật khẩu xác nhận không khớp",
       "otpRequired": "Vui lòng nhập mã xác thực",
-      "invalidOtpLength": "Mã xác thực phải gồm đúng 6 ký tự"
+      "invalidOtpLength": "Mã xác thực phải gồm đúng 6 ký tự",
+      "tokenRequired": "Vui lòng nhập link hoặc mã token xác thực"
     }
   },
   "calculator": {

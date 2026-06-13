@@ -1,3 +1,4 @@
+using System;
 using FastBiteGroup.Contract.Abstractions.Message;
 using FastBiteGroup.Contract.Services.V1.Auth.Responses;
 
@@ -32,12 +33,4 @@ public static class AuthCommands
 
     public sealed record RevokeAllSessionsCommand(
         Guid UserId) : ICommand;
-
-    public sealed record ForgotPasswordCommand(
-        string Email) : ICommand;
-
-    public sealed record ResetPasswordCommand(
-        string Email,
-        string Otp,
-        string NewPassword) : ICommand;
 }

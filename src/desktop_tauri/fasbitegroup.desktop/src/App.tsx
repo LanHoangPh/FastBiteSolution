@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calculator } from "@/features/calculator/components/Calculator";
 import { AuthBackground } from "@/features/auth/components/AuthBackground";
 import { Logo } from "@/features/auth/components/Logo";
@@ -16,15 +16,40 @@ import { LanguageSelector } from "@/shared/components/LanguageSelector";
 import "./App.css";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(() =>
-    authService.isAuthenticated(),
-  );
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authView, setAuthView] = useState<
     "login" | "register" | "verify-email" | "forgot-password" | "reset-password"
   >("login");
   const [email, setEmail] = useState("");
+  const [initialToken, setInitialToken] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("token") || "";
+  });
+
   const [successMessage, setSuccessMessage] = useState("");
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    const initSession = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const hasToken = params.has("token");
+      const hasEmail = params.has("email");
+      const isVerifyPath = window.location.pathname === "/verify-email";
+
+      if (isVerifyPath || (hasToken && hasEmail)) {
+        setEmail(params.get("email") || "");
+        setAuthView("verify-email");
+        window.history.replaceState({}, document.title, "/");
+      }
+
+      await authService.initialize();
+      setIsLoggedIn(authService.isAuthenticated());
+      setIsInitializing(false);
+    };
+    initSession();
+  }, []);
+
   const isDark =
     theme === "dark" ||
     (theme === "system" &&
@@ -51,6 +76,7 @@ function App() {
             }}
             onRequireVerification={(targetEmail) => {
               setEmail(targetEmail);
+              setInitialToken("");
               setAuthView("verify-email");
             }}
             successMessage={successMessage}
@@ -61,6 +87,7 @@ function App() {
           <RegisterCard
             onRegisterSuccess={(registeredEmail) => {
               setEmail(registeredEmail);
+              setInitialToken("");
               setAuthView("verify-email");
             }}
             onNavigateToLogin={() => setAuthView("login")}
@@ -70,8 +97,12 @@ function App() {
         return (
           <VerifyEmailCard
             email={email}
+            initialToken={initialToken}
             onVerificationSuccess={() => setIsLoggedIn(true)}
-            onNavigateToLogin={() => setAuthView("login")}
+            onNavigateToLogin={() => {
+              setInitialToken("");
+              setAuthView("login");
+            }}
           />
         );
       case "forgot-password":
@@ -98,6 +129,14 @@ function App() {
         );
     }
   };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+        <span className="size-8 border-4 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden transition-colors duration-500 bg-slate-50 dark:bg-slate-950">

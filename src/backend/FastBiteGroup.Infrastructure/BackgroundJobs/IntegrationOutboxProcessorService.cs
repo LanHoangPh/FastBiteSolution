@@ -1,8 +1,8 @@
+using System.Net;
+using System.Text.Json;
 using FastBiteGroup.Application.Abstractions.Emails;
 using FastBiteGroup.Contract.Abstractions.Outbox;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
-using System.Net;
-using System.Text.Json;
 
 namespace FastBiteGroup.Infrastructure.BackgroundJobs;
 
@@ -35,6 +35,7 @@ public sealed class IntegrationOutboxProcessorService(
         using var scope = serviceProvider.CreateScope();
         var outboxStore = scope.ServiceProvider.GetRequiredService<IIntegrationOutboxStore>();
         var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
         var messages = await outboxStore.GetPendingAsync(batchSize: 20, cancellationToken);
 
@@ -49,7 +50,8 @@ public sealed class IntegrationOutboxProcessorService(
                     {
                         var email = WebUtility.UrlEncode(payload.Email);
                         var token = WebUtility.UrlEncode(payload.EmailConfirmationToken);
-                        var verificationUrl = $"https://localhost:5001/api/v1/auth/verify-email?email={email}&token={token}";
+                        var frontendUrl = GetFrontendUrl(configuration);
+                        var verificationUrl = $"{frontendUrl}/verify-email?email={email}&token={token}";
 
                         var htmlBody = $@"
                             <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
@@ -106,5 +108,18 @@ public sealed class IntegrationOutboxProcessorService(
                 await outboxStore.MarkFailedAsync(message.Id, ex.ToString(), cancellationToken);
             }
         }
+    }
+
+    private static string GetFrontendUrl(IConfiguration configuration)
+    {
+        // 1. Try to read from configuration (injected by Aspire or set in production)
+        var frontendUrl = configuration["ApiSettings:FrontendUrl"];
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            return frontendUrl.TrimEnd('/');
+        }
+
+        // 2. Default fallback for local development (Tauri React dev port)
+        return "http://localhost:1420";
     }
 }

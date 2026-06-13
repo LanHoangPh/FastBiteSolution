@@ -2,6 +2,7 @@ using FastBiteGroup.Contract.Services.V1.Auth;
 using FastBiteGroup.Contract.Services.V1.Auth.Commands;
 using FastBiteGroup.Contract.Services.V1.Auth.Events;
 using System.Text.Json;
+using FastBiteGroup.Application.Constants;
 
 namespace FastBiteGroup.Application.UseCases.V1.Commands.Auth;
 
@@ -17,18 +18,17 @@ public sealed class ForgotPasswordCommandHandler(
         var user = await userAuthService.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
-            return Result.Success();
+            return Result.Failure(AuthErrors.InvalidCredentials);
         }
 
         // Spam prevention: limit requests to max 3 per 15 minutes
-        string countKey = $"OTP_RESET_COUNT_{user.Email}";
-        var count = await cacheService.GetAsync<int>(countKey, cancellationToken);
+        var count = await cacheService.GetAsync<int>(CacheKeys.CountKeyLogin(user.Email), cancellationToken);
         if (count >= 3)
         {
             return Result.Failure(AuthErrors.TooManyRequests);
         }
 
-        await cacheService.SetAsync(countKey, count + 1, TimeSpan.FromMinutes(15), cancellationToken);
+        await cacheService.SetAsync(CacheKeys.CountKeyLogin(user.Email), count + 1, TimeSpan.FromMinutes(15), cancellationToken);
 
         // Generate 6-digit OTP using IOtpService (10 mins TTL)
         var otp = await otpService.GenerateOtpAsync("RESET_PWD", user.Email, TimeSpan.FromMinutes(10), cancellationToken);
